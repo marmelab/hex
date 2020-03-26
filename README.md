@@ -1,10 +1,10 @@
 # Hex
 
-This project implements a mobile and desktop version of the hex game.
+This project implements a mobile version of the hex game.
 
 ## Requirements
 
-- Node 12
+- Node 12 or above
 - Yarn
 
 ## Installation
