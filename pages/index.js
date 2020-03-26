@@ -1,4 +1,5 @@
-import Head from 'next/head'
+import Head from "next/head";
+import { ThemeProvider, CSSReset, Button } from "@chakra-ui/core";
 
 const Home = () => (
   <div className="container">
@@ -6,12 +7,15 @@ const Home = () => (
       <title>Hex</title>
     </Head>
 
-    <main>
-    </main>
+    <ThemeProvider>
+      <CSSReset />
+      <main>
+        <Button>Start</Button>
+      </main>
 
-    <footer>
-    </footer>
+      <footer></footer>
+    </ThemeProvider>
   </div>
-)
+);
 
-export default Home
+export default Home;
