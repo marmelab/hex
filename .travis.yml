@@ -15,6 +15,7 @@ install:
   - make install
 
 before_script:
+  - make build
   - make start
 
 script:
