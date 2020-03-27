@@ -20,5 +20,6 @@ before_script:
 script:
   - make test
 
-only: 
-  - master
+branches:
+  only:
+    - master
