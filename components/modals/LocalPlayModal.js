@@ -17,7 +17,7 @@ export function LocalPlayModal() {
   return (
     <>
       <Button onClick={onOpen} variantColor="teal" size="lg">
-        Play (local)
+        Play
       </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
