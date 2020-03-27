@@ -7,9 +7,13 @@ help:
 
 install: ## Install project's dependencies
 	@echo "Install project deps"
+	yarn install
+	yarn build
 
 start: ## Start project
 	@echo "Start the project"
+	yarn run start
 
 test: ## Launch the project's tests
 	@echo "Launch the tests"
+	yarn run cy:run
