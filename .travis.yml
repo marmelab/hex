@@ -14,5 +14,11 @@ cache:
 install:
   - make install
 
+before_script:
+  - make start
+
 script:
   - make test
+
+only: 
+  - master

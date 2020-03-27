@@ -8,6 +8,9 @@ help:
 install: ## Install project's dependencies
 	@echo "Install project deps"
 	yarn install
+
+build:
+	@echo "Build project"
 	yarn build
 
 start: ## Start project
