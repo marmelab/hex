@@ -1,10 +1,26 @@
 describe("The Home Page", function() {
-  it("Launch a local game", function() {
-    cy.contains('Play (local)').click()
-    cy.get('#modal-1-body').invoke('show')
-    cy.contains('2 players on the same device')
-    cy.get('#size')
-      .select('7')
-    cy.contains('Start')
+
+  before(function() {
+    cy.visit("/");
+  });
+
+  it("Click on Play button", function() {
+    cy.contains("Play (local)").click();
+  });
+
+  it("Display a modal", function() {
+    cy.get("#modal-1-body").invoke("show");
+  });
+
+  it("Show the 2 players on same device modal", function() {
+    cy.contains("2 players on the same device");
+  });
+
+  it("Select a size of board", function() {
+    cy.get("#size").select("7");
+  });
+
+  it("Show a start button", function() {
+    cy.contains("Start");
   });
 });
