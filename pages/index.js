@@ -1,20 +1,28 @@
 import Head from "next/head";
-import { ThemeProvider, CSSReset, Button } from "@chakra-ui/core";
+import { ThemeProvider, CSSReset, Flex, Button } from "@chakra-ui/core";
+import { LocalPlayModal } from "../components/modals/LocalPlayModal";
 
 const Home = () => (
-  <div className="container">
+  <div>
     <Head>
       <title>Hex</title>
     </Head>
 
     <ThemeProvider>
       <CSSReset />
-      <main>
-        <Button>Start</Button>
+      <main className="centered">
+          <LocalPlayModal />
       </main>
 
       <footer></footer>
     </ThemeProvider>
+
+    <style jsx>{`
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    `}</style>
   </div>
 );
 
