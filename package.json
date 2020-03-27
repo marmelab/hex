@@ -6,16 +6,14 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "cypress:open": "cypress open"
   },
   "dependencies": {
-    "@chakra-ui/core": "^0.7.0",
-    "@emotion/core": "^10.0.28",
-    "@emotion/styled": "^10.0.27",
-    "emotion-theming": "^10.0.27",
-    "formik": "^2.1.4",
     "next": "^9.3.1",
+    "onsenui": "^2.10.10",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "react-onsenui": "^1.11.2"
   }
 }
