@@ -19,4 +19,4 @@ start: ## Start project
 
 test: ## Launch the project's tests
 	@echo "Launch the tests"
-	yarn run cypress:run --config video=false
+	yarn run cypress:run --config video=false screenshot=false

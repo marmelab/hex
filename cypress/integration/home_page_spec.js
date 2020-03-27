@@ -2,10 +2,7 @@ describe("The Home Page", function() {
 
   before(function() {
     cy.visit("/");
-  });
-
-  it("Click on Play button", function() {
-    cy.contains("Play (local)").click();
+    cy.contains("Play").click();
   });
 
   it("Display a modal", function() {
