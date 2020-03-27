@@ -2,14 +2,7 @@ import { Formik } from "formik";
 import { Button, FormLabel, Select } from "@chakra-ui/core";
 
 const LocalPlayForm = () => (
-  <Formik
-    onSubmit={(values, actions) => {
-      setTimeout(() => {
-        alert(JSON.stringify(values, null, 2));
-        actions.setSubmitting(false);
-      }, 1000);
-    }}
-  >
+  <Formik onSubmit={(values, actions) => {}}>
     {props => (
       <form onSubmit={props.handleSubmit}>
         <FormLabel htmlFor="size">Size of the board</FormLabel>
