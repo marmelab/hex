@@ -1,8 +1,4 @@
 describe("The Home Page", function() {
-  it("successfully loads", function() {
-    cy.visit("/");
-  });
-
   it("Launch a local game", function() {
     cy.contains('Play (local)').click()
     cy.get('#modal-1-body').invoke('show')
