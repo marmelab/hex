@@ -1,5 +1,18 @@
-language: minimal
-before_script:
-- make install
+language: nodejs
+node_js:
+  - 12
+addons:
+  apt:
+    packages:
+      # Ubuntu 16+ does not install this dependency by default, so we need to install it ourselves
+      - libgconf-2-4
+cache:
+  directories:
+    - node_modules
+    - ~/.cache
+
+install:
+  - make install
+
 script:
-- make test
+  - make test
