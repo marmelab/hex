@@ -4,7 +4,6 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
   useDisclosure
@@ -12,7 +11,7 @@ import {
 
 import LocalPlayForm from "../forms/LocalPlayForm";
 
-export function LocalPlayModal() {
+export default function LocalPlayModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
