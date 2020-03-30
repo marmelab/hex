@@ -1,54 +1,30 @@
 import React from "react";
 import Hexagon from "./Hexagon";
 import ButtomBoard from "./BottomBoard";
+import {
+  getBoardRatio,
+  getHexagonHeight,
+  getHexagonWidth,
+  calculateLeftPosition,
+  calculateTopPosition
+} from "./tools.js";
 
 function Playboard(props) {
   const size = props.size;
-  const boardRatio =
-    (1 + (size - 1) * 0.75) / (size * 0.89 + (size * 0.89 - 0.89) / 2);
 
-  const cellWidth = 100 / (size + (size - 1) / 2);
-  const cellHeight = 100 / (1 + (size - 1) * 0.75);
-  /*
-   This function calculate, for each hexagons, the top position value.
-   Use the columnIndex (columns are drawn first).
-   eg. 
-     1 2 3
-     1 2 3 
-     1 2 3
+  const boardRatio = getBoardRatio(size);
 
-    visualOffset is a fixed value (depends of bottomBoard visual)
-    offset considers width of hexagon and strokeWidth values
-   */
-  function calculateTopPosition(rowIndex) {
-    const offset = cellHeight * 0.75;
-    const visualOffset = 0;
-
-    return (visualOffset + rowIndex * offset).toString() + "%";
-  }
-
-  /*
-   This function calculate, for each hexagons, the left position value.
-
-   visualOffset is a fixed value (depends of bottomBoard visual)
-   offset considers width of hexagon and strokeWidth values
-  */
-  function calculateLeftPosition(columnIndex, rowIndex) {
-    const lineOffset = (rowIndex * cellWidth) / 2;
-
-    return (lineOffset + cellWidth * columnIndex).toString() + "%";
-  }
+  const hexagonWidth = getHexagonWidth(size);
+  const hexagonHeight = getHexagonHeight(size);
 
   const hexagons = () => {
-    const iterator = [...Array(size)];
+    const board = [...Array(size)];
 
     return (
       <div
         className="container"
         style={{
-          alignItems: "center",
-          justifyContent: "center",
-          width: "50vw",
+          width: "60vw",
           position: "relative"
         }}
       >
@@ -62,24 +38,23 @@ function Playboard(props) {
           }}
         ></ButtomBoard>
         <div style={{ position: "absolute", width: "100%", height: "100%" }}>
-          {iterator.map((e, rowIndex) => {
-            return iterator.map((x, columnIndex) => {
-              const top = calculateTopPosition(rowIndex);
+          {board.map((e, rowIndex) => {
+            return board.map((x, columnIndex) => {
+              const top = calculateTopPosition(rowIndex, hexagonHeight);
               const left = calculateLeftPosition(
                 columnIndex,
                 rowIndex,
-                cellWidth,
-                size
+                hexagonWidth
               );
 
               return (
                 <Hexagon
                   color={"#e2dddf"}
                   style={{
-                    top,
-                    left,
-                    width: cellWidth + "%",
-                    height: cellHeight + "%"
+                    top: `${top}%`,
+                    left: `${left}%`,
+                    width: `${hexagonWidth}%`,
+                    height: `${hexagonHeight}%`
                   }}
                 />
               );
@@ -88,9 +63,6 @@ function Playboard(props) {
         </div>
 
         <style jsx>{`
-          .container {
-            border: 1px red solid;
-          }
           .container:after {
             content: "";
             display: block;

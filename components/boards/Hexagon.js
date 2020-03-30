@@ -11,10 +11,6 @@ function Hexagon(props) {
         ...props.style
       }}
     >
-      {/*       <path
-        d="M1.25 145.443v-96l83.138-48 83.139 48v96l-83.139 48z"
-
-      /> */}
       <polygon
         fill={props.color}
         stroke="#2f404d"
