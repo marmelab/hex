@@ -1,4 +1,4 @@
-.PHONY: default install start test
+.PHONY: default install start test dev
 
 .DEFAULT_GOAL := help
 
@@ -16,6 +16,10 @@ build:
 start: ## Start project
 	@echo "Start the project"
 	yarn run start
+
+dev: ## Start project (dev mode)
+	@echo "Start the project (dev mode)"
+	yarn run dev
 
 test: ## Launch the project's tests
 	@echo "Launch the tests"
