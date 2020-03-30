@@ -1,12 +1,14 @@
 import React from "react";
 import Hexagon from "./Hexagon";
-import { Box, Flex } from "@chakra-ui/core";
 import ButtomBoard from "./BottomBoard";
 
 function Playboard(props) {
   const size = props.size;
-  const proportion = 105 / size;
+  const boardRatio =
+    (1 + (size - 1) * 0.75) / (size * 0.89 + (size * 0.89 - 0.89) / 2);
 
+  const cellWidth = 100 / (size + (size - 1) / 2);
+  const cellHeight = 100 / (1 + (size - 1) * 0.75);
   /*
    This function calculate, for each hexagons, the top position value.
    Use the columnIndex (columns are drawn first).
@@ -18,11 +20,11 @@ function Playboard(props) {
     visualOffset is a fixed value (depends of bottomBoard visual)
     offset considers width of hexagon and strokeWidth values
    */
-  function calculateTopPosition(columnIndex, proportion) {
-    const offset = proportion * 0.75;
-    const visualOffset = 10;
+  function calculateTopPosition(rowIndex) {
+    const offset = cellHeight * 0.75;
+    const visualOffset = 0;
 
-    return (visualOffset + columnIndex * offset).toString() + "vh";
+    return (visualOffset + rowIndex * offset).toString() + "%";
   }
 
   /*
@@ -31,48 +33,71 @@ function Playboard(props) {
    visualOffset is a fixed value (depends of bottomBoard visual)
    offset considers width of hexagon and strokeWidth values
   */
-  function calculateLeftPosition(columnIndex, lineIndex, proportion) {
-    const offset = proportion * 0.85;
-    const visualOffset = 33;
-    const lineOffset = (offset * columnIndex) / 2;
-    return (visualOffset + lineIndex * offset + lineOffset).toString() + "vh";
+  function calculateLeftPosition(columnIndex, rowIndex) {
+    const lineOffset = (rowIndex * cellWidth) / 2;
+
+    return (lineOffset + cellWidth * columnIndex).toString() + "%";
   }
 
   const hexagons = () => {
     const iterator = [...Array(size)];
 
     return (
-      <Flex
+      <div
+        className="container"
         style={{
           alignItems: "center",
           justifyContent: "center",
-          margin: "2%",
-          height: "90vh",
-          width: "75%"
+          width: "50vw",
+          position: "relative"
         }}
       >
-          {iterator.map((e, lineIndex) => {
+        <ButtomBoard
+          style={{
+            position: "absolute",
+            top: "-6.1%",
+            right: "-5%",
+            bottom: "-6.1%",
+            left: "-5%"
+          }}
+        ></ButtomBoard>
+        <div style={{ position: "absolute", width: "100%", height: "100%" }}>
+          {iterator.map((e, rowIndex) => {
             return iterator.map((x, columnIndex) => {
-              const top = calculateTopPosition(columnIndex, proportion, size);
+              const top = calculateTopPosition(rowIndex);
               const left = calculateLeftPosition(
                 columnIndex,
-                lineIndex,
-                proportion,
+                rowIndex,
+                cellWidth,
                 size
               );
 
               return (
                 <Hexagon
                   color={"#e2dddf"}
-                  left={left}
-                  top={top}
-                  proportion={proportion + "vh"}
+                  style={{
+                    top,
+                    left,
+                    width: cellWidth + "%",
+                    height: cellHeight + "%"
+                  }}
                 />
               );
             });
           })}
-        <ButtomBoard></ButtomBoard>
-      </Flex>
+        </div>
+
+        <style jsx>{`
+          .container {
+            border: 1px red solid;
+          }
+          .container:after {
+            content: "";
+            display: block;
+            padding-bottom: ${boardRatio * 100}%;
+          }
+        `}</style>
+      </div>
     );
   };
 
