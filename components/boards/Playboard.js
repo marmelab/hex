@@ -21,7 +21,12 @@ function Playboard(props) {
 
   return (
     <div className="container">
-      <BottomBoard />
+      <BottomBoard
+        size={size}
+        hexagonHeight={hexagonHeight}
+        hexagonWidth={hexagonWidth}
+      />
+
       <div name="grid" className="hexagons-grid">
         {board.map((e, rowIndex) => {
           return board.map((x, columnIndex) => {
