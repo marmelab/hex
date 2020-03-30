@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "svgr": "@svgr/cli"
   },
   "dependencies": {
     "@chakra-ui/core": "^0.7.0",
@@ -21,6 +22,7 @@
     "react-dom": "^16.13.1"
   },
   "devDependencies": {
+    "@svgr/cli": "^5.3.0",
     "cypress": "^4.2.0"
   }
 }
