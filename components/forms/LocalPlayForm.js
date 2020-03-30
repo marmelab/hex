@@ -1,12 +1,15 @@
 import { Formik } from "formik";
 import { Button, FormLabel, Select } from "@chakra-ui/core";
-import Router from 'next/router'
+import Router from "next/router";
 
 const LocalPlayForm = () => (
   <Formik
-    initialValues={{ size: '7' }}  
+    initialValues={{ size: "7" }}
     onSubmit={values => {
-      Router.push('/board')
+      Router.push({
+        pathname: "/board",
+        query: { size: values.size }
+      });
     }}
   >
     {({ handleSubmit, handleChange, values }) => (
@@ -17,11 +20,7 @@ const LocalPlayForm = () => (
           <option value="9">9</option>
           <option value="11">11</option>
         </Select>
-        <Button
-          mt={4}
-          variantColor="teal"
-          type="submit"
-        >
+        <Button mt={4} variantColor="teal" type="submit">
           Start
         </Button>
       </form>

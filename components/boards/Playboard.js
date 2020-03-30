@@ -37,7 +37,7 @@ function Playboard(props) {
             left: "-5%"
           }}
         ></ButtomBoard>
-        <div style={{ position: "absolute", width: "100%", height: "100%" }}>
+        <div name="grid" style={{ position: "absolute", width: "100%", height: "100%" }}>
           {board.map((e, rowIndex) => {
             return board.map((x, columnIndex) => {
               const top = calculateTopPosition(rowIndex, hexagonHeight);
