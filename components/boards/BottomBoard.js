@@ -2,7 +2,7 @@ import React from "react";
 
 function BottomBoard(props) {
   return (
-    <svg name="bottom-board" viewBox="0 0 100 62.409" {...props}>
+    <svg name="bottom-board" className="bottom-board" viewBox="0 0 100 62.409" {...props}>
       <g strokeWidth={0.265}>
         <path
           d="M3.095.022L.794 3.932l49.19 27.291L68.414.022zm46.889 31.201L31.507 62.461l65.477-.052 1.9-3.056z"
@@ -16,6 +16,15 @@ function BottomBoard(props) {
           strokeWidth={0.04363084}
         />
       </g>
+      <style jsx>{`
+          .bottom-board {
+            position: absolute;
+            top: -6.1%;
+            right: -5%;
+            bottom: -6.1%;
+            left: -5%;
+          }
+        `}</style>
     </svg>
   );
 }

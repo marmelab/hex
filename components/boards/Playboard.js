@@ -1,13 +1,13 @@
 import React from "react";
 import Hexagon from "./Hexagon";
-import ButtomBoard from "./BottomBoard";
+import BottomBoard from "./BottomBoard";
 import {
   getBoardRatio,
   getHexagonHeight,
   getHexagonWidth,
   calculateLeftPosition,
   calculateTopPosition
-} from "./tools.js";
+} from "./position.js";
 
 function Playboard(props) {
   const size = props.size;
@@ -21,23 +21,9 @@ function Playboard(props) {
     const board = [...Array(size)];
 
     return (
-      <div
-        className="container"
-        style={{
-          width: "60vw",
-          position: "relative"
-        }}
-      >
-        <ButtomBoard
-          style={{
-            position: "absolute",
-            top: "-6.1%",
-            right: "-5%",
-            bottom: "-6.1%",
-            left: "-5%"
-          }}
-        ></ButtomBoard>
-        <div name="grid" style={{ position: "absolute", width: "100%", height: "100%" }}>
+      <div className="container">
+        <BottomBoard />
+        <div name="grid" className="hexagons-grid">
           {board.map((e, rowIndex) => {
             return board.map((x, columnIndex) => {
               const top = calculateTopPosition(rowIndex, hexagonHeight);
@@ -61,12 +47,22 @@ function Playboard(props) {
             });
           })}
         </div>
-
         <style jsx>{`
+          .container {
+            width: 60vw;
+            position: relative;
+          }
+
           .container:after {
             content: "";
             display: block;
             padding-bottom: ${boardRatio * 100}%;
+          }
+
+          .hexagons-grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
           }
         `}</style>
       </div>
