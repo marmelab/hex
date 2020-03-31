@@ -1,15 +1,9 @@
 import Head from "next/head";
 import { ThemeProvider, CSSReset } from "@chakra-ui/core";
 
-function hasAside(aside) {
-  if (aside) {
-    return true;
-  }
-}
-
 function Layout({ aside, content }) {
-  const asideWidth = hasAside(aside) ? "20%" : "0%";
-  const mainWidth = hasAside(aside) ? "80%" : "100%";
+  const asideWidth = aside ? "20%" : "0%";
+  const mainWidth = aside ? "80%" : "100%";
 
   return (
     <div>
