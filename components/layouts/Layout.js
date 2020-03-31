@@ -5,7 +5,7 @@ const Layout = props => (
   <div>
     <Head>
       <title>Hex</title>
-      <style>{'body { background-color: #2f404d; }'}</style>
+      <style>{'body { background-color: #2f404d }'}</style>
     </Head>
 
     <ThemeProvider>
