@@ -8,7 +8,6 @@ function hasAside(aside) {
 }
 
 function Layout({ aside, content }) {
-
   const asideWidth = hasAside(aside) ? "20%" : "0%";
   const mainWidth = hasAside(aside) ? "80%" : "100%";
 
@@ -16,6 +15,7 @@ function Layout({ aside, content }) {
     <div>
       <Head>
         <title>Hex</title>
+        <link rel="manifest" href="/manifest.webmanifest"></link>
         <style>{"body { background-color: #2f404d }"}</style>
       </Head>
 
