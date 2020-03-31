@@ -1,48 +1,54 @@
 import Head from "next/head";
 import { ThemeProvider, CSSReset } from "@chakra-ui/core";
-import { Flex, Badge } from "@chakra-ui/core";
+import {
+  FIRST_PLAYER_COLOR,
+  LIGHT_COLOR_500,
+  LIGHT_COLOR_100
+} from "../../theme/colors";
 
-const Layout = props => (
-  <div>
-    <Head>
-      <title>Hex</title>
-      <style>{"body { background-color: #2f404d }"}</style>
-    </Head>
+function Layout({ aside, content }) {
+  return (
+    <div>
+      <Head>
+        <title>Hex</title>
+        <style>{"body { background-color: #2f404d }"}</style>
+      </Head>
 
-    <ThemeProvider>
-      <CSSReset />
+      <ThemeProvider>
+        <CSSReset />
 
-      <div className="main">
-        <div className="in-middle">{props.content}</div>
-        <div className="aside">{props.aside}</div>
-      </div>
+        <div className="main">
+          <div className="in-middle">{content}</div>
+          <div className="aside">{aside}</div>
+        </div>
 
-      <footer></footer>
-    </ThemeProvider>
-    <style jsx>{`
-      .main {
-        display: flex;
-        flex-flow: row wrap;
-        justify-content: space-around;
-        height: 100vh;
-      }
+        <footer></footer>
+      </ThemeProvider>
+      <style jsx>{`
+        .main {
+          display: flex;
+          flex-flow: row wrap;
+          justify-content: space-around;
+          height: 100vh;
+        }
 
-      .in-middle {
-        justify-content: center;
-        align-items: center;
-        display: flex;
-        height: 100vh;
-        width: 80%;
-      }
+        .in-middle {
+          justify-content: center;
+          align-items: center;
+          display: flex;
+          height: 100vh;
+          width: 80%;
+        }
 
-      .aside {
-        justify-content: center;
-        align-items: center;
-        display: flex;
-        width: 20%;
-      }
-    `}</style>
-  </div>
-);
+        .aside {
+          justify-content: center;
+          align-items: center;
+          display: flex;
+          width: 20%;
+        }
+      `}</style>
+    </div>
+  );
+}
 
 export default Layout;

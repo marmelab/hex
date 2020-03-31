@@ -1,12 +1,12 @@
 import { useRouter } from "next/router";
-import { Badge, Heading, Text } from "@chakra-ui/core";
+import { Text } from "@chakra-ui/core";
 
 import Layout from "../components/layouts/Layout";
 import Playboard from "../components/boards/Playboard";
-import { lighterColor, lightColor } from "../theme/colors";
+import { LIGHT_COLOR_100, LIGHT_COLOR_500 } from "../theme/colors";
 
-const player1 = 1;
-const player2 = 2;
+const PLAYER1 = 1;
+const PLAYER2 = 2;
 
 const Board = props => {
   const { query } = useRouter();
@@ -15,7 +15,7 @@ const Board = props => {
     return null;
   }
 
-  const currentPlayer = player1;
+  const currentPlayer = PLAYER1;
 
   return (
     <>
@@ -26,14 +26,13 @@ const Board = props => {
             <Text
               name="current-player"
               className="hud-current-player"
-              fontSize={20}
             >
               Player {currentPlayer}
             </Text>
 
             <style jsx>{`
               .hud {
-                background: ${lighterColor};
+                background: ${LIGHT_COLOR_100};
                 border-radius: 5%;
                 display: flex;
                 align-items: left;
@@ -41,7 +40,7 @@ const Board = props => {
               }
 
               .hud-current-player {
-                color: ${lightColor};
+                color: ${LIGHT_COLOR_500};
                 width: 100%;
               }
             `}</style>

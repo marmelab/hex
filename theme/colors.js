@@ -1,5 +1,5 @@
-export const firstPlayerColor = "#255bc8"
-export const secondPlayerColor = "#25d5c8"
+export const FIRST_PLAYER_COLOR = "#255bc8"
+export const SECOND_PLAYER_COLOR = "#25d5c8"
 
-export const lighterColor = "#e2dddf"
-export const lightColor = "#b0acb0"
+export const LIGHT_COLOR_100 = "#e2dddf"
+export const LIGHT_COLOR_500 = "#b0acb0"
