@@ -1,7 +1,3 @@
-import React from "react";
-import Hexagon from "./Hexagon";
-import ButtomBoard from "./BottomBoard";
-
 /*
  * Hexagon width proportion
  * An hexagon is not square. Approximatively, width is 0.89 unit of height.
@@ -12,10 +8,10 @@ const hexagonWidthProportion = 0.89;
  * Hexagon height three quarter
  * Each hexagon is entangled in the two hexagons above. To represent this entanglement, we need to manage with the "three quarter" height.
  */
-const hexagonHeightThreeQuarter = 0.75;
+const hexagonRowOffset = 0.75;
 
 export function getBoardRatio(size) {
-  const height = 1 + (size - 1) * hexagonHeightThreeQuarter;
+  const height = 1 + (size - 1) * hexagonRowOffset;
 
   const width =
     size * hexagonWidthProportion +
@@ -29,11 +25,11 @@ export function getHexagonWidth(size) {
 }
 
 export function getHexagonHeight(size) {
-  return 100 / (1 + (size - 1) * hexagonHeightThreeQuarter);
+  return 100 / (1 + (size - 1) * hexagonRowOffset);
 }
 
 export function calculateTopPosition(rowIndex, hexagonHeight) {
-  return rowIndex * hexagonHeight * hexagonHeightThreeQuarter;
+  return rowIndex * hexagonHeight * hexagonRowOffset;
 }
 
 export function calculateLeftPosition(columnIndex, rowIndex, hexagonWidth) {
