@@ -2,9 +2,6 @@ import Head from "next/head";
 import { ThemeProvider, CSSReset } from "@chakra-ui/core";
 
 function Layout({ aside, content }) {
-  const asideWidth = aside ? "20%" : "0%";
-  const mainWidth = aside ? "80%" : "100%";
-
   return (
     <div>
       <Head>
@@ -36,14 +33,7 @@ function Layout({ aside, content }) {
           align-items: center;
           display: flex;
           height: 100vh;
-          width: ${mainWidth};
-        }
-
-        .aside {
-          justify-content: center;
-          align-items: center;
-          display: flex;
-          width: ${asideWidth};
+          width: 100%;
         }
       `}</style>
     </div>

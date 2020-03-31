@@ -5,7 +5,7 @@ import {
   LIGHT_COLOR_100
 } from "../../theme/colors";
 
-import { FIRST_PLAYER_VALUE, SECOND_PLAYER_VALUE } from "../../pages/board.js";
+import { FIRST_PLAYER_VALUE, SECOND_PLAYER_VALUE } from "./Playboard";
 
 function Hexagon(props) {
   const value = props.value;
