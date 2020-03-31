@@ -1,12 +1,17 @@
 import Head from "next/head";
 import { ThemeProvider, CSSReset } from "@chakra-ui/core";
-import {
-  FIRST_PLAYER_COLOR,
-  LIGHT_COLOR_500,
-  LIGHT_COLOR_100
-} from "../../theme/colors";
+
+function hasAside(aside) {
+  if (aside) {
+    return true;
+  }
+}
 
 function Layout({ aside, content }) {
+
+  const asideWidth = hasAside(aside) ? "20%" : "0%";
+  const mainWidth = hasAside(aside) ? "80%" : "100%";
+
   return (
     <div>
       <Head>
@@ -18,7 +23,7 @@ function Layout({ aside, content }) {
         <CSSReset />
 
         <div className="main">
-          <div className="in-middle">{content}</div>
+          <div className="content">{content}</div>
           <div className="aside">{aside}</div>
         </div>
 
@@ -32,19 +37,19 @@ function Layout({ aside, content }) {
           height: 100vh;
         }
 
-        .in-middle {
+        .content {
           justify-content: center;
           align-items: center;
           display: flex;
           height: 100vh;
-          width: 80%;
+          width: ${mainWidth};
         }
 
         .aside {
           justify-content: center;
           align-items: center;
           display: flex;
-          width: 20%;
+          width: ${asideWidth};
         }
       `}</style>
     </div>
