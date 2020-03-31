@@ -1,30 +1,53 @@
 import Head from "next/head";
 import { ThemeProvider, CSSReset } from "@chakra-ui/core";
 
-const Layout = props => (
-  <div>
-    <Head>
-      <title>Hex</title>
-      <style>{'body { background-color: #2f404d }'}</style>
-    </Head>
+function Layout({ aside, content }) {
+  const asideWidth = aside ? "20%" : "0%";
+  const mainWidth = aside ? "80%" : "100%";
 
-    <ThemeProvider>
-      <CSSReset />
-      <div className="in-middle">
-        {props.content}
-      </div>
-      <footer></footer>
-    </ThemeProvider>
-    <style jsx>{`
-      .in-middle {
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        display: flex;
-        height: 100vh;
-      }
-    `}</style>
-  </div>
-);
+  return (
+    <div>
+      <Head>
+        <title>Hex</title>
+        <link rel="manifest" href="/manifest.webmanifest"></link>
+        <style>{"body { background-color: #2f404d }"}</style>
+      </Head>
 
-export default Layout
+      <ThemeProvider>
+        <CSSReset />
+
+        <div className="main">
+          <div className="content">{content}</div>
+          <div className="aside">{aside}</div>
+        </div>
+
+        <footer></footer>
+      </ThemeProvider>
+      <style jsx>{`
+        .main {
+          display: flex;
+          flex-flow: row wrap;
+          justify-content: space-around;
+          height: 100vh;
+        }
+
+        .content {
+          justify-content: center;
+          align-items: center;
+          display: flex;
+          height: 100vh;
+          width: ${mainWidth};
+        }
+
+        .aside {
+          justify-content: center;
+          align-items: center;
+          display: flex;
+          width: ${asideWidth};
+        }
+      `}</style>
+    </div>
+  );
+}
+
+export default Layout;

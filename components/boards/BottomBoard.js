@@ -1,5 +1,5 @@
 import React from "react";
-import { firstPlayerColor, secondPlayerColor } from "../../theme/colors";
+import { FIRST_PLAYER_COLOR, SECOND_PLAYER_COLOR } from "../../theme/colors";
 
 function getTotalWidth(hexagonWidth, size) {
   return (size - 0.25) * hexagonWidth;
@@ -45,12 +45,12 @@ function BottomBoard({ size, hexagonHeight, hexagonWidth }) {
             position: absolute;
           }
           .playerSide.top {
-            background-color: ${firstPlayerColor};
+            background-color: ${FIRST_PLAYER_COLOR};
             shape-outside: polygon(${topLeftCorner}, ${topRightCorner}, 50% 50%);
             clip-path: polygon(${topLeftCorner}, ${topRightCorner}, 50% 50%);
           }
           .playerSide.bottom {
-            background-color: ${firstPlayerColor};
+            background-color: ${FIRST_PLAYER_COLOR};
             shape-outside: polygon(
               ${bottomLeftCorner},
               ${bottomRightCorner},
@@ -63,7 +63,7 @@ function BottomBoard({ size, hexagonHeight, hexagonWidth }) {
             );
           }
           .playerSide.left {
-            background-color: ${secondPlayerColor};
+            background-color: ${SECOND_PLAYER_COLOR};
             shape-outside: polygon(
               ${topLeftCorner},
               ${bottomLeftCorner},
@@ -72,7 +72,7 @@ function BottomBoard({ size, hexagonHeight, hexagonWidth }) {
             clip-path: polygon(${topLeftCorner}, ${bottomLeftCorner}, 50% 50%);
           }
           .playerSide.right {
-            background-color: ${secondPlayerColor};
+            background-color: ${SECOND_PLAYER_COLOR};
             shape-outside: polygon(
               ${topRightCorner},
               ${bottomRightCorner},

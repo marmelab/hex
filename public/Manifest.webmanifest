@@ -1,0 +1,10 @@
+{
+    "short_name": "Hex",
+    "name": "Hex Game",
+    "theme_color": "#255bc8",
+    "background_color": "#000000",
+    "display": "fullscreen",
+    "Scope": "/",
+    "orientation": "landscape",
+    "start_url": "/"
+  }
