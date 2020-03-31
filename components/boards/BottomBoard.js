@@ -1,31 +1,86 @@
 import React from "react";
+import { firstPlayerColor, secondPlayerColor } from "../../theme/colors";
 
-function BottomBoard(props) {
+function getTotalWidth(hexagonWidth, size) {
+  return (size - 0.25) * hexagonWidth;
+}
+
+function getBoardOffset(hexagonWidth, size) {
+  return (size - 0.25) * (hexagonWidth / 2);
+}
+
+function getVerticalGutter(hexagonHeight) {
+  return -0.5 * hexagonHeight;
+}
+
+function getHorizontalGutter(hexagonWidth) {
+  return -1.5 * hexagonWidth;
+}
+
+function BottomBoard({ size, hexagonHeight, hexagonWidth }) {
+  const topLeftCorner = "0 0";
+  const topRightCorner = `${getTotalWidth(hexagonWidth, size)}% 0`;
+  const bottomRightCorner = "100% 100%";
+  const bottomLeftCorner = `${getBoardOffset(hexagonWidth, size)}% 100%`;
+
   return (
-    <svg name="bottom-board" className="bottom-board" viewBox="0 0 100 62.409" {...props}>
-      <g strokeWidth={0.265}>
-        <path
-          d="M3.095.022L.794 3.932l49.19 27.291L68.414.022zm46.889 31.201L31.507 62.461l65.477-.052 1.9-3.056z"
-          fill="#255bc8"
-          strokeWidth={0.04363084}
-        />
+    <div name="bottom-board" className="bottom-board">
+      <div className="playerSide top"></div>
+      <div className="playerSide right"></div>
+      <div className="playerSide bottom"></div>
+      <div className="playerSide left"></div>
 
-        <path
-          d="M68.414.022L49.977 31.217l48.907 28.136 1.224-2.044zM49.977 31.217L.794 3.932.022 5.186l31.485 57.275z"
-          fill="#25d5c8"
-          strokeWidth={0.04363084}
-        />
-      </g>
       <style jsx>{`
-          .bottom-board {
-            position: absolute;
-            top: -6.1%;
-            right: -5%;
-            bottom: -6.1%;
-            left: -5%;
+          .bottom-board{
+              position: absolute;
+              top: ${getVerticalGutter(hexagonHeight)}%;
+              right: ${getHorizontalGutter(hexagonWidth)}%;
+              bottom: ${getVerticalGutter(hexagonHeight)}%;
+              left: ${getHorizontalGutter(hexagonWidth)}%;
+            }}
           }
-        `}</style>
-    </svg>
+          .playerSide {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+          }
+          .playerSide.top {
+            background-color: ${firstPlayerColor};
+            shape-outside: polygon(${topLeftCorner}, ${topRightCorner}, 50% 50%);
+            clip-path: polygon(${topLeftCorner}, ${topRightCorner}, 50% 50%);
+          }
+          .playerSide.bottom {
+            background-color: ${firstPlayerColor};
+            shape-outside: polygon(
+              ${bottomLeftCorner},
+              ${bottomRightCorner},
+              50% 50%
+            );
+            clip-path: polygon(
+              ${bottomLeftCorner},
+              ${bottomRightCorner},
+              50% 50%
+            );
+          }
+          .playerSide.left {
+            background-color: ${secondPlayerColor};
+            shape-outside: polygon(
+              ${topLeftCorner},
+              ${bottomLeftCorner},
+              50% 50%
+            );
+            clip-path: polygon(${topLeftCorner}, ${bottomLeftCorner}, 50% 50%);
+          }
+          .playerSide.right {
+            background-color: ${secondPlayerColor};
+            shape-outside: polygon(
+              ${topRightCorner},
+              ${bottomRightCorner},
+              50% 50%
+            );
+            clip-path: polygon(${topRightCorner}, ${bottomRightCorner}, 50% 50%);
+          }`}</style>
+    </div>
   );
 }
 
