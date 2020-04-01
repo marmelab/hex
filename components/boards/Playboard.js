@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Hexagon from "./Hexagon";
 import BottomBoard from "./BottomBoard";
 import {
@@ -34,8 +34,6 @@ function Playboard(props) {
     setGrid(updatedGrid);
     setPlayer(player === 1 ? 2 : 1);
   };
-
-  useEffect(() => {}, [grid]);
 
   return (
     <>
@@ -75,7 +73,9 @@ function Playboard(props) {
         </div>
       </div>
 
-      <div className="side">{<Hud player={player} />}</div>
+      <div className="side">
+        <Hud player={player} />
+      </div>
 
       <style jsx>{`
         .container {
