@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Hexagon from "./Hexagon";
 import BottomBoard from "./BottomBoard";
 import {
@@ -8,6 +8,10 @@ import {
   calculateLeftPosition,
   calculateTopPosition
 } from "./position.js";
+import Hud from "../huds/Hud";
+
+export const FIRST_PLAYER_VALUE = 1;
+export const SECOND_PLAYER_VALUE = 2;
 
 function Playboard(props) {
   const size = props.size;
@@ -17,19 +21,34 @@ function Playboard(props) {
   const hexagonWidth = getHexagonWidth(size);
   const hexagonHeight = getHexagonHeight(size);
 
-  const board = [...Array(size)];
+  const [grid, setGrid] = useState(Array(props.size * props.size).fill(0));
+  const [player, setPlayer] = useState(FIRST_PLAYER_VALUE);
+
+  const handleCellOnPress = (id, player) => {
+    if (grid[id] !== 0) {
+      return;
+    }
+    const updatedGrid = grid.map((hexagon, index) =>
+      id === index ? player : hexagon
+    );
+    setGrid(updatedGrid);
+    setPlayer(player === 1 ? 2 : 1);
+  };
 
   return (
-    <div className="container">
-      <BottomBoard
-        size={size}
-        hexagonHeight={hexagonHeight}
-        hexagonWidth={hexagonWidth}
-      />
+    <>
+      <div className="container">
+        <BottomBoard
+          size={size}
+          hexagonHeight={hexagonHeight}
+          hexagonWidth={hexagonWidth}
+        />
 
-      <div name="grid" className="hexagons-grid">
-        {board.map((e, rowIndex) => {
-          return board.map((x, columnIndex) => {
+        <div name="grid" className="hexagons-grid">
+          {grid.map((value, index) => {
+            const rowIndex = index % size;
+            const columnIndex = Math.floor(index / size);
+
             const top = calculateTopPosition(rowIndex, hexagonHeight);
             const left = calculateLeftPosition(
               columnIndex,
@@ -39,22 +58,33 @@ function Playboard(props) {
 
             return (
               <Hexagon
-                color={"#e2dddf"}
+                onClick={() => handleCellOnPress(index, player)}
                 style={{
                   top: `${top}%`,
                   left: `${left}%`,
                   width: `${hexagonWidth}%`,
                   height: `${hexagonHeight}%`
                 }}
+                name={`hexagon_${index}`}
+                value={value}
               />
             );
-          });
-        })}
+          })}
+        </div>
       </div>
+
+      <div className="side">
+        <Hud player={player} />
+      </div>
+
       <style jsx>{`
         .container {
-          width: 60vw;
+          width: 62vw;
           position: relative;
+          justify-content: center;
+          align-items: center;
+          margin: 10vw;
+          display: flex;
         }
 
         .container:after {
@@ -68,8 +98,13 @@ function Playboard(props) {
           width: 100%;
           height: 100%;
         }
+
+        .side {
+          display: flex;
+          width: 25vh;
+        }
       `}</style>
-    </div>
+    </>
   );
 }
 
