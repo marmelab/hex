@@ -14,11 +14,11 @@ function Hud({ player }) {
           background: ${LIGHT_COLOR_100};
           border-radius: 5%;
           display: flex;
+          padding: 5px;
         }
 
         .hud-current-player {
           color: ${LIGHT_COLOR_500};
-          width: 100%;
         }
       `}</style>
     </div>

@@ -15,7 +15,6 @@ function Layout({ aside, content }) {
 
         <div className="main">
           <div className="content">{content}</div>
-          <div className="aside">{aside}</div>
         </div>
 
         <footer></footer>

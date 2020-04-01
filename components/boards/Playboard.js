@@ -73,37 +73,37 @@ function Playboard(props) {
             );
           })}
         </div>
-
-        <div className="side">
-          {<Hud player={player} />}
-        </div>
-
-        <style jsx>{`
-          .container {
-            width: 62vw;
-            position: relative;
-          }
-
-          .container:after {
-            content: "";
-            display: block;
-            padding-bottom: ${boardRatio * 100}%;
-          }
-
-          .hexagons-grid {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-          }
-
-          .side {
-            display: flex;
-            align-items: right;
-            justify-content: right;
-            heigth: 100%;
-          }
-        `}</style>
       </div>
+
+      <div className="side">{<Hud player={player} />}</div>
+
+      <style jsx>{`
+        .container {
+          width: 62vw;
+          position: relative;
+          justify-content: center;
+          align-items: center;
+          margin: 10vw;
+          display: flex;
+        }
+
+        .container:after {
+          content: "";
+          display: block;
+          padding-bottom: ${boardRatio * 100}%;
+        }
+
+        .hexagons-grid {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+        }
+
+        .side {
+          display: flex;
+          width: 25vh;
+        }
+      `}</style>
     </>
   );
 }
