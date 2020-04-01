@@ -11,18 +11,18 @@ describe("The Board Page", function() {
     cy.get("div[name=grid]")
       .find("svg")
       .should("have.length", size * size);
-    cy.get("p[name=current-player]").contains("Player 1");
+    cy.get("p[name=current-player]").should("contain", "Player 1");
   });
 
   it("Can put a stone anywhere as player 1 and player 2 can play after", function() {
     cy.get("div[name=grid]")
       .find("svg[name=hexagon_0]")
       .click();
-    cy.get("p[name=current-player]").contains("Player 2");
+    cy.get("p[name=current-player]").should("contain", "Player 2");
 
     cy.get("div[name=grid]")
       .find("svg[name=hexagon_1]")
       .click();
-    cy.get("p[name=current-player]").contains("Player 1");
+    cy.get("p[name=current-player]").should("contain", "Player 1");
   });
 });
