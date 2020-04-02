@@ -11,6 +11,7 @@ import {
 import Hud from "../huds/Hud";
 import { generateEmptyGrid } from "../../engine/grid";
 import { FIRST_PLAYER_VALUE } from "../../engine/player";
+import { isWon } from "../../engine/game";
 
 function Playboard(props) {
   const size = props.size;
@@ -31,8 +32,11 @@ function Playboard(props) {
       id === index ? player : hexagon
     );
     setGrid(updatedGrid);
+
+    isWon(updatedGrid, player);
     setPlayer(player === 1 ? 2 : 1);
   };
+
 
   return (
     <>

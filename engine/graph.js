@@ -1,37 +1,59 @@
-import { FIRST_PLAYER_VALUE, SECOND_PLAYER_VALUE } from "./player";
+import {
+  getNeighborsOfEndVertex,
+  getNeighborsOfStartVertex,
+  getNeighbors,
+  getAutoLinkedNeighbors
+} from "./neighbors";
+
+import _ from "lodash";
 
 const START_VERTEX_ID = 0;
 
 /**
  * function getGraphFromCoordinates(coordinates, player)
- * 
+ *
  * This function builds the graph for a player.
  * Add players vertex and start/end vertex.
- * 
- * @param {array} coordinates 
- * @param {int} player 
+ *
+ * @param {array} coordinates
+ * @param {int} player
  */
 export function getGraphFromCoordinates(coordinates, player) {
-  const endVertexId = coordinates.length + 1;
+  const startNeighbors = getNeighborsOfStartVertex(coordinates, player);
+  const endNeighbors = getNeighborsOfEndVertex(coordinates, player);
 
-  const playerVertex = getVertexByPlayer(coordinates, player);
-  return [{ [START_VERTEX_ID]: [] }, { [endVertexId]: [] }, playerVertex].flat();
+  const neighbors = getAllNeighborsByPlayer(coordinates, player);
+  const autoLinkedNeighbors = getAutoLinkedNeighbors(coordinates, player);
+
+  _.merge(neighbors, autoLinkedNeighbors);
+
+  const graph = Object.assign({}, startNeighbors);
+  Object.assign(graph, endNeighbors);
+  Object.assign(graph, neighbors);
+
+  return graph;
 }
 
 /**
  * function getVertexByPlayer(coordinates, player)
- * 
- * This function get back all vertex for a player (parameter).
- * 
- * @param {array} coordinates 
- * @param {int} player 
+ *
+ * This function get back all neighbors for a player (parameter).
+ *
+ * @param {array} coordinates
+ * @param {int} player
  */
-export function getVertexByPlayer(coordinates, player) {
+export function getAllNeighborsByPlayer(coordinates, player) {
   const playerCoordinates = coordinates.filter(function(coordinate) {
     return coordinate.player == player;
   });
 
-  return playerCoordinates.map(function(coordinate) {
-    return { [coordinate.id]: [] };
-  });
+  return playerCoordinates
+    .map(function(coordinate) {
+      return {
+        [coordinate.id]: getNeighbors(coordinates, coordinate, player)
+      };
+    })
+    .reduce(function(graph, neighbors) {
+      return Object.assign(graph, neighbors);
+    });
 }
