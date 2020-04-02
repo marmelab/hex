@@ -23,6 +23,7 @@ function Playboard(props) {
 
   const [grid, setGrid] = useState(generateEmptyGrid(size));
   const [player, setPlayer] = useState(FIRST_PLAYER_VALUE);
+  const [winner, setWinner] = useState(0);
 
   const handleCellOnPress = (id, player) => {
     if (grid[id] !== 0) {
@@ -33,10 +34,12 @@ function Playboard(props) {
     );
     setGrid(updatedGrid);
 
-    isWon(updatedGrid, player);
+    if (isWon(updatedGrid, player)) {
+      setWinner(player);
+    }
+
     setPlayer(player === 1 ? 2 : 1);
   };
-
 
   return (
     <>
@@ -77,7 +80,7 @@ function Playboard(props) {
       </div>
 
       <div className="side">
-        <Hud player={player} />
+        <Hud player={player} winner={winner} />
       </div>
 
       <style jsx>{`
