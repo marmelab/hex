@@ -36,3 +36,20 @@ export function getCoordinatesFromGrid(grid) {
     return coordinate;
   });
 }
+
+/**
+ * function getCoordinate(coordinates, x, y)
+ *
+ * Filters coordinates to get back the coordinate who matches with x and y value.
+ *
+ * @param {array} coordinates
+ * @param {int} x
+ * @param {int} y
+ */
+export function getCoordinate(coordinates, x, y) {
+  return coordinates.filter(function(coordinate) {
+    if (coordinate.x == x && coordinate.y == y) {
+      return coordinate;
+    }
+  })[0];
+}
