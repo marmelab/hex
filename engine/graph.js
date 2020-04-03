@@ -44,7 +44,7 @@ export function getGraphFromCoordinates(coordinates, player) {
  */
 export function getAllNeighborsByPlayer(coordinates, player) {
   const playerCoordinates = coordinates.filter(function(coordinate) {
-    return coordinate.player == player;
+    return coordinate.player === player;
   });
 
   return playerCoordinates

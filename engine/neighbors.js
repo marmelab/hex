@@ -170,7 +170,7 @@ export function getNeighborsByNeigborIds(coordinates, ids, player) {
 
   if (neighbors.length >= 1) {
     return neighbors.reduce(function(neighbors, neighbor) {
-      return Object.assign(neighbors, neighbor);
+      return Object.assign({}, neighbors, neighbor);
     });
   }
 }
