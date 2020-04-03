@@ -26,7 +26,7 @@ function Playboard(props) {
   const [winner, setWinner] = useState(0);
 
   const handleCellOnPress = (id, player) => {
-    if (grid[id] !== 0) {
+    if (grid[id] !== 0 || winner) {
       return;
     }
     const updatedGrid = grid.map((hexagon, index) =>

@@ -6,16 +6,33 @@ import {
   LIGHT_COLOR_500,
   LIGHT_COLOR_100
 } from "../../theme/colors";
-import { FIRST_PLAYER_VALUE } from "../../engine/player";
+import { FIRST_PLAYER_VALUE, SECOND_PLAYER_VALUE } from "../../engine/player";
+
+function switchColor(player, winner) {
+  const colorSetFirstPlayer = {
+    color: FIRST_PLAYER_COLOR,
+    colorFont: LIGHT_COLOR_100
+  };
+  const colorSetSecondPlayer = {
+    color: SECOND_PLAYER_COLOR,
+    colorFont: DARK_COLOR_100
+  };
+
+  if (winner === SECOND_PLAYER_VALUE) {
+    return colorSetSecondPlayer;
+  } else if (winner === FIRST_PLAYER_VALUE) {
+    return colorSetFirstPlayer;
+  }
+
+  if (player === FIRST_PLAYER_VALUE) {
+    return colorSetFirstPlayer;
+  } else if (player === SECOND_PLAYER_VALUE) {
+    return colorSetSecondPlayer;
+  }
+}
 
 function Hud({ player, winner }) {
-  const color =
-    player == FIRST_PLAYER_VALUE || winner == FIRST_PLAYER_VALUE
-      ? FIRST_PLAYER_COLOR
-      : SECOND_PLAYER_COLOR;
-
-  const colorFont =
-    player == FIRST_PLAYER_VALUE || winner ? LIGHT_COLOR_100 : DARK_COLOR_100;
+  const { color, colorFont } = switchColor(player, winner);
 
   return (
     <div className="hud">
