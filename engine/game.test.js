@@ -12,4 +12,12 @@ describe("isWon function", function() {
 
     expect(won).toEqual(expectedIsWon);
   });
+
+  it("should determine is a game is not won", function() {
+    const grid = [1, 1, 0, 0, 0, 0, 0, 0, 0];
+    const won = isWon(grid, FIRST_PLAYER_VALUE);
+    const expectedIsWon = false;
+
+    expect(won).toEqual(expectedIsWon);
+  });
 });

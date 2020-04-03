@@ -21,6 +21,8 @@ export function isWon(grid, player) {
     find_path(graph, START_ID, endId);
     return true;
   } catch (error) {
-    return false;
+    if (error.message.includes("Could not find a path from")) {
+      return false;
+    }
   }
 }
