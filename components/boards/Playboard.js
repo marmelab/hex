@@ -90,7 +90,7 @@ function Playboard(props) {
                 style={{
                   top: `${top}%`,
                   left: `${left}%`,
-                  width: `${hexagonWidth * 1.1}%`,
+                  width: `calc(${hexagonWidth}% + 1px)`,
                   height: `${hexagonHeight}%`
                 }}
                 name={`hexagon_${index}`}
