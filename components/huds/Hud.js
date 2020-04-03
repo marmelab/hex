@@ -51,7 +51,7 @@ function Hud({ player, winner }) {
         }
 
         .hud-current-player {
-          font-size: 1vw;
+          font-size: 1.2vw;
           color: ${colorFont};
           width: 100%;
           font-weight: bold;
