@@ -12,17 +12,16 @@ var find_path = dijkstra.find_path;
  * @param {[]} grid
  * @param {int} player
  */
-export function isWon(grid, player) {
+export function getWinningPath(grid, player) {
   const coordinates = getCoordinatesFromGrid(grid);
   const graph = getGraphFromCoordinates(coordinates, player);
   const endId = coordinates.length + 1;
 
   try {
-    find_path(graph, START_ID, endId);
-    return true;
+    return find_path(graph, START_ID, endId);
   } catch (error) {
     if (error.message.includes("Could not find a path from")) {
-      return false;
+      return undefined;
     }
   }
 }

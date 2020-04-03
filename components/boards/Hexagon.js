@@ -2,18 +2,29 @@ import React from "react";
 import {
   FIRST_PLAYER_COLOR,
   SECOND_PLAYER_COLOR,
-  LIGHT_COLOR_100
+  LIGHT_COLOR_100,
+  WINNING_COLOR
 } from "../../theme/colors";
-import { FIRST_PLAYER_VALUE, SECOND_PLAYER_VALUE } from "../../engine/player";
+import {
+  FIRST_PLAYER_VALUE,
+  SECOND_PLAYER_VALUE,
+  WINNER_LINE_VALUE
+} from "../../engine/player";
+
+function getColor(value) {
+  if (value === FIRST_PLAYER_VALUE) {
+    return FIRST_PLAYER_COLOR;
+  } else if (value === SECOND_PLAYER_VALUE) {
+    return SECOND_PLAYER_COLOR;
+  } else if (value === WINNER_LINE_VALUE) {
+    return WINNING_COLOR;
+  } else {
+    return LIGHT_COLOR_100;
+  }
+}
 
 function Hexagon(props) {
-  const value = props.value;
-  const color =
-    value === FIRST_PLAYER_VALUE
-      ? FIRST_PLAYER_COLOR
-      : value === SECOND_PLAYER_VALUE
-      ? SECOND_PLAYER_COLOR
-      : LIGHT_COLOR_100;
+  const color = getColor(props.value);
 
   return (
     <svg
