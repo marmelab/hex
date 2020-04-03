@@ -10,8 +10,18 @@ import {
 } from "./position.js";
 import Hud from "../huds/Hud";
 import { generateEmptyGrid } from "../../engine/grid";
-import { FIRST_PLAYER_VALUE } from "../../engine/player";
-import { isWon } from "../../engine/game";
+import { FIRST_PLAYER_VALUE, WINNER_LINE_VALUE } from "../../engine/player";
+import { getWinningPath } from "../../engine/game";
+
+/**
+ * Check if the index of an hexagon is in the winning path.
+ *
+ * @param {[]} winningPath
+ * @param {int} index
+ */
+function hexagonIndexIsInPath(winningPath, index) {
+  return _.indexOf(winningPath, (index + 1).toString(10)) >= 0;
+}
 
 function Playboard(props) {
   const size = props.size;
@@ -34,8 +44,20 @@ function Playboard(props) {
     );
     setGrid(updatedGrid);
 
-    if (isWon(updatedGrid, player)) {
+    const winningPath = getWinningPath(updatedGrid, player);
+
+    if (winningPath) {
       setWinner(player);
+
+      const winningGrid = grid.map(function(value, index) {
+        if (hexagonIndexIsInPath(winningPath, index)) {
+          return WINNER_LINE_VALUE;
+        }
+
+        return value;
+      });
+
+      setGrid(winningGrid);
     }
 
     setPlayer(player === 1 ? 2 : 1);
