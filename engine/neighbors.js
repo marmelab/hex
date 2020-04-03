@@ -35,9 +35,7 @@ export function getNeighbors(coordinates, coordinate, player) {
       return { [neighborCoordinate.id]: distance };
     }
   }).filter(function(neighbor) {
-    if (neighbor && Object.values(neighbor)[0] === OWNED_DISTANCE) {
-      return neighbor;
-    }
+    return neighbor && Object.values(neighbor)[0] === OWNED_DISTANCE;
   });
   return _.merge(...neighbors);
 }
