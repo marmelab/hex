@@ -13,6 +13,16 @@ import { generateEmptyGrid } from "../../engine/grid";
 import { FIRST_PLAYER_VALUE, WINNER_LINE_VALUE } from "../../engine/player";
 import { getWinningPath } from "../../engine/game";
 
+/**
+ * Check if the index of an hexagon is in the winning path.
+ *
+ * @param {[]} winningPath
+ * @param {int} index
+ */
+function hexagonIndexIsInPath(winningPath, index) {
+  return _.indexOf(winningPath, (index + 1).toString(10)) >= 0;
+}
+
 function Playboard(props) {
   const size = props.size;
 
@@ -40,7 +50,7 @@ function Playboard(props) {
       setWinner(player);
 
       const winningGrid = grid.map(function(value, index) {
-        if (_.indexOf(winningPath, (index + 1).toString(10)) >= 0) {
+        if (hexagonIndexIsInPath(winningPath, index)) {
           return WINNER_LINE_VALUE;
         }
 
