@@ -23,4 +23,5 @@ dev: ## Start project (dev mode)
 
 test: ## Launch the project's tests
 	@echo "Launch the tests"
-	yarn run cypress:run --config video=false screenshot=false
+	yarn run cypress:run --config video=false screenshot=false && \
+	yarn jest --bail

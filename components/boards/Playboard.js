@@ -9,9 +9,9 @@ import {
   calculateTopPosition
 } from "./position.js";
 import Hud from "../huds/Hud";
-
-export const FIRST_PLAYER_VALUE = 1;
-export const SECOND_PLAYER_VALUE = 2;
+import { generateEmptyGrid } from "../../engine/grid";
+import { FIRST_PLAYER_VALUE } from "../../engine/player";
+import { isWon } from "../../engine/game";
 
 function Playboard(props) {
   const size = props.size;
@@ -21,17 +21,23 @@ function Playboard(props) {
   const hexagonWidth = getHexagonWidth(size);
   const hexagonHeight = getHexagonHeight(size);
 
-  const [grid, setGrid] = useState(Array(props.size * props.size).fill(0));
+  const [grid, setGrid] = useState(generateEmptyGrid(size));
   const [player, setPlayer] = useState(FIRST_PLAYER_VALUE);
+  const [winner, setWinner] = useState(0);
 
   const handleCellOnPress = (id, player) => {
-    if (grid[id] !== 0) {
+    if (grid[id] !== 0 || winner) {
       return;
     }
     const updatedGrid = grid.map((hexagon, index) =>
       id === index ? player : hexagon
     );
     setGrid(updatedGrid);
+
+    if (isWon(updatedGrid, player)) {
+      setWinner(player);
+    }
+
     setPlayer(player === 1 ? 2 : 1);
   };
 
@@ -74,7 +80,7 @@ function Playboard(props) {
       </div>
 
       <div className="side">
-        <Hud player={player} />
+        <Hud player={player} winner={winner} />
       </div>
 
       <style jsx>{`

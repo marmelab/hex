@@ -3,3 +3,5 @@ export const SECOND_PLAYER_COLOR = "#25d5c8"
 
 export const LIGHT_COLOR_100 = "#e2dddf"
 export const LIGHT_COLOR_500 = "#b0acb0"
+
+export const DARK_COLOR_100 = "#2f404d"
