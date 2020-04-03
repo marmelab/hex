@@ -36,7 +36,6 @@ function Playboard(props) {
 
     const winningPath = getWinningPath(updatedGrid, player);
 
-    console.log("Winning Path : ", winningPath);
     if (winningPath) {
       setWinner(player);
 

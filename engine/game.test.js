@@ -1,7 +1,7 @@
 var dijkstra = require("../node_modules/dijkstrajs/dijkstra.js");
 var find_path = dijkstra.find_path;
 
-import { isWon, getWinningPath } from "./game.js";
+import { getWinningPath } from "./game.js";
 import { FIRST_PLAYER_VALUE } from "./player.js";
 
 describe("isWon function", function() {
