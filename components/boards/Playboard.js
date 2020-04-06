@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useReducer, initialState } from "react";
+import React, { useCallback, useReducer } from "react";
 import Hexagon from "./Hexagon";
 import BottomBoard from "./BottomBoard";
 import {
@@ -18,6 +18,7 @@ import {
 import { getWinningPath } from "../../engine/game";
 import { Flex, Box } from "@chakra-ui/core";
 import SidePanel from "../panels/SidePanel";
+import { getGameById } from "../forms/storage";
 
 /**
  * Check if the index of an hexagon is in the winning path.
@@ -32,14 +33,20 @@ function hexagonIndexIsInPath(winningPath, index) {
 /**
  * Initialize states.
  *
- * @param {int} size
+ * @param {*} size
+ * @param {*} id
  */
-function init(size) {
-  return {
-    winner: NO_PLAYER_VALUE,
-    player: FIRST_PLAYER_VALUE,
-    grid: generateEmptyGrid(size),
-  };
+function init({ size, id }) {
+  if (size) {
+    return {
+      winner: NO_PLAYER_VALUE,
+      player: FIRST_PLAYER_VALUE,
+      grid: generateEmptyGrid(params.size),
+    };
+  } else if (id) {
+    const { grid, player, size } = loadGame(params.id);
+    return { winner: NO_PLAYER_VALUE, player, grid, size };
+  }
 }
 
 /**
@@ -70,9 +77,33 @@ function playMove(id, grid, player, winner) {
     return { player: player, grid: winningGrid, winner: player };
   }
 
-  const nextPlayer =
-    player === FIRST_PLAYER_VALUE ? SECOND_PLAYER_VALUE : FIRST_PLAYER_VALUE;
+  const nextPlayer = getNextPlayer(player);
+
   return { player: nextPlayer, grid: updatedGrid, winner: winner };
+}
+
+/**
+ * Determines who will play next.
+ *
+ * @param {*} player
+ */
+function getNextPlayer(player) {
+  return player === FIRST_PLAYER_VALUE
+    ? SECOND_PLAYER_VALUE
+    : FIRST_PLAYER_VALUE;
+}
+
+/**
+ * Load a game from Local Storage by id.
+ *
+ * @param {int} id
+ */
+function loadGame(id) {
+  const game = getGameById(id);
+  const nextPlayer = getNextPlayer(game.player);
+  const size = Math.sqrt(game.grid.length);
+
+  return { player: nextPlayer, grid: game.grid, size };
 }
 
 function reducer({ grid, player, winner }, action) {
@@ -86,13 +117,17 @@ function reducer({ grid, player, winner }, action) {
   }
 }
 
-function Playboard({ size, ...props }) {
+function Playboard({ sizeParameter, id, ...props }) {
+  const [{ grid, player, winner, size }, dispatch] = useReducer(
+    reducer,
+    { size, id },
+    init
+  );
+
   const boardRatio = getBoardRatio(size);
 
   const hexagonWidth = getHexagonWidth(size);
   const hexagonHeight = getHexagonHeight(size);
-
-  const [{ grid, player, winner }, dispatch] = useReducer(reducer, size, init);
 
   const handleReplayOnPress = useCallback(() => {
     if (winner) {

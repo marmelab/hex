@@ -6,7 +6,7 @@ import Playboard from "../components/boards/Playboard";
 const Board = () => {
   const { query } = useRouter();
 
-  if (!query.size) {
+  if (!query.size && !query.id) {
     return null;
   }
 
@@ -15,6 +15,7 @@ const Board = () => {
       content={
         <Playboard
           size={parseInt(query.size, 10)}
+          id={parseInt(query.id, 10)}
           w="56vw"
           h="62vh"
           marginTop="15vh"

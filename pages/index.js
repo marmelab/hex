@@ -1,9 +1,9 @@
 import Layout from "../components/layouts/Layout";
-import LocalPlayModal from "../components/modals/LocalPlayModal";
+import MainMenu from "../components/Menus/MainMenu";
+import { DARK_COLOR_100 } from "../theme/colors";
 
 const Home = () => {
-  const localPlayModal = <LocalPlayModal />;
-  return <Layout content={localPlayModal} />;
+  return <Layout content={<MainMenu w="100vw" h="25vh" flexWrap="wrap" />} />;
 };
 
 export default Home;
