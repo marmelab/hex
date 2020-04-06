@@ -6,12 +6,17 @@ import {
   getHexagonHeight,
   getHexagonWidth,
   calculateLeftPosition,
-  calculateTopPosition
+  calculateTopPosition,
 } from "./position.js";
 import Hud from "../huds/Hud";
 import { generateEmptyGrid } from "../../engine/grid";
-import { FIRST_PLAYER_VALUE, WINNER_LINE_VALUE } from "../../engine/player";
+import {
+  FIRST_PLAYER_VALUE,
+  WINNER_LINE_VALUE,
+  NO_PLAYER_VALUE,
+} from "../../engine/player";
 import { getWinningPath } from "../../engine/game";
+import { Flex } from "@chakra-ui/core";
 
 /**
  * Check if the index of an hexagon is in the winning path.
@@ -24,6 +29,12 @@ function hexagonIndexIsInPath(winningPath, index) {
 }
 
 function Playboard(props) {
+  function reset(size) {
+    setWinner(NO_PLAYER_VALUE);
+    setPlayer(FIRST_PLAYER_VALUE);
+    setGrid(generateEmptyGrid(size));
+  }
+
   const size = props.size;
 
   const boardRatio = getBoardRatio(size);
@@ -33,7 +44,13 @@ function Playboard(props) {
 
   const [grid, setGrid] = useState(generateEmptyGrid(size));
   const [player, setPlayer] = useState(FIRST_PLAYER_VALUE);
-  const [winner, setWinner] = useState(0);
+  const [winner, setWinner] = useState(NO_PLAYER_VALUE);
+
+  const handleReplayOnPress = (size, winner) => {
+    if (winner) {
+      reset(size);
+    }
+  };
 
   const handleCellOnPress = (id, player) => {
     if (grid[id] !== 0 || winner) {
@@ -49,7 +66,7 @@ function Playboard(props) {
     if (winningPath) {
       setWinner(player);
 
-      const winningGrid = grid.map(function(value, index) {
+      const winningGrid = grid.map(function (value, index) {
         if (hexagonIndexIsInPath(winningPath, index)) {
           return WINNER_LINE_VALUE;
         }
@@ -65,7 +82,20 @@ function Playboard(props) {
 
   return (
     <>
-      <div className="container">
+      <Flex
+        className="container"
+        align="center"
+        justify="center"
+        position="relative"
+        h="75vh"
+        m="10vw"
+        w="65vw"
+        _after={{
+          content: "",
+          display: "block",
+          paddingBottom: `${boardRatio} * 100%`,
+        }}
+      >
         <BottomBoard
           size={size}
           hexagonHeight={hexagonHeight}
@@ -91,7 +121,7 @@ function Playboard(props) {
                   top: `${top}%`,
                   left: `${left}%`,
                   width: `calc(${hexagonWidth}% + 1px)`,
-                  height: `${hexagonHeight}%`
+                  height: `${hexagonHeight}%`,
                 }}
                 name={`hexagon_${index}`}
                 value={value}
@@ -99,37 +129,21 @@ function Playboard(props) {
             );
           })}
         </div>
-      </div>
+      </Flex>
 
-      <div className="side">
-        <Hud player={player} winner={winner} />
-      </div>
+      <Flex w="25vw" className="side">
+        <Hud
+          player={player}
+          winner={winner}
+          onReplayOnPress={() => handleReplayOnPress(size, winner)}
+        />
+      </Flex>
 
       <style jsx>{`
-        .container {
-          width: 62vw;
-          position: relative;
-          justify-content: center;
-          align-items: center;
-          margin: 10vw;
-          display: flex;
-        }
-
-        .container:after {
-          content: "";
-          display: block;
-          padding-bottom: ${boardRatio * 100}%;
-        }
-
         .hexagons-grid {
           position: absolute;
           width: 100%;
           height: 100%;
-        }
-
-        .side {
-          display: flex;
-          width: 25vh;
         }
       `}</style>
     </>
