@@ -15,7 +15,7 @@ const Board = () => {
       content={
         <Playboard
           size={parseInt(query.size, 10)}
-          w="60%"
+          w="56vw"
           h="62vh"
           marginTop="15vh"
           marginRight="15vw"

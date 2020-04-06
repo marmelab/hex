@@ -39,20 +39,16 @@ function Hud({ player, winner, ...props }) {
   const { color, colorFont } = switchColor(player, winner);
 
   return (
-    <Flex
-      alignItems="center"
-      bg={color}
-      borderRadius="md"
-      justifyItems="center"
-      p="0.5vw"
-      {...props}
-    >
+    <Flex  borderRadius="md" justifyContent="center" {...props}>
       <Text
         name="current-player"
+        bg={color}
         color={colorFont}
         fontSize="1em"
         fontWeight="bold"
-        p="1vw"
+        display="flex"
+        p="5%"
+        textAlign="center"
       >
         {winner === NO_PLAYER_VALUE
           ? `Player ${player}, it's your turn.`
