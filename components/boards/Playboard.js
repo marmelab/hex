@@ -8,7 +8,6 @@ import {
   calculateLeftPosition,
   calculateTopPosition,
 } from "./position.js";
-import Hud from "../huds/Hud";
 import { generateEmptyGrid } from "../../engine/grid";
 import {
   FIRST_PLAYER_VALUE,
@@ -18,7 +17,7 @@ import {
 } from "../../engine/player";
 import { getWinningPath } from "../../engine/game";
 import { Flex, Box } from "@chakra-ui/core";
-import ReplayButton from "../buttons/ReplayButton";
+import SidePanel from "../panel/SidePanel";
 
 /**
  * Check if the index of an hexagon is in the winning path.
@@ -50,41 +49,38 @@ function init(size) {
  * @param {int} id
  * @param {*} state
  */
-function playMove(id, state) {
-  if (state.grid[id] !== 0 || state.winner) {
-    return { player: state.player, grid: state.grid, winner: state.winner };
+function playMove(id, grid, player, winner) {
+  if (grid[id] !== 0 || winner) {
+    return { player: player, grid: grid, winner: winner };
   }
 
-  const updatedGrid = state.grid.map((hexagon, index) =>
-    id === index ? state.player : hexagon
+  const updatedGrid = grid.map((hexagon, index) =>
+    id === index ? player : hexagon
   );
 
-  const winningPath = getWinningPath(updatedGrid, state.player);
+  const winningPath = getWinningPath(updatedGrid, player);
 
   if (winningPath) {
-    const winningGrid = state.grid.map(function (value, index) {
+    const winningGrid = grid.map(function (value, index) {
       return hexagonIndexIsInPath(winningPath, index)
         ? WINNER_LINE_VALUE
         : value;
     });
 
-    return { player: state.player, grid: winningGrid, winner: state.player };
+    return { player: player, grid: winningGrid, winner: player };
   }
 
-  const player =
-    state.player === FIRST_PLAYER_VALUE
-      ? SECOND_PLAYER_VALUE
-      : FIRST_PLAYER_VALUE;
-
-  return { player, grid: updatedGrid, winner: state.winner };
+  const nextPlayer =
+    player === FIRST_PLAYER_VALUE ? SECOND_PLAYER_VALUE : FIRST_PLAYER_VALUE;
+  return { player: nextPlayer, grid: updatedGrid, winner: winner };
 }
 
-function reducer(state, action) {
+function reducer({ grid, player, winner }, action) {
   switch (action.type) {
     case "reset":
       return init(action.payload);
     case "playMove":
-      return playMove(action.payload, state);
+      return playMove(action.payload, grid, player, winner);
     default:
       throw new Error();
   }
@@ -96,16 +92,13 @@ function Playboard({ size }) {
   const hexagonWidth = getHexagonWidth(size);
   const hexagonHeight = getHexagonHeight(size);
 
-  const [state, dispatch] = useReducer(reducer, size, init);
+  const [{ grid, player, winner }, dispatch] = useReducer(reducer, size, init);
 
-  const handleReplayOnPress = useCallback(
-    () => {
-      if (winner) {
-        dispatch({ type: "reset", payload: size, winner });
-      }
-    },
-    [size, state.winner]
-  );
+  const handleReplayOnPress = useCallback(() => {
+    if (winner) {
+      dispatch({ type: "reset", payload: size, winner });
+    }
+  }, [size, winner]);
 
   const handleCellOnPress = (id) => {
     dispatch({ type: "playMove", payload: id });
@@ -114,13 +107,13 @@ function Playboard({ size }) {
   return (
     <>
       <Flex
-        className="container"
+        name="playboard"
         align="center"
         justify="center"
         position="relative"
-        h="70vh"
+        h="70%"
         margin="15%"
-        w="75%"
+        w="70%"
         _after={{
           content: "",
           display: "block",
@@ -134,7 +127,7 @@ function Playboard({ size }) {
         />
 
         <Box name="grid" position="absolute" width="100%" height="100%">
-          {state.grid.map((value, index) => {
+          {grid.map((value, index) => {
             const rowIndex = index % size;
             const columnIndex = Math.floor(index / size);
 
@@ -162,21 +155,11 @@ function Playboard({ size }) {
         </Box>
       </Flex>
 
-      <Flex className="side" w="25%">
-        <Hud player={state.player} winner={state.winner} />
-
-        {state.winner ? (
-          <Flex
-            align="center"
-            justify="center"
-            flexWrap="wrap"
-            p="1vw"
-            w="100%"
-          >
-            <ReplayButton onClick={handleReplayOnPress} />
-          </Flex>
-        ) : null}
-      </Flex>
+      <SidePanel
+        player={player}
+        winner={winner}
+        onReplayOnPress={handleReplayOnPress}
+      />
     </>
   );
 }

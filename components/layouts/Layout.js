@@ -1,7 +1,7 @@
 import Head from "next/head";
-import { ThemeProvider, CSSReset } from "@chakra-ui/core";
+import { ThemeProvider, CSSReset, Flex } from "@chakra-ui/core";
 
-function Layout({ aside, content }) {
+function Layout({ content }) {
   return (
     <div>
       <Head>
@@ -13,28 +13,18 @@ function Layout({ aside, content }) {
       <ThemeProvider>
         <CSSReset />
 
-        <div className="main">
-          <div className="content">{content}</div>
-        </div>
+        <Flex
+          name="main"
+          alignItems="center"
+          h="100vh"
+          justifyItems="center"
+          w="100vw"
+        >
+          {content}
+        </Flex>
 
         <footer></footer>
       </ThemeProvider>
-      <style jsx>{`
-        .main {
-          display: flex;
-          flex-flow: row wrap;
-          justify-content: space-around;
-          height: 100vh;
-        }
-
-        .content {
-          justify-content: center;
-          align-items: center;
-          display: flex;
-          height: 100vh;
-          width: 100%;
-        }
-      `}</style>
     </div>
   );
 }

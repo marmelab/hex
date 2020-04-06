@@ -1,4 +1,4 @@
-import { Button } from "@chakra-ui/core";
+import { Button, Flex } from "@chakra-ui/core";
 import {
   Modal,
   ModalOverlay,
@@ -6,7 +6,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/core";
 
 import LocalPlayForm from "../forms/LocalPlayForm";
@@ -14,7 +14,7 @@ import LocalPlayForm from "../forms/LocalPlayForm";
 export default function LocalPlayModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <>
+    <Flex width="100%" alignItems="center" justify="center">
       <Button onClick={onOpen} variantColor="teal" size="lg">
         Play
       </Button>
@@ -29,6 +29,6 @@ export default function LocalPlayModal() {
           </ModalBody>
         </ModalContent>
       </Modal>
-    </>
+    </Flex>
   );
 }

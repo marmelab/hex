@@ -10,10 +10,9 @@ import {
   SECOND_PLAYER_VALUE,
   NO_PLAYER_VALUE,
 } from "../../engine/player";
-import { Flex } from "@chakra-ui/core";
+import { Flex, Text } from "@chakra-ui/core";
 
 function switchColor(player, winner) {
-
   const colorSetFirstPlayer = {
     color: FIRST_PLAYER_COLOR,
     colorFont: LIGHT_COLOR_100,
@@ -41,14 +40,14 @@ function Hud({ player, winner }) {
 
   return (
     <Flex
-      align="center"
+      alignItems="center"
       bg={color}
       borderRadius="md"
-      flexWrap="wrap"
-      justify="center"
-      p="1vw"
+      justifyItems="center"
+      p="0.5vw"
+      width="95%"
     >
-      <Flex
+      <Text
         name="current-player"
         color={colorFont}
         fontSize="1em"
@@ -58,7 +57,7 @@ function Hud({ player, winner }) {
         {winner === NO_PLAYER_VALUE
           ? `Player ${player}, it's your turn.`
           : `Won by player ${winner}`}
-      </Flex>
+      </Text>
     </Flex>
   );
 }
