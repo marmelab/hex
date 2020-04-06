@@ -10,10 +10,10 @@ import {
   SECOND_PLAYER_VALUE,
   NO_PLAYER_VALUE,
 } from "../../engine/player";
-import ReplayButton from "../buttons/ReplayButton";
 import { Flex } from "@chakra-ui/core";
 
 function switchColor(player, winner) {
+
   const colorSetFirstPlayer = {
     color: FIRST_PLAYER_COLOR,
     colorFont: LIGHT_COLOR_100,

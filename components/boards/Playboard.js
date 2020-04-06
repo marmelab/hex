@@ -43,10 +43,18 @@ function init(size) {
   };
 }
 
-function updateGrid(id, state) {
+/**
+ * Play a move based on the id of hexagon clicked.
+ * Updates player, grid and winner values.
+ *
+ * @param {int} id
+ * @param {*} state
+ */
+function playMove(id, state) {
   if (state.grid[id] !== 0 || state.winner) {
-    return;
+    return { player: state.player, grid: state.grid, winner: state.winner };
   }
+
   const updatedGrid = state.grid.map((hexagon, index) =>
     id === index ? state.player : hexagon
   );
@@ -55,15 +63,18 @@ function updateGrid(id, state) {
 
   if (winningPath) {
     const winningGrid = state.grid.map(function (value, index) {
-      if (hexagonIndexIsInPath(winningPath, index)) {
-        return WINNER_LINE_VALUE;
-      }
-
-      return { player, grid: winningGrid, winner };
+      return hexagonIndexIsInPath(winningPath, index)
+        ? WINNER_LINE_VALUE
+        : value;
     });
+
+    return { player: state.player, grid: winningGrid, winner: state.player };
   }
 
-  const player = FIRST_PLAYER_VALUE ? SECOND_PLAYER_VALUE : FIRST_PLAYER_VALUE;
+  const player =
+    state.player === FIRST_PLAYER_VALUE
+      ? SECOND_PLAYER_VALUE
+      : FIRST_PLAYER_VALUE;
 
   return { player, grid: updatedGrid, winner: state.winner };
 }
@@ -72,8 +83,8 @@ function reducer(state, action) {
   switch (action.type) {
     case "reset":
       return init(action.payload);
-    case "updateGrid":
-      return updateGrid(action.payload, state);
+    case "playMove":
+      return playMove(action.payload, state);
     default:
       throw new Error();
   }
@@ -87,14 +98,17 @@ function Playboard({ size }) {
 
   const [state, dispatch] = useReducer(reducer, size, init);
 
-  const handleReplayOnPress = useCallback(() => {
-    if (winner) {
-      dispatch({ type: "reset", payload: size });
-    }
-  }, [size, state.winner]);
+  const handleReplayOnPress = useCallback(
+    () => {
+      if (winner) {
+        dispatch({ type: "reset", payload: size, winner });
+      }
+    },
+    [size, state.winner]
+  );
 
   const handleCellOnPress = (id) => {
-    dispatch({ type: "updateGrid", payload: id });
+    dispatch({ type: "playMove", payload: id });
   };
 
   return (
@@ -104,9 +118,9 @@ function Playboard({ size }) {
         align="center"
         justify="center"
         position="relative"
-        h="75vh"
-        m="10vw"
-        w="65vw"
+        h="70vh"
+        margin="15%"
+        w="75%"
         _after={{
           content: "",
           display: "block",
@@ -133,7 +147,7 @@ function Playboard({ size }) {
 
             return (
               <Hexagon
-                onClick={() => handleCellOnPress(index, state.player)}
+                onClick={() => handleCellOnPress(index)}
                 style={{
                   top: `${top}%`,
                   left: `${left}%`,
@@ -148,7 +162,7 @@ function Playboard({ size }) {
         </Box>
       </Flex>
 
-      <Flex w="25vw" className="side">
+      <Flex className="side" w="25%">
         <Hud player={state.player} winner={state.winner} />
 
         {state.winner ? (
