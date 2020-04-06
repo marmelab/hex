@@ -10,7 +10,7 @@ import {
   SECOND_PLAYER_VALUE,
   NO_PLAYER_VALUE,
 } from "../../engine/player";
-import ReplayButton from "./ReplayButton";
+import ReplayButton from "../buttons/ReplayButton";
 import { Flex } from "@chakra-ui/core";
 
 function switchColor(player, winner) {
@@ -36,38 +36,30 @@ function switchColor(player, winner) {
   }
 }
 
-function Hud({ player, winner, onReplayOnPress }) {
+function Hud({ player, winner }) {
   const { color, colorFont } = switchColor(player, winner);
 
   return (
-    <div className="hud">
-      <p name="current-player" className="hud-current-player">
+    <Flex
+      align="center"
+      bg={color}
+      borderRadius="md"
+      flexWrap="wrap"
+      justify="center"
+      p="1vw"
+    >
+      <Flex
+        name="current-player"
+        color={colorFont}
+        fontSize="1em"
+        fontWeight="bold"
+        p="1vw"
+      >
         {winner === NO_PLAYER_VALUE
           ? `Player ${player}, it's your turn.`
           : `Won by player ${winner}`}
-      </p>
-      {winner ? (
-        <Flex align="center" justify="center" p="25%" w="100%">
-          <ReplayButton onClick={handleReplayOnPress()} />
-        </Flex>
-      ) : null}
-      <style jsx>{`
-        .hud {
-          background: ${color};
-          border-radius: 5%;
-          display: flex;
-          flex-wrap: wrap;
-          padding: 10%;
-        }
-
-        .hud-current-player {
-          font-size: 1.2vw;
-          color: ${colorFont};
-          width: 100%;
-          font-weight: bold;
-        }
-      `}</style>
-    </div>
+      </Flex>
+    </Flex>
   );
 }
 

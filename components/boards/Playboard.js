@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useReducer, initialState } from "react";
 import Hexagon from "./Hexagon";
 import BottomBoard from "./BottomBoard";
 import {
@@ -14,9 +14,11 @@ import {
   FIRST_PLAYER_VALUE,
   WINNER_LINE_VALUE,
   NO_PLAYER_VALUE,
+  SECOND_PLAYER_VALUE,
 } from "../../engine/player";
 import { getWinningPath } from "../../engine/game";
-import { Flex } from "@chakra-ui/core";
+import { Flex, Box } from "@chakra-ui/core";
+import ReplayButton from "../buttons/ReplayButton";
 
 /**
  * Check if the index of an hexagon is in the winning path.
@@ -28,56 +30,71 @@ function hexagonIndexIsInPath(winningPath, index) {
   return _.indexOf(winningPath, (index + 1).toString(10)) >= 0;
 }
 
-function Playboard(props) {
-  function reset(size) {
-    setWinner(NO_PLAYER_VALUE);
-    setPlayer(FIRST_PLAYER_VALUE);
-    setGrid(generateEmptyGrid(size));
+/**
+ * Initialize states.
+ *
+ * @param {int} size
+ */
+function init(size) {
+  return {
+    winner: NO_PLAYER_VALUE,
+    player: FIRST_PLAYER_VALUE,
+    grid: generateEmptyGrid(size),
+  };
+}
+
+function updateGrid(id, state) {
+  if (state.grid[id] !== 0 || state.winner) {
+    return;
+  }
+  const updatedGrid = state.grid.map((hexagon, index) =>
+    id === index ? state.player : hexagon
+  );
+
+  const winningPath = getWinningPath(updatedGrid, state.player);
+
+  if (winningPath) {
+    const winningGrid = state.grid.map(function (value, index) {
+      if (hexagonIndexIsInPath(winningPath, index)) {
+        return WINNER_LINE_VALUE;
+      }
+
+      return { player, grid: winningGrid, winner };
+    });
   }
 
-  const size = props.size;
+  const player = FIRST_PLAYER_VALUE ? SECOND_PLAYER_VALUE : FIRST_PLAYER_VALUE;
 
+  return { player, grid: updatedGrid, winner: state.winner };
+}
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "reset":
+      return init(action.payload);
+    case "updateGrid":
+      return updateGrid(action.payload, state);
+    default:
+      throw new Error();
+  }
+}
+
+function Playboard({ size }) {
   const boardRatio = getBoardRatio(size);
 
   const hexagonWidth = getHexagonWidth(size);
   const hexagonHeight = getHexagonHeight(size);
 
-  const [grid, setGrid] = useState(generateEmptyGrid(size));
-  const [player, setPlayer] = useState(FIRST_PLAYER_VALUE);
-  const [winner, setWinner] = useState(NO_PLAYER_VALUE);
+  const [state, dispatch] = useReducer(reducer, size, init);
 
-  const handleReplayOnPress = (size, winner) => {
+  const handleReplayOnPress = useCallback(() => {
     if (winner) {
-      reset(size);
+      dispatch({ type: "reset", payload: size });
     }
-  };
+  }, [size, state.winner]);
 
-  const handleCellOnPress = (id, player) => {
-    if (grid[id] !== 0 || winner) {
-      return;
-    }
-    const updatedGrid = grid.map((hexagon, index) =>
-      id === index ? player : hexagon
-    );
-    setGrid(updatedGrid);
-
-    const winningPath = getWinningPath(updatedGrid, player);
-
-    if (winningPath) {
-      setWinner(player);
-
-      const winningGrid = grid.map(function (value, index) {
-        if (hexagonIndexIsInPath(winningPath, index)) {
-          return WINNER_LINE_VALUE;
-        }
-
-        return value;
-      });
-
-      setGrid(winningGrid);
-    }
-
-    setPlayer(player === 1 ? 2 : 1);
+  const handleCellOnPress = (id) => {
+    dispatch({ type: "updateGrid", payload: id });
   };
 
   return (
@@ -102,8 +119,8 @@ function Playboard(props) {
           hexagonWidth={hexagonWidth}
         />
 
-        <div name="grid" className="hexagons-grid">
-          {grid.map((value, index) => {
+        <Box name="grid" position="absolute" width="100%" height="100%">
+          {state.grid.map((value, index) => {
             const rowIndex = index % size;
             const columnIndex = Math.floor(index / size);
 
@@ -116,7 +133,7 @@ function Playboard(props) {
 
             return (
               <Hexagon
-                onClick={() => handleCellOnPress(index, player)}
+                onClick={() => handleCellOnPress(index, state.player)}
                 style={{
                   top: `${top}%`,
                   left: `${left}%`,
@@ -128,24 +145,24 @@ function Playboard(props) {
               />
             );
           })}
-        </div>
+        </Box>
       </Flex>
 
       <Flex w="25vw" className="side">
-        <Hud
-          player={player}
-          winner={winner}
-          onReplayOnPress={() => handleReplayOnPress(size, winner)}
-        />
-      </Flex>
+        <Hud player={state.player} winner={state.winner} />
 
-      <style jsx>{`
-        .hexagons-grid {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-        }
-      `}</style>
+        {state.winner ? (
+          <Flex
+            align="center"
+            justify="center"
+            flexWrap="wrap"
+            p="1vw"
+            w="100%"
+          >
+            <ReplayButton onClick={handleReplayOnPress} />
+          </Flex>
+        ) : null}
+      </Flex>
     </>
   );
 }
