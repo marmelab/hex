@@ -11,7 +11,20 @@ const Board = () => {
   }
 
   return (
-    <Layout content={<Playboard size={parseInt(query.size, 10)} color />} />
+    <Layout
+      content={
+        <Playboard
+          size={parseInt(query.size, 10)}
+          w="60%"
+          h="62vh"
+          marginTop="15vh"
+          marginRight="15vw"
+          marginBottom="15vh"
+          marginLeft="15vw"
+          color
+        />
+      }
+    />
   );
 };
 

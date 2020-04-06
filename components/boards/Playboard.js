@@ -17,7 +17,7 @@ import {
 } from "../../engine/player";
 import { getWinningPath } from "../../engine/game";
 import { Flex, Box } from "@chakra-ui/core";
-import SidePanel from "../panel/SidePanel";
+import SidePanel from "../panels/SidePanel";
 
 /**
  * Check if the index of an hexagon is in the winning path.
@@ -86,7 +86,7 @@ function reducer({ grid, player, winner }, action) {
   }
 }
 
-function Playboard({ size }) {
+function Playboard({ size, ...props }) {
   const boardRatio = getBoardRatio(size);
 
   const hexagonWidth = getHexagonWidth(size);
@@ -111,14 +111,12 @@ function Playboard({ size }) {
         align="center"
         justify="center"
         position="relative"
-        h="70%"
-        margin="15%"
-        w="70%"
         _after={{
           content: "",
           display: "block",
           paddingBottom: `${boardRatio} * 100%`,
         }}
+        {...props}
       >
         <BottomBoard
           size={size}
@@ -159,6 +157,8 @@ function Playboard({ size }) {
         player={player}
         winner={winner}
         onReplayOnPress={handleReplayOnPress}
+        w="25%"
+        flexWrap="wrap"
       />
     </>
   );

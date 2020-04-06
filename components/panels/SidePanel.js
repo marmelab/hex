@@ -2,10 +2,10 @@ import { Flex } from "@chakra-ui/core";
 import ReplayButton from "../buttons/ReplayButton";
 import Hud from "../huds/Hud";
 
-function SidePanel({ player, winner, onReplayOnPress }) {
+function SidePanel({ player, winner, onReplayOnPress, ...props }) {
   return (
-    <Flex name="sidePanel" w="25%" flexWrap="wrap">
-      <Hud player={player} winner={winner} />
+    <Flex name="sidePanel" {...props}>
+      <Hud player={player} winner={winner} width="95%" />
 
       {winner ? (
         <Flex

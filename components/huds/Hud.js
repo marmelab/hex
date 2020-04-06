@@ -35,7 +35,7 @@ function switchColor(player, winner) {
   }
 }
 
-function Hud({ player, winner }) {
+function Hud({ player, winner, ...props }) {
   const { color, colorFont } = switchColor(player, winner);
 
   return (
@@ -45,7 +45,7 @@ function Hud({ player, winner }) {
       borderRadius="md"
       justifyItems="center"
       p="0.5vw"
-      width="95%"
+      {...props}
     >
       <Text
         name="current-player"
