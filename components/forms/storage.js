@@ -6,7 +6,22 @@ const GAMES_KEY = "games";
  * @return Array
  */
 export function getGamesInLocalStorage() {
-  return JSON.parse(getFromLocalStorage(GAMES_KEY));
+  const games = JSON.parse(getFromLocalStorage(GAMES_KEY));
+
+  if (games === null) {
+    setGamesInLocalStorage([]);
+  }
+
+  return games;
+}
+
+/**
+ * Writes game array as JSON string into the Local Storage.
+ *
+ * @param {Array} games
+ */
+export function setGamesInLocalStorage(games) {
+  return localStorage.setItem(GAMES_KEY, JSON.stringify(games));
 }
 
 /**

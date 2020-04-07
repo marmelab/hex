@@ -1,4 +1,4 @@
-import { Button, Flex } from "@chakra-ui/core";
+import { Flex } from "@chakra-ui/core";
 import {
   Modal,
   ModalOverlay,
@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/core";
 
 import MenuButton from "../buttons/MenuButton";
-import LoadGameForm from "../forms/LoadGameForm copy";
+import LoadGameForm from "../forms/LoadGameForm";
 
 export default function SavedGameModal({ ...props }) {
   const { isOpen, onOpen, onClose } = useDisclosure();

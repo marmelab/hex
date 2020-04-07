@@ -1,15 +1,12 @@
 import LocalPlayModal from "../modals/LocalPlayModal";
 import SavedGameModal from "../modals/SavedGameModal";
 import { Flex } from "@chakra-ui/core";
-import styled from "@emotion/styled";
 
-export default function MainMenu({ ...props }) {
-  const styles = { width: "100%", alignItems: "center", justify: "center" };
-
+export default function MainMenu(props) {
   return (
     <Flex name="mainMenu" {...props}>
-      <LocalPlayModal {...styles} />
-      <SavedGameModal {...styles} />
+      <LocalPlayModal width="100%" alignItems="center" justify="center" />
+      <SavedGameModal width="100%" alignItems="center" justify="center" />
     </Flex>
   );
 }

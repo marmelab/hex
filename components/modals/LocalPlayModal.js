@@ -1,4 +1,4 @@
-import { Button, Flex } from "@chakra-ui/core";
+import { Flex } from "@chakra-ui/core";
 import {
   Modal,
   ModalOverlay,

@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import Router from "next/router";
 
 import Layout from "../components/layouts/Layout";
 import Playboard from "../components/boards/Playboard";
@@ -10,12 +11,14 @@ const Board = () => {
     return null;
   }
 
+  const sizeParameter = query.size ? parseInt(query.size, 10) : undefined;
+
   return (
     <Layout
       content={
         <Playboard
-          size={parseInt(query.size, 10)}
-          id={parseInt(query.id, 10)}
+          sizeParameter={sizeParameter}
+          idParameter={query.id}
           w="56vw"
           h="62vh"
           marginTop="15vh"

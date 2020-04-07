@@ -19,108 +19,17 @@ import { getWinningPath } from "../../engine/game";
 import { Flex, Box } from "@chakra-ui/core";
 import SidePanel from "../panels/SidePanel";
 import { getGameById } from "../forms/storage";
+import {
+  getGamesInLocalStorage,
+  setGamesInLocalStorage,
+} from "../forms/storage";
 
-/**
- * Check if the index of an hexagon is in the winning path.
- *
- * @param {[]} winningPath
- * @param {int} index
- */
-function hexagonIndexIsInPath(winningPath, index) {
-  return _.indexOf(winningPath, (index + 1).toString(10)) >= 0;
-}
+const ERROR_NOT_FOUND_GAME = `Can't find the game with ID`;
 
-/**
- * Initialize states.
- *
- * @param {*} size
- * @param {*} id
- */
-function init({ size, id }) {
-  if (size) {
-    return {
-      winner: NO_PLAYER_VALUE,
-      player: FIRST_PLAYER_VALUE,
-      grid: generateEmptyGrid(params.size),
-    };
-  } else if (id) {
-    const { grid, player, size } = loadGame(params.id);
-    return { winner: NO_PLAYER_VALUE, player, grid, size };
-  }
-}
-
-/**
- * Play a move based on the id of hexagon clicked.
- * Updates player, grid and winner values.
- *
- * @param {int} id
- * @param {*} state
- */
-function playMove(id, grid, player, winner) {
-  if (grid[id] !== 0 || winner) {
-    return { player: player, grid: grid, winner: winner };
-  }
-
-  const updatedGrid = grid.map((hexagon, index) =>
-    id === index ? player : hexagon
-  );
-
-  const winningPath = getWinningPath(updatedGrid, player);
-
-  if (winningPath) {
-    const winningGrid = grid.map(function (value, index) {
-      return hexagonIndexIsInPath(winningPath, index)
-        ? WINNER_LINE_VALUE
-        : value;
-    });
-
-    return { player: player, grid: winningGrid, winner: player };
-  }
-
-  const nextPlayer = getNextPlayer(player);
-
-  return { player: nextPlayer, grid: updatedGrid, winner: winner };
-}
-
-/**
- * Determines who will play next.
- *
- * @param {*} player
- */
-function getNextPlayer(player) {
-  return player === FIRST_PLAYER_VALUE
-    ? SECOND_PLAYER_VALUE
-    : FIRST_PLAYER_VALUE;
-}
-
-/**
- * Load a game from Local Storage by id.
- *
- * @param {int} id
- */
-function loadGame(id) {
-  const game = getGameById(id);
-  const nextPlayer = getNextPlayer(game.player);
-  const size = Math.sqrt(game.grid.length);
-
-  return { player: nextPlayer, grid: game.grid, size };
-}
-
-function reducer({ grid, player, winner }, action) {
-  switch (action.type) {
-    case "reset":
-      return init(action.payload);
-    case "playMove":
-      return playMove(action.payload, grid, player, winner);
-    default:
-      throw new Error();
-  }
-}
-
-function Playboard({ sizeParameter, id, ...props }) {
-  const [{ grid, player, winner, size }, dispatch] = useReducer(
+function Playboard({ sizeParameter, idParameter, ...props }) {
+  const [{ grid, player, winner, size, gameId }, dispatch] = useReducer(
     reducer,
-    { size, id },
+    { sizeParameter, idParameter, gameId },
     init
   );
 
@@ -131,7 +40,11 @@ function Playboard({ sizeParameter, id, ...props }) {
 
   const handleReplayOnPress = useCallback(() => {
     if (winner) {
-      dispatch({ type: "reset", payload: size, winner });
+      dispatch({
+        type: "reset",
+        payload: { sizeParameter: size, idParameter: undefined },
+        winner,
+      });
     }
   }, [size, winner]);
 
@@ -200,3 +113,195 @@ function Playboard({ sizeParameter, id, ...props }) {
 }
 
 export default Playboard;
+
+/**
+ * Available actions :
+ *  - reset
+ *  - playMove
+ *
+ * @param {Object} action
+ * @param {string} action
+ */
+function reducer({ grid, player, winner, size, gameId }, action) {
+  switch (action.type) {
+    case "reset":
+      return init(action.payload);
+    case "playMove":
+      return playMove({
+        id: action.payload,
+        grid,
+        player,
+        winner,
+        size,
+        gameId,
+      });
+    default:
+      throw new Error();
+  }
+}
+
+/**
+ * Initialize states.
+ *
+ * @param {*} size
+ * @param {*} id
+ */
+function init({ sizeParameter, idParameter }) {
+  if (sizeParameter) {
+    return {
+      winner: NO_PLAYER_VALUE,
+      player: FIRST_PLAYER_VALUE,
+      grid: generateEmptyGrid(sizeParameter),
+      size: sizeParameter,
+      gameId: generateGameId(),
+    };
+  } else if (idParameter) {
+    const { grid, player, size } = loadGame(idParameter);
+    return {
+      winner: NO_PLAYER_VALUE,
+      player: player,
+      grid: grid,
+      size: size,
+      gameId: idParameter,
+    };
+  }
+
+  throw new Error(`Can't intialize a game.`);
+}
+
+/**
+ * Play a move based on the id of hexagon clicked.
+ * Updates player, grid and winner values.
+ *
+ * @param {int} id
+ * @param {*} state
+ */
+function playMove({ id, grid, player, winner, size, gameId }) {
+  if (grid[id] !== 0 || winner) {
+    return { player: player, grid: grid, winner: winner, size, gameId };
+  }
+
+  const updatedGrid = grid.map((hexagon, index) =>
+    id === index ? player : hexagon
+  );
+
+  const winningPath = getWinningPath(updatedGrid, player);
+
+  if (winningPath) {
+    const winningGrid = grid.map(function (value, index) {
+      return hexagonIndexIsInPath(winningPath, index)
+        ? WINNER_LINE_VALUE
+        : value;
+    });
+
+    cleanCurrentGame(gameId);
+
+    return {
+      player: player,
+      grid: winningGrid,
+      winner: player,
+      size: size,
+      gameId: gameId,
+    };
+  }
+
+  const nextPlayer = getNextPlayer(player);
+
+  saveCurrentGame(gameId, updatedGrid, player);
+
+  return {
+    player: nextPlayer,
+    grid: updatedGrid,
+    winner: winner,
+    size: size,
+    gameId: gameId,
+  };
+}
+
+/**
+ * Create a timestamp based game id
+ *
+ * Based on : https://gist.github.com/gordonbrander/2230317
+ * @param {int} parameterId
+ */
+function generateGameId() {
+  return Math.random().toString(36).substr(2, 9);
+}
+
+/**
+ * Save the current game and add it to the current pool of saved games.
+ *
+ * @param {String} gameId
+ * @param {Array} grid
+ * @param {int} player
+ */
+function saveCurrentGame(gameId, grid, player) {
+  const games = getGamesInLocalStorage();
+
+  const currentGame = games.find(function (game) {
+    return game.id === gameId;
+  });
+
+  if (!currentGame) {
+    const newSave = { id: gameId, grid, player };
+    games.push(newSave);
+  } else {
+    currentGame.grid = grid;
+    currentGame.player = player;
+  }
+
+  setGamesInLocalStorage(games);
+}
+
+/**
+ * Save the current game and add it to the current pool of saved games.
+ *
+ * @param {string} gameId
+ */
+function cleanCurrentGame(gameId) {
+  const games = getGamesInLocalStorage();
+
+  _.remove(games, function (game) {
+    return game.id === gameId;
+  });
+
+  setGamesInLocalStorage(games);
+}
+
+/**
+ * Check if the index of an hexagon is in the winning path.
+ *
+ * @param {[]} winningPath
+ * @param {int} index
+ */
+function hexagonIndexIsInPath(winningPath, index) {
+  return _.indexOf(winningPath, (index + 1).toString(10)) >= 0;
+}
+
+/**
+ * Determines who will play next.
+ *
+ * @param {*} player
+ */
+function getNextPlayer(player) {
+  return player === FIRST_PLAYER_VALUE
+    ? SECOND_PLAYER_VALUE
+    : FIRST_PLAYER_VALUE;
+}
+
+/**
+ * Load a game from Local Storage by id.
+ *
+ * @param {int} id
+ */
+function loadGame(id) {
+  const game = getGameById(id);
+
+  if (game) {
+    const nextPlayer = getNextPlayer(game.player);
+    const size = Math.sqrt(game.grid.length);
+
+    return { player: nextPlayer, grid: game.grid, size: size };
+  }
+  throw new Error(`Can't find the game with ID ${id}`);
+}
