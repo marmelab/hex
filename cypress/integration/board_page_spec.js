@@ -7,38 +7,49 @@ describe("The Board Page", function () {
     cy.clearLocalStorage();
   });
 
-  it("Display a board game with bottom and grid", function () {
-    cy.get("div[name=bottom-board]");
-    cy.get("div[name=grid]")
+  it("should display a board game with bottom and grid", function () {
+    cy.findByLabelText("Game Board").should("exist");
+
+    cy.findByLabelText("Grid")
+      .should("exist")
       .find("svg")
       .should("have.length", size * size);
-    cy.get("p[name=current-player]").should("contain", "Player 1");
+
+    cy.findByTitle("Current player")
+      .should("exist")
+      .should("contain", "Player 1");
   });
 
   it("Can put a stone anywhere as player 1 and player 2 can play after", function () {
-    cy.get("div[name=grid]").find("svg[name=hexagon_0]").click();
-    cy.get("p[name=current-player]").should("contain", "Player 2");
+    cy.findByLabelText("hexagon_0_x_0_y_0").should("exist").click();
+    cy.findByTitle("Current player")
+      .should("exist")
+      .should("contain", "Player 2");
 
-    cy.get("div[name=grid]").find("svg[name=hexagon_1]").click();
-    cy.get("p[name=current-player]").should("contain", "Player 1");
+    cy.findByLabelText("hexagon_1_x_1_y_0").should("exist").click();
+    cy.findByTitle("Current player")
+      .should("exist")
+      .should("contain", "Player 1");
   });
 
   it("should display the relay button when the game is over", function () {
     cy.visit(`/board?size=3`);
-    cy.get("div[name=grid]").find("svg[name=hexagon_3]").click();
-    cy.get("div[name=grid]").find("svg[name=hexagon_0]").click();
-    cy.get("div[name=grid]").find("svg[name=hexagon_4]").click();
-    cy.get("div[name=grid]").find("svg[name=hexagon_1]").click();
-    cy.get("div[name=grid]").find("svg[name=hexagon_5]").click();
+    cy.findByLabelText("hexagon_0_x_0_y_0").should("exist").click();
+    cy.findByLabelText("hexagon_3_x_0_y_1").should("exist").click();
+    cy.findByLabelText("hexagon_1_x_1_y_0").should("exist").click();
+    cy.findByLabelText("hexagon_4_x_1_y_1").should("exist").click();
+    cy.findByLabelText("hexagon_2_x_2_y_0").should("exist").click();
 
-    cy.get("p[name=current-player]").should("contain", "Won by player 1");
-    cy.get("button[name=replay-button]").should("contain", "Replay");
+    cy.findByTitle("Current player")
+      .should("exist")
+      .should("contain", "Won by player 1");
+    cy.findByTitle("Replay").should("exist").should("contain", "Replay");
   });
 
   it("should save the game state in Local Storage", function () {
     cy.visit(`/board?size=3`);
-    cy.get("div[name=grid]")
-      .find("svg[name=hexagon_1]")
+    cy.findByLabelText("hexagon_1_x_1_y_0")
+      .should("exist")
       .click()
       .should(() => {
         const games = JSON.parse(localStorage.getItem("games"));
@@ -51,14 +62,14 @@ describe("The Board Page", function () {
 
   it("should clean the save in Local Storage when the game is over", function () {
     cy.visit(`/board?size=3`);
-    cy.get("div[name=grid]").find("svg[name=hexagon_0]").click();
-    cy.get("div[name=grid]").find("svg[name=hexagon_3]").click();
-    cy.get("div[name=grid]").find("svg[name=hexagon_1]").click();
-    cy.get("div[name=grid]").find("svg[name=hexagon_4]").click();
-    cy.get("div[name=grid]").find("svg[name=hexagon_2]").click();
+    cy.findByLabelText("hexagon_0_x_0_y_0").should("exist").click();
+    cy.findByLabelText("hexagon_3_x_0_y_1").should("exist").click();
+    cy.findByLabelText("hexagon_1_x_1_y_0").should("exist").click();
+    cy.findByLabelText("hexagon_4_x_1_y_1").should("exist").click();
+    cy.findByLabelText("hexagon_2_x_2_y_0").should("exist").click();
 
-    cy.get("button[name=replay-button]")
-      .get()
+    cy.findByTitle("Replay")
+      .should("exist")
       .should(() => {
         const games = JSON.parse(localStorage.getItem("games"));
         assert.deepEqual(games, []);

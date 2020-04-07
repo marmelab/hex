@@ -15,12 +15,12 @@ const LocalPlayForm = () => (
     {({ handleSubmit, handleChange, values }) => (
       <form onSubmit={handleSubmit}>
         <FormLabel htmlFor="size">Size of the board</FormLabel>
-        <Select name="size" onChange={handleChange} value={values.size}>
+        <Select title="Select a size" onChange={handleChange} value={values.size} tabIndex="0">
           <option value="7">7</option>
           <option value="9">9</option>
           <option value="11">11</option>
         </Select>
-        <Button mt={4} variantColor="teal" type="submit">
+        <Button title="Start" mt={4} variantColor="teal" type="submit">
           Start
         </Button>
       </form>

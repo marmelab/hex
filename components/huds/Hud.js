@@ -41,7 +41,7 @@ function Hud({ player, winner, ...props }) {
   return (
     <Flex  borderRadius="md" justifyContent="center" {...props}>
       <Text
-        name="current-player"
+        title="Current player"
         bg={color}
         color={colorFont}
         fontSize="1em"

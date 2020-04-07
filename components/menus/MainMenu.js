@@ -10,6 +10,7 @@ export default function MainMenu(props) {
         alignItems="center"
         justify="center"
         m="2%"
+        tabindex="0"
       />
       <SavedGameModal
         width="100%"

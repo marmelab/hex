@@ -5,18 +5,26 @@ import { getGamesInLocalStorage } from "./storage";
 import _ from "lodash";
 
 export default function LoadGameForm() {
-  const games = () => {
-    try {
-      return getGamesInLocalStorage();
-    } catch (error) {
-      if (error.message.includes("Local Storage is unavailable.")) {
-        return undefined;
+  const games = getGames();
+  const firstGameId = games ? _.first(games).id : "0";
+
+  const options = games
+    ? () => {
+        return games.map((game, index) => {
+          return (
+            <option title={`Game number ${game.id}`} value={game.id}>
+              Game #{index + 1}
+            </option>
+          );
+        });
       }
-    }
-  };
-
-  const firstGameId = games()[0].id;
-
+    : () => {
+        return (
+          <option title={`Game number 0`} value="0">
+            No game saved
+          </option>
+        );
+      };
   return (
     <Formik
       initialValues={{ gameId: firstGameId }}
@@ -30,20 +38,40 @@ export default function LoadGameForm() {
       {({ handleSubmit, handleChange, values }) => (
         <form onSubmit={handleSubmit}>
           <FormLabel htmlFor="gameId">Load game :</FormLabel>
-          <Select name="gameId" onChange={handleChange} value={values.gameId}>
-            {games().map((game, index) => {
-              return (
-                <option name={`game_${game.id}`} value={game.id}>
-                  Partie n°{index + 1}
-                </option>
-              );
-            })}
+          <Select
+            title="Choose a game"
+            onChange={handleChange}
+            value={values.gameId}
+            tabIndex="0"
+            name="gameId"
+          >
+            {options()}
           </Select>
-          <Button mt={4} variantColor="teal" type="submit">
+          <Button
+            mt={4}
+            variantColor="teal"
+            type="submit"
+            disabled={firstGameId === "0"}
+          >
             Start
           </Button>
         </form>
       )}
     </Formik>
   );
+}
+
+/**
+ * Get all games stored in Local Storage.
+ *
+ * @returns Array
+ */
+function getGames() {
+  try {
+    return getGamesInLocalStorage();
+  } catch (error) {
+    if (error.message.includes("Local Storage is unavailable.")) {
+      return undefined;
+    }
+  }
 }

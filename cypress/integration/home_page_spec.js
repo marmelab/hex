@@ -5,14 +5,21 @@ describe("The Home Page", function () {
   });
 
   it("should display the menu", function () {
-    cy.get('button[name="local-game"]').contains("Play local game");
-    cy.get('button[name="resume-local-game"]').contains("Resume local game");
+    cy.findByTitle("Play local game").should("exist");
+    cy.findByTitle("Resume a local game").should("exist");
   });
 
-  it("Display the '2 players on the same device' modal", function () {
-    cy.get("#modal-1-body").invoke("show");
-    cy.contains("2 players on the same device");
-    cy.get('select[name="size"]').select("7");
-    cy.contains("Start");
+  it("should display local game configuration modal", function () {
+    cy.findByTitle("Play local game").click({ force: true });
+    cy.findByTitle("2 players on the same device").should("exist");
+    cy.findByTitle("Select a size").should("exist").select("7");
+    cy.findByTitle("Start").should("exist");
+  });
+
+  it("should display the resume local game modal", function () {
+    cy.findByTitle("Resume local game").click({ force: true });
+    cy.findByTitle("Load local game").should("exist");
+    cy.findByTitle("Choose a game").should("exist");
+    cy.findByTitle("Start").should("exist");
   });
 });

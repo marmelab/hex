@@ -72,7 +72,7 @@ function Playboard({ sizeParameter, idParameter, ...props }) {
           hexagonWidth={hexagonWidth}
         />
 
-        <Box name="grid" position="absolute" width="100%" height="100%">
+        <Box aria-label="Grid" position="absolute" width="100%" height="100%">
           {grid.map((value, index) => {
             const rowIndex = index % size;
             const columnIndex = Math.floor(index / size);
@@ -87,6 +87,11 @@ function Playboard({ sizeParameter, idParameter, ...props }) {
             return (
               <Hexagon
                 onClick={() => handleCellOnPress(index)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleCellOnPress(index);
+                  }
+                }}
                 style={{
                   top: `${top}%`,
                   left: `${left}%`,
@@ -95,6 +100,7 @@ function Playboard({ sizeParameter, idParameter, ...props }) {
                 }}
                 name={`hexagon_${index}`}
                 value={value}
+                aria-label={`hexagon_${index}_x_${rowIndex}_y_${columnIndex}`}
               />
             );
           })}
@@ -172,7 +178,7 @@ function init({ sizeParameter, idParameter }) {
 /**
  * Play a move based on the id of hexagon clicked.
  * Updates player, grid and winner values.
- * 
+ *
  * @param {Object} move
  */
 function playMove({ cellIndex, grid, player, winner, size, gameId }) {
