@@ -16,7 +16,13 @@ export default function LocalPlayModal(props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Flex {...props}>
-      <MenuButton variantColor="teal" size="lg" text="Play local game" onClick={onOpen} />
+      <MenuButton
+        name="local-game"
+        variantColor="teal"
+        size="lg"
+        text="Play local game"
+        onClick={onOpen}
+      />
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>

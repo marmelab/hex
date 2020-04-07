@@ -48,8 +48,8 @@ function Playboard({ sizeParameter, idParameter, ...props }) {
     }
   }, [size, winner]);
 
-  const handleCellOnPress = (id) => {
-    dispatch({ type: "playMove", payload: id });
+  const handleCellOnPress = (cellIndex) => {
+    dispatch({ type: "playMove", payload: cellIndex });
   };
 
   return (
@@ -128,7 +128,7 @@ function reducer({ grid, player, winner, size, gameId }, action) {
       return init(action.payload);
     case "playMove":
       return playMove({
-        id: action.payload,
+        cellIndex: action.payload,
         grid,
         player,
         winner,
@@ -175,13 +175,13 @@ function init({ sizeParameter, idParameter }) {
  * 
  * @param {Object} move
  */
-function playMove({ index, grid, player, winner, size, gameId }) {
-  if (grid[index] !== 0 || winner) {
+function playMove({ cellIndex, grid, player, winner, size, gameId }) {
+  if (grid[cellIndex] !== 0 || winner) {
     return { player: player, grid: grid, winner: winner, size, gameId };
   }
 
   const updatedGrid = grid.map((hexagon, index) =>
-    index === index ? player : hexagon
+    cellIndex === index ? player : hexagon
   );
 
   const winningPath = getWinningPath(updatedGrid, player);
