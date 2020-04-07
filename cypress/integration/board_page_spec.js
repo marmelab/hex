@@ -4,6 +4,7 @@ describe("The Board Page", function () {
 
   before(function () {
     cy.visit(`/board?size=${size}`);
+    cy.clearLocalStorage();
   });
 
   it("Display a board game with bottom and grid", function () {
@@ -32,5 +33,35 @@ describe("The Board Page", function () {
 
     cy.get("p[name=current-player]").should("contain", "Won by player 1");
     cy.get("button[name=replay-button]").should("contain", "Replay");
+  });
+
+  it("should save the game state in Local Storage", function () {
+    cy.visit(`/board?size=3`);
+    cy.get("div[name=grid]")
+      .find("svg[name=hexagon_1]")
+      .click()
+      .should(() => {
+        const games = JSON.parse(localStorage.getItem("games"));
+        const save = games[0];
+
+        assert.deepEqual(save.grid, [0, 1, 0, 0, 0, 0, 0, 0, 0]);
+        assert.equal(save.player, 1);
+      });
+  });
+
+  it("should clean the save in Local Storage when the game is over", function () {
+    cy.visit(`/board?size=3`);
+    cy.get("div[name=grid]").find("svg[name=hexagon_0]").click();
+    cy.get("div[name=grid]").find("svg[name=hexagon_3]").click();
+    cy.get("div[name=grid]").find("svg[name=hexagon_1]").click();
+    cy.get("div[name=grid]").find("svg[name=hexagon_4]").click();
+    cy.get("div[name=grid]").find("svg[name=hexagon_2]").click();
+
+    cy.get("button[name=replay-button]")
+      .get()
+      .should(() => {
+        const games = JSON.parse(localStorage.getItem("games"));
+        assert.deepEqual(games, []);
+      });
   });
 });
