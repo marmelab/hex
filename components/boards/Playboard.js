@@ -18,8 +18,8 @@ import {
 import { getWinningPath } from "../../engine/game";
 import { Flex, Box } from "@chakra-ui/core";
 import SidePanel from "../panels/SidePanel";
-import { getGameById } from "../forms/storage";
 import {
+  getGameById,
   getGamesInLocalStorage,
   setGamesInLocalStorage,
 } from "../forms/storage";
@@ -119,7 +119,7 @@ export default Playboard;
  *  - reset
  *  - playMove
  *
- * @param {Object} action
+ * @param {Object} state
  * @param {string} action
  */
 function reducer({ grid, player, winner, size, gameId }, action) {
@@ -172,17 +172,16 @@ function init({ sizeParameter, idParameter }) {
 /**
  * Play a move based on the id of hexagon clicked.
  * Updates player, grid and winner values.
- *
- * @param {int} id
- * @param {*} state
+ * 
+ * @param {Object} move
  */
-function playMove({ id, grid, player, winner, size, gameId }) {
-  if (grid[id] !== 0 || winner) {
+function playMove({ index, grid, player, winner, size, gameId }) {
+  if (grid[index] !== 0 || winner) {
     return { player: player, grid: grid, winner: winner, size, gameId };
   }
 
   const updatedGrid = grid.map((hexagon, index) =>
-    id === index ? player : hexagon
+    index === index ? player : hexagon
   );
 
   const winningPath = getWinningPath(updatedGrid, player);
