@@ -17,7 +17,6 @@ export default function LocalPlayModal(props) {
   return (
     <Flex {...props}>
       <MenuButton
-        title="Play local game"
         variantColor="teal"
         size="lg"
         text="Play local game"
@@ -26,7 +25,7 @@ export default function LocalPlayModal(props) {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader title="2 players on the same device">2 players on the same device</ModalHeader>
+          <ModalHeader>2 players on the same device</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <LocalPlayForm />

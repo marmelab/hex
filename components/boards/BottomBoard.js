@@ -24,7 +24,7 @@ function BottomBoard({ size, hexagonHeight, hexagonWidth }) {
   const bottomLeftCorner = `${getBoardOffset(hexagonWidth, size)}% 100%`;
 
   return (
-    <div aria-label="Game Board" className="bottom-board">
+    <div className="bottom-board">
       <div className="playerSide top"></div>
       <div className="playerSide right"></div>
       <div className="playerSide bottom"></div>

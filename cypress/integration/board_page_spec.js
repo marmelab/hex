@@ -8,47 +8,38 @@ describe("The Board Page", function () {
   });
 
   it("should display a board game with bottom and grid", function () {
-    cy.findByLabelText("Game Board").should("exist");
+    cy.findByTestId("grid").then((container) =>
+      cy
+        .findAllByRole("button", { container })
+        .should("have.length", size * size)
+    );
 
-    cy.findByLabelText("Grid")
-      .should("exist")
-      .find("svg")
-      .should("have.length", size * size);
-
-    cy.findByTitle("Current player")
-      .should("exist")
-      .should("contain", "Player 1");
+    cy.findByText("Player 1, it's your turn.").should("exist");
   });
 
   it("Can put a stone anywhere as player 1 and player 2 can play after", function () {
-    cy.findByLabelText("hexagon_0_x_0_y_0").should("exist").click();
-    cy.findByTitle("Current player")
-      .should("exist")
-      .should("contain", "Player 2");
+    cy.findByLabelText("Hexagon at row 0 and column 0").should("exist").click();
+    cy.findByText("Player 2, it's your turn.").should("exist");
 
-    cy.findByLabelText("hexagon_1_x_1_y_0").should("exist").click();
-    cy.findByTitle("Current player")
-      .should("exist")
-      .should("contain", "Player 1");
+    cy.findByLabelText("Hexagon at row 1 and column 0").should("exist").click();
+    cy.findByText("Player 1, it's your turn.").should("exist");
   });
 
   it("should display the relay button when the game is over", function () {
     cy.visit(`/board?size=3`);
-    cy.findByLabelText("hexagon_0_x_0_y_0").should("exist").click();
-    cy.findByLabelText("hexagon_3_x_0_y_1").should("exist").click();
-    cy.findByLabelText("hexagon_1_x_1_y_0").should("exist").click();
-    cy.findByLabelText("hexagon_4_x_1_y_1").should("exist").click();
-    cy.findByLabelText("hexagon_2_x_2_y_0").should("exist").click();
+    cy.findByLabelText("Hexagon at row 0 and column 0").should("exist").click();
+    cy.findByLabelText("Hexagon at row 0 and column 1").should("exist").click();
+    cy.findByLabelText("Hexagon at row 1 and column 0").should("exist").click();
+    cy.findByLabelText("Hexagon at row 1 and column 1").should("exist").click();
+    cy.findByLabelText("Hexagon at row 2 and column 0").should("exist").click();
 
-    cy.findByTitle("Current player")
-      .should("exist")
-      .should("contain", "Won by player 1");
-    cy.findByTitle("Replay").should("exist").should("contain", "Replay");
+    cy.findByText("Won by player 1").should("exist");
+    cy.findByText("Replay").should("exist");
   });
 
   it("should save the game state in Local Storage", function () {
     cy.visit(`/board?size=3`);
-    cy.findByLabelText("hexagon_1_x_1_y_0")
+    cy.findByLabelText("Hexagon at row 1 and column 0")
       .should("exist")
       .click()
       .should(() => {
@@ -62,13 +53,13 @@ describe("The Board Page", function () {
 
   it("should clean the save in Local Storage when the game is over", function () {
     cy.visit(`/board?size=3`);
-    cy.findByLabelText("hexagon_0_x_0_y_0").should("exist").click();
-    cy.findByLabelText("hexagon_3_x_0_y_1").should("exist").click();
-    cy.findByLabelText("hexagon_1_x_1_y_0").should("exist").click();
-    cy.findByLabelText("hexagon_4_x_1_y_1").should("exist").click();
-    cy.findByLabelText("hexagon_2_x_2_y_0").should("exist").click();
+    cy.findByLabelText("Hexagon at row 0 and column 0").should("exist").click();
+    cy.findByLabelText("Hexagon at row 0 and column 1").should("exist").click();
+    cy.findByLabelText("Hexagon at row 1 and column 0").should("exist").click();
+    cy.findByLabelText("Hexagon at row 1 and column 1").should("exist").click();
+    cy.findByLabelText("Hexagon at row 2 and column 0").should("exist").click();
 
-    cy.findByTitle("Replay")
+    cy.findByText("Replay")
       .should("exist")
       .should(() => {
         const games = JSON.parse(localStorage.getItem("games"));

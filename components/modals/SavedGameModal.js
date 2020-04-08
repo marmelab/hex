@@ -17,7 +17,6 @@ export default function SavedGameModal({ ...props }) {
   return (
     <Flex {...props}>
       <MenuButton
-        title="Resume a local game"
         variantColor="teal"
         text="Resume local game"
         onClick={onOpen}
@@ -25,7 +24,7 @@ export default function SavedGameModal({ ...props }) {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader title="Load local game">Load local game</ModalHeader>
+          <ModalHeader>Load local game</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <LoadGameForm />

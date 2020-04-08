@@ -12,7 +12,7 @@ export default function LoadGameForm() {
     ? () => {
         return games.map((game, index) => {
           return (
-            <option title={`Game number ${game.id}`} value={game.id}>
+            <option value={game.id}>
               Game #{index + 1}
             </option>
           );
@@ -37,13 +37,13 @@ export default function LoadGameForm() {
     >
       {({ handleSubmit, handleChange, values }) => (
         <form onSubmit={handleSubmit}>
-          <FormLabel htmlFor="gameId">Load game :</FormLabel>
+          <FormLabel htmlFor="load-game-select">Load game</FormLabel>
           <Select
-            title="Choose a game"
             onChange={handleChange}
             value={values.gameId}
             tabIndex="0"
             name="gameId"
+            id="load-game-select"
           >
             {options()}
           </Select>

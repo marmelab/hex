@@ -72,7 +72,7 @@ function Playboard({ sizeParameter, idParameter, ...props }) {
           hexagonWidth={hexagonWidth}
         />
 
-        <Box aria-label="Grid" position="absolute" width="100%" height="100%">
+        <Box data-testid="grid" position="absolute" width="100%" height="100%">
           {grid.map((value, index) => {
             const rowIndex = index % size;
             const columnIndex = Math.floor(index / size);
@@ -100,7 +100,8 @@ function Playboard({ sizeParameter, idParameter, ...props }) {
                 }}
                 name={`hexagon_${index}`}
                 value={value}
-                aria-label={`hexagon_${index}_x_${rowIndex}_y_${columnIndex}`}
+                aria-label={`Hexagon at row ${rowIndex} and column ${columnIndex}`}
+                role="button"
               />
             );
           })}
