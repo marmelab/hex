@@ -1,5 +1,5 @@
-import { Formik } from "formik";
 import { Button, FormLabel, Select } from "@chakra-ui/core";
+import { Formik } from "formik";
 import Router from "next/router";
 
 const LocalPlayForm = () => (

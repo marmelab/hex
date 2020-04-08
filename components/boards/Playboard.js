@@ -16,7 +16,7 @@ import {
   SECOND_PLAYER_VALUE,
 } from "../../engine/player";
 import { getWinningPath } from "../../engine/game";
-import { Flex, Box } from "@chakra-ui/core";
+import { Flex, Box, PseudoBox } from "@chakra-ui/core";
 import SidePanel from "../panels/SidePanel";
 import {
   getGameById,
@@ -53,59 +53,62 @@ function Playboard({ sizeParameter, idParameter, ...props }) {
   };
 
   return (
-    <>
-      <Flex
-        name="playboard"
-        align="center"
-        justify="center"
-        position="relative"
-        _after={{
-          content: "",
-          display: "block",
-          paddingBottom: `${boardRatio} * 100%`,
-        }}
-        {...props}
-      >
-        <BottomBoard
-          size={size}
-          hexagonHeight={hexagonHeight}
-          hexagonWidth={hexagonWidth}
-        />
+    <Flex {...props}>
+      <Flex flexGrow="1" alignItems="center" justifyContent="center">
+        <PseudoBox
+          position="relative"
+          width="80%"
+          _after={{
+            content: `""`,
+            display: "block",
+            paddingBottom: `${boardRatio * 100}%`,
+          }}
+        >
+          <BottomBoard
+            size={size}
+            hexagonHeight={hexagonHeight}
+            hexagonWidth={hexagonWidth}
+          />
+          <Box
+            data-testid="grid"
+            position="absolute"
+            width="100%"
+            height="100%"
+          >
+            {grid.map((value, index) => {
+              const rowIndex = index % size;
+              const columnIndex = Math.floor(index / size);
 
-        <Box data-testid="grid" position="absolute" width="100%" height="100%">
-          {grid.map((value, index) => {
-            const rowIndex = index % size;
-            const columnIndex = Math.floor(index / size);
+              const top = calculateTopPosition(rowIndex, hexagonHeight);
+              const left = calculateLeftPosition(
+                columnIndex,
+                rowIndex,
+                hexagonWidth
+              );
 
-            const top = calculateTopPosition(rowIndex, hexagonHeight);
-            const left = calculateLeftPosition(
-              columnIndex,
-              rowIndex,
-              hexagonWidth
-            );
-
-            return (
-              <Hexagon
-                onClick={() => handleCellOnPress(index)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleCellOnPress(index);
-                  }
-                }}
-                style={{
-                  top: `${top}%`,
-                  left: `${left}%`,
-                  width: `calc(${hexagonWidth}% + 1px)`,
-                  height: `${hexagonHeight}%`,
-                }}
-                name={`hexagon_${index}`}
-                value={value}
-                aria-label={`Hexagon at row ${rowIndex} and column ${columnIndex}`}
-                role="button"
-              />
-            );
-          })}
-        </Box>
+              return (
+                <Hexagon
+                  onClick={() => handleCellOnPress(index)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleCellOnPress(index);
+                    }
+                  }}
+                  style={{
+                    top: `${top}%`,
+                    left: `${left}%`,
+                    width: `calc(${hexagonWidth}% + 1px)`,
+                    height: `${hexagonHeight}%`,
+                  }}
+                  name={`hexagon_${index}`}
+                  value={value}
+                  aria-label={`Hexagon at row ${rowIndex} and column ${columnIndex}`}
+                  role="button"
+                />
+              );
+            })}
+          </Box>
+        </PseudoBox>
       </Flex>
 
       <SidePanel
@@ -115,7 +118,7 @@ function Playboard({ sizeParameter, idParameter, ...props }) {
         w="25%"
         flexWrap="wrap"
       />
-    </>
+    </Flex>
   );
 }
 

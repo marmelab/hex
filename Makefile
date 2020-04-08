@@ -8,6 +8,7 @@ help:
 install: ## Install project's dependencies
 	@echo "Install project deps"
 	yarn install
+	yarn run database:create
 
 build:
 	@echo "Build project"

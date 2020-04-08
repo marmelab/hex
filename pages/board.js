@@ -19,12 +19,9 @@ const Board = () => {
         <Playboard
           sizeParameter={sizeParameter}
           idParameter={query.id}
-          w="56vw"
-          h="62vh"
+          w="100vw"
           marginTop="15vh"
-          marginRight="15vw"
           marginBottom="15vh"
-          marginLeft="15vw"
           color
         />
       }

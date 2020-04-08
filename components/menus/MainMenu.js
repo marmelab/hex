@@ -1,6 +1,7 @@
 import LocalPlayModal from "../modals/LocalPlayModal";
 import SavedGameModal from "../modals/SavedGameModal";
 import { Flex } from "@chakra-ui/core";
+import OnlinePlayModal from "../modals/OnlinePlayModal";
 
 export default function MainMenu(props) {
   return (
@@ -13,6 +14,12 @@ export default function MainMenu(props) {
         tabindex="0"
       />
       <SavedGameModal
+        width="100%"
+        alignItems="center"
+        justify="center"
+        m="2%"
+      />
+      <OnlinePlayModal
         width="100%"
         alignItems="center"
         justify="center"
