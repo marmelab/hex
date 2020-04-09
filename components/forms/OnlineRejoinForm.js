@@ -11,7 +11,7 @@ export default function OnlineRejoinForm({ games, ...props }) {
           const size = JSON.parse(game.grid).length;
 
           return (
-            <option name="gameId" value={game.uuid}>
+            <option value={game.uuid}>
               Play with {game.player1_nickname} - size {size}x{size}
             </option>
           );
