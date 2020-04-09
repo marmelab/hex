@@ -1,21 +1,20 @@
-import { Flex } from "@chakra-ui/core";
 import {
+  Flex,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
   ModalBody,
   ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
   useDisclosure,
 } from "@chakra-ui/core";
-
-import LocalPlayForm from "../forms/LocalPlayForm";
 import MenuButton from "../buttons/MenuButton";
+import LocalPlayForm from "../forms/LocalPlayForm";
 
 export default function LocalPlayModal(props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Flex {...props}>
+    <Flex alignItems="center" justify="center" {...props}>
       <MenuButton
         variantColor="teal"
         size="lg"

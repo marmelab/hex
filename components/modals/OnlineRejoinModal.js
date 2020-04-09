@@ -14,7 +14,7 @@ import OnlineRejoinForm from "../forms/OnlineRejoinForm";
 export default function OnlineRejoinModal({ games, ...props }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Flex {...props}>
+    <Flex {...props} alignItems="center" justify="center">
       <MenuButton
         variantColor="teal"
         text="Rejoin online game"

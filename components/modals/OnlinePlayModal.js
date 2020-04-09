@@ -14,7 +14,7 @@ import OnlinePlayForm from "../forms/OnlinePlayForm";
 export default function OnlinePlayModal({ ...props }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Flex {...props}>
+    <Flex alignItems="center" justify="center" {...props}>
       <MenuButton
         variantColor="teal"
         size="lg"
