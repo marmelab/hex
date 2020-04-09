@@ -12,5 +12,15 @@ export default (req, res) => {
       .then((game) => {
         res.status(200).json(game);
       });
+  } else if (req.method === "GET") {
+    getGameRepository()
+      .findAll({
+        where: {
+          player2_nickname: null,
+        },
+      })
+      .then((game) => {
+        res.status(200).json(game);
+      });
   }
 };
