@@ -1,9 +1,14 @@
 import { Sequelize } from "sequelize";
 
-export function getDatabaseInstance() {
-  /* @todo: Extract DB parameters in config file */
-  return new Sequelize({
-    dialect: "sqlite",
-    storage: "./var/data.sqlite",
-  });
-}
+const { DB_PARAMETERS } = require("./bootstrap");
+
+let instance;
+
+export const getDatabaseInstance = () => {
+  if (instance) {
+    return instance;
+  }
+
+  instance = new Sequelize(DB_PARAMETERS);
+  return instance;
+};

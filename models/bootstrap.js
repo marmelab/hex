@@ -5,6 +5,8 @@ const DB_PARAMETERS = {
   storage: "./var/data.sqlite",
 };
 
+const { GAME_DEFINITION } = require("./games/game");
+
 /**
  * InitDatabase
  */
@@ -13,7 +15,7 @@ const { Sequelize } = require("sequelize");
 
 const sequelize = new Sequelize(DB_PARAMETERS);
 
-const { GAME_DEFINITION } = require("./games/game");
 sequelize.define("game", GAME_DEFINITION);
-
 sequelize.sync();
+
+module.exports = { DB_PARAMETERS };
