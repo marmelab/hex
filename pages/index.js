@@ -1,3 +1,4 @@
+import fetch from "isomorphic-unfetch";
 import Layout from "../components/layouts/Layout";
 import MainMenu from "../components/menus/MainMenu";
 
