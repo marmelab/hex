@@ -1,3 +1,5 @@
+import { getGameRepository } from "../../../models/games/gameRepository";
+
 export default (req, res) => {
   const method = req.method;
 
@@ -31,15 +33,23 @@ function patch(req, res) {
 
   getGameRepository()
     .update(
-      { player2Nickname },
+      { player2Nickname: player2Nickname },
       {
         where: {
           uuid: uuid,
         },
       }
     )
-    .then((game) => {
-      return res.status(200).json(game);
+    .then((status) => {
+      getGameRepository()
+        .findOne({
+          where: {
+            uuid: uuid,
+          },
+        })
+        .then((game) => {
+          return res.status(200).json(game);
+        });
     })
     .catch((error) => {
       return res.status(400).json(error);

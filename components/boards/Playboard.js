@@ -25,6 +25,7 @@ import {
 } from "../forms/storage";
 
 const ERROR_NOT_FOUND_GAME = `Can't find the game with ID`;
+const GAME_URI = "http://localhost:3000/api/games";
 
 function Playboard({
   sizeParameter,
@@ -179,35 +180,90 @@ function init({
   idParameter,
   onlineParameter,
   player1NicknameParameter,
+  player2NicknameParameter,
 }) {
   if (sizeParameter) {
-    const grid = generateEmptyGrid(sizeParameter);
-    const gameId = getGameId();
-
-    return {
-      winner: NO_PLAYER_VALUE,
-      player: FIRST_PLAYER_VALUE,
-      grid: grid,
-      size: sizeParameter,
-      gameId: gameId,
-      online: onlineParameter,
-      player1Nickname: player1NicknameParameter,
-    };
+    return createNewGame(
+      sizeParameter,
+      onlineParameter,
+      player1NicknameParameter
+    );
   } else if (idParameter) {
-    const { grid, player, size } = loadGame(idParameter);
-    return {
-      winner: NO_PLAYER_VALUE,
-      player: player,
-      grid: grid,
-      size: size,
-      gameId: idParameter,
-      online: onlineParameter,
-    };
+    return loadExistingGame(
+      idParameter,
+      player2NicknameParameter,
+      onlineParameter
+    );
   }
 
   throw new Error(`Can't intialize a game.`);
 }
 
+/**
+ *
+ * @param {*} idParameter
+ * @param {*} player2NicknameParameter
+ * @param {*} onlineParameter
+ */
+async function loadExistingGame(
+  idParameter,
+  player2NicknameParameter,
+  onlineParameter
+) {
+  const { grid, player, size } = onlineParameter
+    ? updateServerGame(idParameter, player2NicknameParameter)
+    : loadLocalGame();
+
+  console.log(updateServerGame(idParameter, player2NicknameParameter));
+
+  return {
+    winner: NO_PLAYER_VALUE,
+    player: player,
+    grid: grid,
+    size: size,
+    gameId: idParameter,
+    online: onlineParameter,
+  };
+}
+
+function loadLocalGame() {
+  if (getGameById(idParameter)) {
+    const nextPlayer = getNextPlayer(game.player);
+    const size = Math.sqrt(game.grid.length);
+
+    return { player: nextPlayer, grid: game.grid, size: size };
+  }
+  throw new Error(`${ERROR_NOT_FOUND_GAME} ${id}`);
+}
+
+/**
+ *
+ *
+ * @param {int} sizeParameter
+ * @param {boolean} onlineParameter
+ */
+function createNewGame(sizeParameter, onlineParameter) {
+  const grid = generateEmptyGrid(sizeParameter);
+  const gameId = getGameId();
+
+  return {
+    winner: NO_PLAYER_VALUE,
+    player: FIRST_PLAYER_VALUE,
+    grid: grid,
+    size: sizeParameter,
+    gameId: gameId,
+    online: onlineParameter,
+    player1Nickname: player1NicknameParameter,
+  };
+}
+
+/**
+ * Get the game ID.
+ *
+ * If local, we generate it. For online games, we get it back from API.
+ *
+ * @param {boolean} onlineParameter
+ */
 function getGameId(onlineParameter) {
   if (onlineParameter) {
     const game = initializeServerGame({
@@ -220,13 +276,42 @@ function getGameId(onlineParameter) {
   return generateGameId();
 }
 
+/**
+ * Initialize a new game on API
+ *
+ * @param {*} game
+ */
 async function initializeServerGame(game) {
-  fetch("http://localhost:3000/api/games", {
+  fetch(GAME_URI, {
     method: "post",
     body: JSON.stringify(game),
   })
     .then(function (response) {
       return response.json();
+    })
+    .catch(function (data) {});
+}
+
+/**
+ * To rejoin a game, we need to update the player2Nickname
+ *
+ * @param {int} id
+ * @param {string} player2Nickname
+ */
+function updateServerGame(id, player2Nickname) {
+  return fetch(`${GAME_URI}/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ player2Nickname: player2Nickname }),
+  })
+    .then(function (response) {
+      return response.json().then(function (game) {
+        const grid = JSON.parse(game.grid);
+        return {
+          player: FIRST_PLAYER_VALUE,
+          grid: grid,
+          size: Math.sqrt(grid.length),
+        };
+      });
     })
     .catch(function (data) {});
 }
@@ -348,21 +433,4 @@ function getNextPlayer(player) {
   return player === FIRST_PLAYER_VALUE
     ? SECOND_PLAYER_VALUE
     : FIRST_PLAYER_VALUE;
-}
-
-/**
- * Load a game from Local Storage by id.
- *
- * @param {int} id
- */
-function loadGame(id) {
-  const game = getGameById(id);
-
-  if (game) {
-    const nextPlayer = getNextPlayer(game.player);
-    const size = Math.sqrt(game.grid.length);
-
-    return { player: nextPlayer, grid: game.grid, size: size };
-  }
-  throw new Error(`${ERROR_NOT_FOUND_GAME} ${id}`);
 }

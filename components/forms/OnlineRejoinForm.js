@@ -1,19 +1,20 @@
-import { Button, FormLabel, Select } from "@chakra-ui/core";
+import { Button, FormLabel, Input, Select } from "@chakra-ui/core";
 import { Formik } from "formik";
-import Router from "next/router";
 import _ from "lodash";
+import Router from "next/router";
 
 export default function OnlineRejoinForm({ games, ...props }) {
   const firstGameId = games ? _.first(games).uuid : "0";
+  const nickname = undefined;
 
   const options = games
     ? () => {
         return games.map((game, index) => {
-          const size = JSON.parse(game.grid).length;
+          const size = Math.sqrt(JSON.parse(game.grid).length);
 
           return (
             <option value={game.uuid}>
-              Play with {game.player1_nickname} - size {size}x{size}
+              Play with {game.player1Nickname} - size {size}x{size}
             </option>
           );
         });
@@ -23,17 +24,29 @@ export default function OnlineRejoinForm({ games, ...props }) {
       };
   return (
     <Formik
-      initialValues={{ gameId: firstGameId }}
+      initialValues={{ gameId: firstGameId, nickname }}
       onSubmit={(values) => {
         Router.push({
           pathname: "/board",
-          query: { id: values.gameId },
+          query: {
+            id: values.gameId,
+            player2Nickname: values.player2Nickname,
+            online: true,
+          },
         });
       }}
     >
       {({ handleSubmit, handleChange, values }) => (
         <form onSubmit={handleSubmit}>
-          <FormLabel htmlFor="load-game-select">Rejoin online game</FormLabel>
+          <FormLabel htmlFor="player2Nickname">Your nickname</FormLabel>
+          <Input
+            id="player2Nickname"
+            onChange={handleChange}
+            value={values.nickname}
+            tabIndex="0"
+          ></Input>
+
+          <FormLabel htmlFor="load-game-select">Choose a game</FormLabel>
           <Select
             onChange={handleChange}
             value={values.gameId}

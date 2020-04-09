@@ -14,7 +14,7 @@ export default (req, res) => {
 
 function get(res) {
   getGameRepository()
-    .findAll({ where: { player2_nickname: null } })
+    .findAll({ where: { player2Nickname: null } })
     .then((game) => {
       return res.status(200).json(game);
     })
