@@ -21,6 +21,9 @@ function get(res) {
     })
     .then((game) => {
       return res.status(200).json(game);
+    })
+    .catch((error) => {
+      return res.status(400).json(error);
     });
 }
 
@@ -34,5 +37,8 @@ function post(req, res) {
     })
     .then((game) => {
       return res.status(200).json(game);
+    })
+    .catch((error) => {
+      return res.status(400).json(error);
     });
 }
