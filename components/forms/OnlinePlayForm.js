@@ -7,8 +7,6 @@ const OnlinePlayForm = () => (
     initialValues={{ size: "7" }}
     onSubmit={(values) => {
 
-      console.log(values);
-
       Router.push({
         pathname: "/board",
         query: {
