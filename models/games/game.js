@@ -17,3 +17,5 @@ const GAME_DEFINITION = {
     allowNull: false,
   },
 };
+
+module.exports = { GAME_DEFINITION };

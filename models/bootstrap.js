@@ -1,3 +1,5 @@
+require("./games/game");
+
 const DB_PARAMETERS = {
   dialect: "sqlite",
   storage: "./var/data.sqlite",
