@@ -19,6 +19,8 @@ const Board = () => {
         <Playboard
           sizeParameter={sizeParameter}
           idParameter={query.id}
+          onlineParameter={query.online}
+          player1NicknameParameter={query.player1Nickname}
           w="100vw"
           marginTop="15vh"
           marginBottom="15vh"

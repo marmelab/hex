@@ -14,11 +14,7 @@ export default (req, res) => {
 
 function get(res) {
   getGameRepository()
-    .findAll({
-      where: {
-        player2_nickname: null,
-      },
-    })
+    .findAll({ where: { player2_nickname: null } })
     .then((game) => {
       return res.status(200).json(game);
     })
@@ -28,13 +24,9 @@ function get(res) {
 }
 
 function post(req, res) {
-  const { player1_nickname, grid } = req.body;
-
+  const { player1Nickname, grid } = JSON.parse(req.body);
   getGameRepository()
-    .create({
-      player1_nickname,
-      grid,
-    })
+    .create({ player1Nickname, grid })
     .then((game) => {
       return res.status(200).json(game);
     })

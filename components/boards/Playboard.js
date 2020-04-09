@@ -26,10 +26,25 @@ import {
 
 const ERROR_NOT_FOUND_GAME = `Can't find the game with ID`;
 
-function Playboard({ sizeParameter, idParameter, ...props }) {
-  const [{ grid, player, winner, size, gameId }, dispatch] = useReducer(
+function Playboard({
+  sizeParameter,
+  idParameter,
+  onlineParameter,
+  player1NicknameParameter,
+  ...props
+}) {
+  const [
+    { grid, player, winner, size, online, player1Nickname, gameId },
+    dispatch,
+  ] = useReducer(
     reducer,
-    { sizeParameter, idParameter, gameId },
+    {
+      sizeParameter,
+      idParameter,
+      onlineParameter,
+      player1NicknameParameter,
+      gameId,
+    },
     init
   );
 
@@ -101,6 +116,7 @@ function Playboard({ sizeParameter, idParameter, ...props }) {
                     height: `${hexagonHeight}%`,
                   }}
                   name={`hexagon_${index}`}
+                  key={index}
                   value={value}
                   aria-label={`Hexagon at row ${rowIndex} and column ${columnIndex}`}
                   role="button"
@@ -153,17 +169,29 @@ function reducer({ grid, player, winner, size, gameId }, action) {
 /**
  * Initialize states.
  *
- * @param {*} size
- * @param {*} id
+ * @param {int} sizeParameter
+ * @param {int} idParameter
+ * @param {boolean} onlineParameter
+ * @param {string} player1NicknameParameter
  */
-function init({ sizeParameter, idParameter }) {
+function init({
+  sizeParameter,
+  idParameter,
+  onlineParameter,
+  player1NicknameParameter,
+}) {
   if (sizeParameter) {
+    const grid = generateEmptyGrid(sizeParameter);
+    const gameId = getGameId();
+
     return {
       winner: NO_PLAYER_VALUE,
       player: FIRST_PLAYER_VALUE,
-      grid: generateEmptyGrid(sizeParameter),
+      grid: grid,
       size: sizeParameter,
-      gameId: generateGameId(),
+      gameId: gameId,
+      online: onlineParameter,
+      player1Nickname: player1NicknameParameter,
     };
   } else if (idParameter) {
     const { grid, player, size } = loadGame(idParameter);
@@ -173,10 +201,34 @@ function init({ sizeParameter, idParameter }) {
       grid: grid,
       size: size,
       gameId: idParameter,
+      online: onlineParameter,
     };
   }
 
   throw new Error(`Can't intialize a game.`);
+}
+
+function getGameId(onlineParameter) {
+  if (onlineParameter) {
+    const game = initializeServerGame({
+      grid,
+      player1Nickname: player1NicknameParameter,
+    });
+    return game.uuid;
+  }
+
+  return generateGameId();
+}
+
+async function initializeServerGame(game) {
+  fetch("http://localhost:3000/api/games", {
+    method: "post",
+    body: JSON.stringify(game),
+  })
+    .then(function (response) {
+      return response.json();
+    })
+    .catch(function (data) {});
 }
 
 /**
@@ -312,5 +364,5 @@ function loadGame(id) {
 
     return { player: nextPlayer, grid: game.grid, size: size };
   }
-  throw new Error(`Can't find the game with ID ${id}`);
+  throw new Error(`${ERROR_NOT_FOUND_GAME} ${id}`);
 }

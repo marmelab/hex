@@ -6,22 +6,21 @@ const OnlinePlayForm = () => (
   <Formik
     initialValues={{ size: "7" }}
     onSubmit={(values) => {
-
       Router.push({
         pathname: "/board",
         query: {
           size: values.size,
           online: true,
-          player1_nickname: values.player1_nickname,
+          player1Nickname: values.player1Nickname,
         },
       });
     }}
   >
     {({ handleSubmit, handleChange, values }) => (
       <form onSubmit={handleSubmit}>
-        <FormLabel htmlFor="player1_nickname">Your nickname</FormLabel>
+        <FormLabel htmlFor="player1Nickname">Your nickname</FormLabel>
         <Input
-          id="player1_nickname"
+          id="player1Nickname"
           onChange={handleChange}
           value={values.nickname}
           tabIndex="0"

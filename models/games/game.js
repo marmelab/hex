@@ -5,11 +5,11 @@ const GAME_DEFINITION = {
     type: DataTypes.UUID,
     defaultValue: Sequelize.UUIDV4,
   },
-  player1_nickname: {
+  player1Nickname: {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  player2_nickname: {
+  player2Nickname: {
     type: Sequelize.STRING,
   },
   grid: {
