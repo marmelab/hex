@@ -1,6 +1,7 @@
 import { Button, FormLabel, Select } from "@chakra-ui/core";
 import { Formik } from "formik";
 import Router from "next/router";
+import _ from "lodash";
 
 export default function OnlineRejoinForm({ games, ...props }) {
   const firstGameId = games ? _.first(games).uuid : "0";
