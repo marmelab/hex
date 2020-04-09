@@ -1,8 +1,8 @@
-import { Formik } from "formik";
 import { Button, FormLabel, Select } from "@chakra-ui/core";
+import { Formik } from "formik";
+import _ from "lodash";
 import Router from "next/router";
 import { getGamesInLocalStorage } from "./storage";
-import _ from "lodash";
 
 export default function LoadGameForm() {
   const games = getGames();

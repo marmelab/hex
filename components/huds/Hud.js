@@ -39,7 +39,7 @@ function Hud({ player, winner, ...props }) {
   const { color, colorFont } = switchColor(player, winner);
 
   return (
-    <Flex  borderRadius="md" justifyContent="center" {...props}>
+    <Flex  borderRadius="md" justifyContent="center" height="8vh" {...props}>
       <Text
         bg={color}
         color={colorFont}
