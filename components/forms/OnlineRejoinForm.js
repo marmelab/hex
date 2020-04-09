@@ -1,17 +1,20 @@
-import { FormLabel, Select, Button } from "@chakra-ui/core";
+import { Button, FormLabel, Select } from "@chakra-ui/core";
 import { Formik } from "formik";
-import fetch from "isomorphic-unfetch";
 import Router from "next/router";
 
-export default function OnlineRejoinForm(props) {
-  const firstGameId = 0;
+export default function OnlineRejoinForm({ games, ...props }) {
+  const firstGameId = games ? _.first(games).uuid : "0";
 
-  console.log(props);
-
-  const options = props.games
+  const options = games
     ? () => {
         return games.map((game, index) => {
-          return <option value={game.uuid}>Game #{index + 1}</option>;
+          const size = JSON.parse(game.grid).length;
+
+          return (
+            <option name="gameId" value={game.uuid}>
+              Play with {game.player1_nickname} - size {size}x{size}
+            </option>
+          );
         });
       }
     : () => {
@@ -29,7 +32,7 @@ export default function OnlineRejoinForm(props) {
     >
       {({ handleSubmit, handleChange, values }) => (
         <form onSubmit={handleSubmit}>
-          <FormLabel htmlFor="load-game-select">Load game</FormLabel>
+          <FormLabel htmlFor="load-game-select">Rejoin online game</FormLabel>
           <Select
             onChange={handleChange}
             value={values.gameId}
@@ -51,11 +54,4 @@ export default function OnlineRejoinForm(props) {
       )}
     </Formik>
   );
-}
-
-export async function getServerSideProps() {
-  const res = await fetch("http://localhost:3000/api/games");
-  const games = await res.json();
-
-  return { props: { games } };
 }

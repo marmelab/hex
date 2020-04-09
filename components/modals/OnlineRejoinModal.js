@@ -11,7 +11,7 @@ import {
 import MenuButton from "../buttons/MenuButton";
 import OnlineRejoinForm from "../forms/OnlineRejoinForm";
 
-export default function OnlineRejoinModal({ ...props }) {
+export default function OnlineRejoinModal({ games, ...props }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Flex {...props}>
@@ -26,7 +26,7 @@ export default function OnlineRejoinModal({ ...props }) {
           <ModalHeader>Rejoin online game</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <OnlineRejoinForm />
+            <OnlineRejoinForm games={games} />
           </ModalBody>
         </ModalContent>
       </Modal>

@@ -4,7 +4,7 @@ import OnlinePlayModal from "../modals/OnlinePlayModal";
 import OnlineRejoinModal from "../modals/OnlineRejoinModal";
 import SavedGameModal from "../modals/SavedGameModal";
 
-export default function MainMenu(props) {
+export default function MainMenu({ games, ...props }) {
   return (
     <Flex name="mainMenu" {...props}>
       <LocalPlayModal
@@ -31,6 +31,7 @@ export default function MainMenu(props) {
         alignItems="center"
         justify="center"
         m="2%"
+        games={games}
       />
     </Flex>
   );
