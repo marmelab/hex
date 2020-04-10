@@ -33,7 +33,7 @@ const useGame = (
   sizeParameter,
   idParameter,
   player1NicknameParameter,
-  player2NicknameParameter
+  player2NicknameParameter,
 ) => {
   const [game, setGame] = useState();
 
@@ -51,7 +51,7 @@ const useGame = (
         setGame(game);
       });
     }
-  });
+  }, [game]);
 
   return game;
 };
