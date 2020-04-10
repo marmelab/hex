@@ -15,7 +15,7 @@ import LoadGameForm from "../forms/LoadGameForm";
 export default function SavedGameModal({ ...props }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Flex {...props}>
+    <Flex alignItems="center" justify="center" {...props}>
       <MenuButton
         variantColor="teal"
         text="Resume local game"
