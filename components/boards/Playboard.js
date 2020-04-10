@@ -64,7 +64,7 @@ function Playboard({
   player2NicknameParameter,
   ...props
 }) {
-  useGame(
+  const game = useGame(
     onlineParameter,
     sizeParameter,
     idParameter,
