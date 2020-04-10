@@ -21,6 +21,7 @@ const Board = () => {
           idParameter={query.id}
           onlineParameter={query.online}
           player1NicknameParameter={query.player1Nickname}
+          player2NicknameParameter={query.player2Nickname}
           w="100vw"
           marginTop="15vh"
           marginBottom="15vh"

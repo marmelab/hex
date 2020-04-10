@@ -32,6 +32,7 @@ function Playboard({
   idParameter,
   onlineParameter,
   player1NicknameParameter,
+  player2NicknameParameter,
   ...props
 }) {
   const [
@@ -44,6 +45,7 @@ function Playboard({
       idParameter,
       onlineParameter,
       player1NicknameParameter,
+      player2NicknameParameter,
       gameId,
     },
     init
@@ -210,11 +212,11 @@ async function loadExistingGame(
   player2NicknameParameter,
   onlineParameter
 ) {
+  console.log(await updateServerGame(idParameter, player2NicknameParameter));
+
   const { grid, player, size } = onlineParameter
     ? updateServerGame(idParameter, player2NicknameParameter)
     : loadLocalGame();
-
-  console.log(updateServerGame(idParameter, player2NicknameParameter));
 
   return {
     winner: NO_PLAYER_VALUE,
@@ -310,6 +312,7 @@ function updateServerGame(id, player2Nickname) {
           player: FIRST_PLAYER_VALUE,
           grid: grid,
           size: Math.sqrt(grid.length),
+          player1Nickname: player1Nickname,
         };
       });
     })
