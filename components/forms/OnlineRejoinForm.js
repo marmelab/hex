@@ -32,8 +32,7 @@ export default function OnlineRejoinForm({ games, ...props }) {
           query: {
             id: values.gameId,
             player2Nickname: values.player2Nickname,
-            online: true,
-            size: size,
+            online: true
           },
         });
       }}

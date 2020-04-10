@@ -26,6 +26,7 @@ import {
 
 const ERROR_NOT_FOUND_GAME = `Can't find the game with ID`;
 const GAME_URI = "http://localhost:3000/api/games";
+const DEFAULT_SIZE = 11;
 
 const useGame = (
   onlineParameter,
@@ -48,7 +49,7 @@ const useGame = (
         idParameter,
         player2NicknameParameter,
         onlineParameter
-      ).then(setGame);
+      );
     }
   });
 
@@ -223,17 +224,16 @@ function reducer({ grid, player, winner, size, gameId }, action) {
  * @param {string} player1NicknameParameter
  */
 function reset({
-  sizeParameter,
   idParameter,
   onlineParameter,
   player1NicknameParameter,
   player2NicknameParameter,
 }) {
   return {
-    grid: generateEmptyGrid(sizeParameter),
+    grid: generateEmptyGrid(DEFAULT_SIZE),
     player: FIRST_PLAYER_VALUE,
     winner: NO_PLAYER_VALUE,
-    size: sizeParameter,
+    size: DEFAULT_SIZE,
     online: onlineParameter,
     player1Nickname: player1NicknameParameter,
     player2Nickname: player2NicknameParameter,
@@ -332,7 +332,7 @@ async function initializeServerGame(game) {
       return game.uuid;
     })
     .catch(function (error) {
-      console.log(error);
+      return error;
     });
 }
 
@@ -358,7 +358,9 @@ function updateServerGame(id, player2Nickname) {
         };
       });
     })
-    .catch(function (data) {});
+    .catch(function (error) {
+      return error;
+    });
 }
 
 /**
