@@ -33,7 +33,7 @@ const useGame = (
   sizeParameter,
   idParameter,
   player1NicknameParameter,
-  player2NicknameParameter,
+  player2NicknameParameter
 ) => {
   const [game, setGame] = useState();
 
@@ -51,7 +51,13 @@ const useGame = (
         setGame(game);
       });
     }
-  }, [game]);
+  }, [
+    onlineParameter,
+    sizeParameter,
+    idParameter,
+    player1NicknameParameter,
+    player2NicknameParameter,
+  ]);
 
   return game;
 };
@@ -84,18 +90,7 @@ function Playboard({
       gameId,
     },
     dispatch,
-  ] = useReducer(
-    reducer,
-    {
-      sizeParameter,
-      idParameter,
-      onlineParameter,
-      player1NicknameParameter,
-      player2NicknameParameter,
-      gameId,
-    },
-    reset
-  );
+  ] = useReducer(reducer, { game }, reset);
 
   const boardRatio = getBoardRatio(size);
 
