@@ -12,6 +12,31 @@ import {
 } from "../../engine/player";
 import { Flex, Text } from "@chakra-ui/core";
 
+function Hud({ player, winner, ...props }) {
+
+  const { color, colorFont } = switchColor(player, winner);
+
+  return (
+    <Flex borderRadius="md" justifyContent="center" height="8vh" {...props}>
+      <Text
+        bg={color}
+        color={colorFont}
+        fontSize="1em"
+        fontWeight="bold"
+        display="flex"
+        p="5%"
+        textAlign="center"
+      >
+        {winner === NO_PLAYER_VALUE
+          ? `Player ${player}, it's your turn.`
+          : `Won by player ${winner}`}
+      </Text>
+    </Flex>
+  );
+}
+
+export default Hud;
+
 function switchColor(player, winner) {
   const colorSetFirstPlayer = {
     color: FIRST_PLAYER_COLOR,
@@ -34,27 +59,3 @@ function switchColor(player, winner) {
     return colorSetSecondPlayer;
   }
 }
-
-function Hud({ player, winner, ...props }) {
-  const { color, colorFont } = switchColor(player, winner);
-
-  return (
-    <Flex  borderRadius="md" justifyContent="center" height="8vh" {...props}>
-      <Text
-        bg={color}
-        color={colorFont}
-        fontSize="1em"
-        fontWeight="bold"
-        display="flex"
-        p="5%"
-        textAlign="center"
-      >
-        {winner === NO_PLAYER_VALUE
-          ? `Player ${player}, it's your turn.`
-          : `Won by player ${winner}`}
-      </Text>
-    </Flex>
-  );
-}
-
-export default Hud;

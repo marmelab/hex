@@ -9,25 +9,25 @@ import {
   useDisclosure,
 } from "@chakra-ui/core";
 import MenuButton from "../buttons/MenuButton";
-import LocalPlayForm from "../forms/LocalPlayForm";
+import StartGameForm from "../forms/StartGameForm";
 
-export default function LocalPlayModal(props) {
+export default function StartGameModal({ ...props }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Flex alignItems="center" justify="center" {...props}>
       <MenuButton
         variantColor="teal"
         size="lg"
-        text="Play local game"
+        text="Start a new game"
         onClick={onOpen}
       />
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>2 players on the same device</ModalHeader>
+          <ModalHeader>Start a new game</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <LocalPlayForm />
+            <StartGameForm />
           </ModalBody>
         </ModalContent>
       </Modal>

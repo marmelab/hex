@@ -1,5 +1,5 @@
 import { Box, Flex, PseudoBox } from "@chakra-ui/core";
-import React, { useCallback, useEffect, useReducer, useState } from "react";
+import React, { useCallback, useReducer } from "react";
 import { getWinningPath } from "../../engine/game";
 import { generateEmptyGrid } from "../../engine/grid";
 import {
@@ -10,7 +10,7 @@ import {
 } from "../../engine/player";
 import {
   getGameById,
-  getGamesInLocalStorage,
+  getGamesFromLocalStorage,
   setGamesInLocalStorage,
 } from "../forms/storage";
 import SidePanel from "../panels/SidePanel";
@@ -25,75 +25,26 @@ import {
 } from "./position.js";
 
 const ERROR_NOT_FOUND_GAME = `Can't find the game with ID`;
-const GAME_URI = "http://localhost:3000/api/games";
 const DEFAULT_SIZE = 11;
 
-const useGame = (
-  onlineParameter,
-  sizeParameter,
-  idParameter,
-  player1NicknameParameter,
-  player2NicknameParameter
-) => {
-  const [game, setGame] = useState();
+function init({ game }) {
+  return {
+    grid: game.grid,
+    size: Math.sqrt(game.grid.length),
+    player: game.player,
+    winner: game.winner,
+  };
+}
 
-  useEffect(() => {
-    if (sizeParameter) {
-      setGame(
-        createNewGame(sizeParameter, onlineParameter, player1NicknameParameter)
-      );
-    } else if (idParameter) {
-      loadExistingGame(
-        idParameter,
-        player2NicknameParameter,
-        onlineParameter
-      ).then(function (game) {
-        setGame(game);
-      });
-    }
-  }, [
-    onlineParameter,
-    sizeParameter,
-    idParameter,
-    player1NicknameParameter,
-    player2NicknameParameter,
-  ]);
+function Playboard({ game, ...props }) {
 
-  return game;
-};
-
-function Playboard({
-  sizeParameter,
-  idParameter,
-  onlineParameter,
-  player1NicknameParameter,
-  player2NicknameParameter,
-  ...props
-}) {
-  const game = useGame(
-    onlineParameter,
-    sizeParameter,
-    idParameter,
-    player1NicknameParameter,
-    player2NicknameParameter
+  const [{ grid, player, winner, size }, dispatch] = useReducer(
+    reducer,
+    { game },
+    init
   );
 
-  const [
-    {
-      grid,
-      player,
-      winner,
-      size,
-      online,
-      player1Nickname,
-      player2Nickname,
-      gameId,
-    },
-    dispatch,
-  ] = useReducer(reducer, { game }, reset);
-
   const boardRatio = getBoardRatio(size);
-
   const hexagonWidth = getHexagonWidth(size);
   const hexagonHeight = getHexagonHeight(size);
 
@@ -101,7 +52,7 @@ function Playboard({
     if (winner) {
       dispatch({
         type: "reset",
-        payload: { sizeParameter: size, idParameter: undefined },
+        payload: { sizeParameter: size },
         winner,
       });
     }
@@ -214,12 +165,10 @@ function reducer({ grid, player, winner, size, gameId }, action) {
  * Initialize states.
  *
  * @param {int} sizeParameter
- * @param {int} idParameter
  * @param {boolean} onlineParameter
  * @param {string} player1NicknameParameter
  */
 function reset({
-  idParameter,
   onlineParameter,
   player1NicknameParameter,
   player2NicknameParameter,
@@ -232,21 +181,15 @@ function reset({
     online: onlineParameter,
     player1Nickname: player1NicknameParameter,
     player2Nickname: player2NicknameParameter,
-    gameId: idParameter,
   };
 }
 
 /**
  *
- * @param {*} idParameter
  * @param {*} player2NicknameParameter
  * @param {*} onlineParameter
  */
-async function loadExistingGame(
-  idParameter,
-  player2NicknameParameter,
-  onlineParameter
-) {
+async function loadExistingGame(player2NicknameParameter, onlineParameter) {
   const { grid, player, size } = onlineParameter
     ? updateServerGame(idParameter, player2NicknameParameter)
     : loadLocalGame();
@@ -269,66 +212,6 @@ function loadLocalGame() {
     return { player: nextPlayer, grid: game.grid, size: size };
   }
   throw new Error(`${ERROR_NOT_FOUND_GAME} ${id}`);
-}
-
-/**
- *
- *
- * @param {int} size
- * @param {boolean} isOnline
- */
-function createNewGame(size, isOnline, player1Nickname) {
-  const grid = generateEmptyGrid(size);
-  const gameId = getGameId(isOnline, grid, player1Nickname);
-
-  return {
-    winner: NO_PLAYER_VALUE,
-    player: FIRST_PLAYER_VALUE,
-    grid: grid,
-    size: size,
-    gameId: gameId,
-    online: isOnline,
-    player1Nickname: player1Nickname,
-  };
-}
-
-/**
- * Get the game ID.
- *
- * If local, we generate it. For online games, we get it back from API.
- *
- * @param {boolean} isOnline
- */
-function getGameId(isOnline, grid, player1Nickname) {
-  if (isOnline) {
-    return initializeServerGame({
-      grid: JSON.stringify(grid),
-      player1Nickname: player1Nickname,
-    });
-  }
-
-  return generateGameId();
-}
-
-/**
- * Initialize a new game on API.
- *
- * @param {*} game
- */
-async function initializeServerGame(game) {
-  fetch(GAME_URI, {
-    method: "post",
-    body: JSON.stringify(game),
-  })
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (game) {
-      return game.uuid;
-    })
-    .catch(function (error) {
-      return error;
-    });
 }
 
 /**
@@ -407,16 +290,6 @@ function playMove({ cellIndex, grid, player, winner, size, gameId }) {
 }
 
 /**
- * Create a timestamp based game id
- *
- * Based on : https://gist.github.com/gordonbrander/2230317
- * @param {int} parameterId
- */
-function generateGameId() {
-  return Math.random().toString(36).substr(2, 9);
-}
-
-/**
  * Save the current game and add it to the current pool of saved games.
  *
  * @param {String} gameId
@@ -424,19 +297,14 @@ function generateGameId() {
  * @param {int} player
  */
 function saveCurrentGame(gameId, grid, player) {
-  const games = getGamesInLocalStorage();
+  const games = getGamesFromLocalStorage();
 
   const currentGame = games.find(function (game) {
     return game.id === gameId;
   });
 
-  if (!currentGame) {
-    const newSave = { id: gameId, grid, player };
-    games.push(newSave);
-  } else {
-    currentGame.grid = grid;
-    currentGame.player = player;
-  }
+  currentGame.grid = grid;
+  currentGame.player = player;
 
   setGamesInLocalStorage(games);
 }
@@ -447,7 +315,7 @@ function saveCurrentGame(gameId, grid, player) {
  * @param {string} gameId
  */
 function cleanCurrentGame(gameId) {
-  const games = getGamesInLocalStorage();
+  const games = getGamesFromLocalStorage();
 
   _.remove(games, function (game) {
     return game.id === gameId;

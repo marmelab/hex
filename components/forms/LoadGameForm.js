@@ -2,7 +2,7 @@ import { Button, FormLabel, Select } from "@chakra-ui/core";
 import { Formik } from "formik";
 import _ from "lodash";
 import Router from "next/router";
-import { getGamesInLocalStorage } from "./storage";
+import { getGamesFromLocalStorage } from "./storage";
 
 export default function LoadGameForm() {
   const games = getGames();
@@ -11,11 +11,7 @@ export default function LoadGameForm() {
   const options = games
     ? () => {
         return games.map((game, index) => {
-          return (
-            <option value={game.id}>
-              Game #{index + 1}
-            </option>
-          );
+          return <option value={game.id}>Game #{index + 1}</option>;
         });
       }
     : () => {
@@ -68,7 +64,7 @@ export default function LoadGameForm() {
  */
 function getGames() {
   try {
-    return getGamesInLocalStorage();
+    return getGamesFromLocalStorage();
   } catch (error) {
     if (error.message.includes("Local Storage is unavailable.")) {
       return undefined;

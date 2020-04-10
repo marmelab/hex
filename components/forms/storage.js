@@ -5,14 +5,18 @@ const GAMES_KEY = "games";
  *
  * @return Array
  */
-export function getGamesInLocalStorage() {
-  const games = JSON.parse(getFromLocalStorage(GAMES_KEY));
+export function getGamesFromLocalStorage() {
+  const gameKeys = getKeys(GAMES_KEY);
 
-  if (games === null) {
-    setGamesInLocalStorage([]);
-  }
+  return gameKeys === null ? initGamesInLocalStorage : JSON.parse(gameKeys);
+}
 
-  return games;
+/**
+ *
+ */
+function initGamesInLocalStorage() {
+  setGamesInLocalStorage([]);
+  return [];
 }
 
 /**
@@ -46,7 +50,7 @@ function localStorageIsSupported() {
  * @param {string} key
  * @return string
  */
-function getFromLocalStorage(key) {
+function getKeys(key) {
   if (localStorageIsSupported()) {
     return localStorage.getItem(key);
   }
@@ -60,7 +64,7 @@ function getFromLocalStorage(key) {
  * @param {int} id
  */
 export function getGameById(id) {
-  return getGamesInLocalStorage().find(function (games) {
-    return games.id == id;
+  return getGamesFromLocalStorage().find(function (games) {
+    return games.id === id;
   });
 }
