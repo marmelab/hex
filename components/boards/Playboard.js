@@ -43,9 +43,13 @@ const useGame = (
         createNewGame(sizeParameter, onlineParameter, player1NicknameParameter)
       );
     } else if (idParameter) {
-      return setGame(
-        loadExistingGame(idParameter, player2NicknameParameter, onlineParameter)
-      );
+      loadExistingGame(
+        idParameter,
+        player2NicknameParameter,
+        onlineParameter
+      ).then(function (game) {
+        setGame(game);
+      });
     }
   });
 
@@ -60,7 +64,7 @@ function Playboard({
   player2NicknameParameter,
   ...props
 }) {
-  const game = useGame(
+  useGame(
     onlineParameter,
     sizeParameter,
     idParameter,
