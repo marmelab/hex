@@ -4,7 +4,8 @@ import _ from "lodash";
 import Router from "next/router";
 
 export default function OnlineRejoinForm({ games, ...props }) {
-  const firstGameId = games ? _.first(games).uuid : "0";
+
+  const firstGameId = games && games.length > 0 ? _.first(games).uuid : "0";
   const nickname = undefined;
 
   const options = games
@@ -32,6 +33,7 @@ export default function OnlineRejoinForm({ games, ...props }) {
             id: values.gameId,
             player2Nickname: values.player2Nickname,
             online: true,
+            size: size,
           },
         });
       }}

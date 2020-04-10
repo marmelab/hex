@@ -1,31 +1,59 @@
-import React, { useCallback, useReducer } from "react";
-import Hexagon from "./Hexagon";
-import BottomBoard from "./BottomBoard";
-import {
-  getBoardRatio,
-  getHexagonHeight,
-  getHexagonWidth,
-  calculateLeftPosition,
-  calculateTopPosition,
-} from "./position.js";
+import { Box, Flex, PseudoBox } from "@chakra-ui/core";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
+import { getWinningPath } from "../../engine/game";
 import { generateEmptyGrid } from "../../engine/grid";
 import {
   FIRST_PLAYER_VALUE,
-  WINNER_LINE_VALUE,
   NO_PLAYER_VALUE,
   SECOND_PLAYER_VALUE,
+  WINNER_LINE_VALUE,
 } from "../../engine/player";
-import { getWinningPath } from "../../engine/game";
-import { Flex, Box, PseudoBox } from "@chakra-ui/core";
-import SidePanel from "../panels/SidePanel";
 import {
   getGameById,
   getGamesInLocalStorage,
   setGamesInLocalStorage,
 } from "../forms/storage";
+import SidePanel from "../panels/SidePanel";
+import BottomBoard from "./BottomBoard";
+import Hexagon from "./Hexagon";
+import {
+  calculateLeftPosition,
+  calculateTopPosition,
+  getBoardRatio,
+  getHexagonHeight,
+  getHexagonWidth,
+} from "./position.js";
 
 const ERROR_NOT_FOUND_GAME = `Can't find the game with ID`;
 const GAME_URI = "http://localhost:3000/api/games";
+
+const useGame = (
+  onlineParameter,
+  sizeParameter,
+  idParameter,
+  player1NicknameParameter,
+  player2NicknameParameter
+) => {
+  const [game, setGame] = useState();
+
+  useEffect(() => {
+    if (sizeParameter) {
+      return createNewGame(
+        sizeParameter,
+        onlineParameter,
+        player1NicknameParameter
+      );
+    } else if (idParameter) {
+      return loadExistingGame(
+        idParameter,
+        player2NicknameParameter,
+        onlineParameter
+      ).then(setGame);
+    }
+  });
+
+  return game;
+};
 
 function Playboard({
   sizeParameter,
@@ -35,8 +63,25 @@ function Playboard({
   player2NicknameParameter,
   ...props
 }) {
+  const game = useGame(
+    onlineParameter,
+    sizeParameter,
+    idParameter,
+    player1NicknameParameter,
+    player2NicknameParameter
+  );
+
   const [
-    { grid, player, winner, size, online, player1Nickname, gameId },
+    {
+      grid,
+      player,
+      winner,
+      size,
+      online,
+      player1Nickname,
+      player2Nickname,
+      gameId,
+    },
     dispatch,
   ] = useReducer(
     reducer,
@@ -48,7 +93,7 @@ function Playboard({
       player2NicknameParameter,
       gameId,
     },
-    init
+    reset
   );
 
   const boardRatio = getBoardRatio(size);
@@ -177,28 +222,23 @@ function reducer({ grid, player, winner, size, gameId }, action) {
  * @param {boolean} onlineParameter
  * @param {string} player1NicknameParameter
  */
-function init({
+function reset({
   sizeParameter,
   idParameter,
   onlineParameter,
   player1NicknameParameter,
   player2NicknameParameter,
 }) {
-  if (sizeParameter) {
-    return createNewGame(
-      sizeParameter,
-      onlineParameter,
-      player1NicknameParameter
-    );
-  } else if (idParameter) {
-    return loadExistingGame(
-      idParameter,
-      player2NicknameParameter,
-      onlineParameter
-    );
-  }
-
-  throw new Error(`Can't intialize a game.`);
+  return {
+    grid: generateEmptyGrid(sizeParameter),
+    player: FIRST_PLAYER_VALUE,
+    winner: NO_PLAYER_VALUE,
+    size: sizeParameter,
+    online: onlineParameter,
+    player1Nickname: player1NicknameParameter,
+    player2Nickname: player2NicknameParameter,
+    gameId: idParameter,
+  };
 }
 
 /**
@@ -212,8 +252,6 @@ async function loadExistingGame(
   player2NicknameParameter,
   onlineParameter
 ) {
-  console.log(await updateServerGame(idParameter, player2NicknameParameter));
-
   const { grid, player, size } = onlineParameter
     ? updateServerGame(idParameter, player2NicknameParameter)
     : loadLocalGame();
@@ -241,21 +279,21 @@ function loadLocalGame() {
 /**
  *
  *
- * @param {int} sizeParameter
- * @param {boolean} onlineParameter
+ * @param {int} size
+ * @param {boolean} isOnline
  */
-function createNewGame(sizeParameter, onlineParameter) {
-  const grid = generateEmptyGrid(sizeParameter);
-  const gameId = getGameId();
+function createNewGame(size, isOnline, player1Nickname) {
+  const grid = generateEmptyGrid(size);
+  const gameId = getGameId(isOnline, grid, player1Nickname);
 
   return {
     winner: NO_PLAYER_VALUE,
     player: FIRST_PLAYER_VALUE,
     grid: grid,
-    size: sizeParameter,
+    size: size,
     gameId: gameId,
-    online: onlineParameter,
-    player1Nickname: player1NicknameParameter,
+    online: isOnline,
+    player1Nickname: player1Nickname,
   };
 }
 
@@ -264,22 +302,21 @@ function createNewGame(sizeParameter, onlineParameter) {
  *
  * If local, we generate it. For online games, we get it back from API.
  *
- * @param {boolean} onlineParameter
+ * @param {boolean} isOnline
  */
-function getGameId(onlineParameter) {
-  if (onlineParameter) {
-    const game = initializeServerGame({
-      grid,
-      player1Nickname: player1NicknameParameter,
+function getGameId(isOnline, grid, player1Nickname) {
+  if (isOnline) {
+    return initializeServerGame({
+      grid: JSON.stringify(grid),
+      player1Nickname: player1Nickname,
     });
-    return game.uuid;
   }
 
   return generateGameId();
 }
 
 /**
- * Initialize a new game on API
+ * Initialize a new game on API.
  *
  * @param {*} game
  */
@@ -291,7 +328,12 @@ async function initializeServerGame(game) {
     .then(function (response) {
       return response.json();
     })
-    .catch(function (data) {});
+    .then(function (game) {
+      return game.uuid;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 }
 
 /**
