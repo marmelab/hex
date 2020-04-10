@@ -39,16 +39,12 @@ const useGame = (
 
   useEffect(() => {
     if (sizeParameter) {
-      return createNewGame(
-        sizeParameter,
-        onlineParameter,
-        player1NicknameParameter
+      setGame(
+        createNewGame(sizeParameter, onlineParameter, player1NicknameParameter)
       );
     } else if (idParameter) {
-      return loadExistingGame(
-        idParameter,
-        player2NicknameParameter,
-        onlineParameter
+      return setGame(
+        loadExistingGame(idParameter, player2NicknameParameter, onlineParameter)
       );
     }
   });
