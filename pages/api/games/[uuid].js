@@ -27,7 +27,9 @@ function get(req, res) {
     })
     .then((game) => {
       const grid = JSON.parse(game.grid);
-      game.dataValues.currentPlayer = getCurrentPlayer(grid, game.winner);
+
+      game.dataValues.player = getCurrentPlayer(grid, game.winner);
+      game.dataValues.grid = grid;
 
       return res.status(200).json(game.dataValues);
     });

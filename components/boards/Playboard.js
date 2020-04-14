@@ -28,6 +28,7 @@ const ERROR_NOT_FOUND_GAME = `Can't find the game with ID`;
 const DEFAULT_SIZE = 11;
 
 function init({ game }) {
+
   return {
     grid: game.grid,
     size: Math.sqrt(game.grid.length),
@@ -37,7 +38,6 @@ function init({ game }) {
 }
 
 function Playboard({ game, ...props }) {
-
   const [{ grid, player, winner, size }, dispatch] = useReducer(
     reducer,
     { game },
