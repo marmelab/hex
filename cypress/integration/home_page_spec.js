@@ -18,6 +18,13 @@ describe("The Home Page", function () {
     cy.findByLabelText("Close").click();
   });
 
+  it("should display the 'Resume local game' modal", function () {
+    cy.findByText("Resume local game").should("exist").click();
+    cy.findByLabelText("Load game").should("exist").select("0") ;
+    cy.findByText("Start").should("exist");
+    cy.findByLabelText("Close").click();
+  });
+
   it("should display the 'Rejoin online game' modal", function () {
     cy.findByText("Rejoin online game").should("exist").click();
     cy.findByText("Your nickname").should("exist").type("Test");

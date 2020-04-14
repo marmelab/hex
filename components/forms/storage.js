@@ -8,7 +8,7 @@ const GAMES_KEY = "games";
 export function getGamesFromLocalStorage() {
   const gameKeys = getKeys(GAMES_KEY);
 
-  return gameKeys === null ? initGamesInLocalStorage : JSON.parse(gameKeys);
+  return gameKeys === null ? initGamesInLocalStorage() : JSON.parse(gameKeys);
 }
 
 /**
