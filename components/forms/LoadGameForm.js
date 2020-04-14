@@ -11,7 +11,11 @@ export default function LoadGameForm() {
   const options = games
     ? () => {
         return games.map((game, index) => {
-          return <option value={game.id}>Game #{index + 1}</option>;
+          return (
+            <option key={index} value={game.id}>
+              Game #{index + 1}
+            </option>
+          );
         });
       }
     : () => {

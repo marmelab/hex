@@ -14,7 +14,7 @@ export default function OnlineRejoinForm({ games, ...props }) {
 
           return (
             <option key={index} value={game.uuid}>
-              Play with {game.player1Nickname} - size {size}x{size}
+              Play with {game.firstPlayerNickname} - size {size}x{size}
             </option>
           );
         });

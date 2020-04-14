@@ -7,8 +7,8 @@ export default function MainMenu({ games, ...props }) {
   return (
     <Flex name="mainMenu" {...props}>
       <StartGameModal width="100%" m="2%" tabindex="0" />
-      <SavedGameModal width="100%" m="2%" />
-      <OnlineRejoinModal width="100%" m="2%" games={games} />
+      <SavedGameModal width="100%" m="2%" tabindex="0" />
+      <OnlineRejoinModal width="100%" m="2%" games={games} tabindex="0" />
     </Flex>
   );
 }
