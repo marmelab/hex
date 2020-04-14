@@ -11,7 +11,6 @@ export default function OfflineBoardPage() {
   if (!id) {
     return null;
   }
-
   const savedGame = getGameById(id);
 
   const grid = JSON.parse(savedGame.grid);

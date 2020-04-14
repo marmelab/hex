@@ -1,5 +1,7 @@
 import { getGameRepository } from "../../models/games/gameRepository";
 
+export const GAME_URI = "http://localhost:3000/api/games";
+
 export default (req, res) => {
   const method = req.method;
 

@@ -1,10 +1,9 @@
 import fetch from "isomorphic-unfetch";
 import Playboard from "../../components/boards/Playboard";
 import Layout from "../../components/layouts/Layout";
+import { GAME_URI } from "../api/games";
 
-export const GAME_URI = "http://localhost:3000/api/games";
-
-const OnlineBoardPage = ({ game }) => {
+export default OnlineBoardPage = ({ game }) => {
   return (
     <Layout
       content={
@@ -13,8 +12,6 @@ const OnlineBoardPage = ({ game }) => {
     />
   );
 };
-
-export default OnlineBoardPage;
 
 export async function getServerSideProps(context) {
   const res = await fetch(`${GAME_URI}/${context.query.id}`);
