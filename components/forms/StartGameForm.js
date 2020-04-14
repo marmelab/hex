@@ -13,8 +13,7 @@ import { generateEmptyGrid } from "../../engine/grid";
 import { NO_PLAYER_VALUE } from "../../engine/player";
 import { GAME_URI, ONLINE_PATHNAME } from "../../pages/board/online";
 import { getGamesFromLocalStorage, setGamesInLocalStorage } from "./storage";
-
-const OFFLINE_PATHNAME = "/board/offline";
+import { OFFLINE_PATHNAME } from "../../pages/board/offline";
 
 export default function StartGameForm() {
   return (
