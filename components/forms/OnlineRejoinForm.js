@@ -89,8 +89,7 @@ function addSecondPlayer({ secondPlayer }, id) {
  */
 function getOptions(games) {
 
-  console.log(games);
-  return games
+  return games.length >= 1
     ? () => {
         return games.map((game, index) => {
           const size = Math.sqrt(JSON.parse(game.grid).length);
