@@ -1,9 +1,5 @@
 import { Box, Flex, PseudoBox } from "@chakra-ui/core";
-import React, { useCallback, useEffect, useState } from "react";
-import {
-  getGamesFromLocalStorage,
-  setGamesInLocalStorage,
-} from "../forms/storage";
+import React, { useCallback } from "react";
 import SidePanel from "../panels/SidePanel";
 import BottomBoard from "./BottomBoard";
 import Hexagon from "./Hexagon";
@@ -15,29 +11,18 @@ import {
   getHexagonWidth,
 } from "./position.js";
 
-function Playboard({ game, apply, ...props }) {
-  if (!game) {
-    return null;
-  }
-
-  const [grid, setGrid] = useState(game.grid);
-  const [size, setSize] = useState(Math.sqrt(game.grid.length));
-  const [player, setPlayer] = useState(game.player);
-  const [winner, setWinner] = useState(game.winner);
-
-  useEffect(() => {
-    setGrid(game.grid);
-    setSize(Math.sqrt(game.grid.length));
-    setPlayer(game.player);
-    setWinner(game.winner);
-  }, [game]);
+function Playboard({ game, onMovePlayed, ...props }) {
+  const grid = game.grid;
+  const size = Math.sqrt(game.grid.length);
+  const player = game.player;
+  const winner = game.winner;
 
   const boardRatio = getBoardRatio(size);
   const hexagonWidth = getHexagonWidth(size);
   const hexagonHeight = getHexagonHeight(size);
 
   const handleCellOnPress = (cellIndex) => {
-    apply({ type: "PlayMove", payload: cellIndex });
+    onMovePlayed({ payload: cellIndex });
   };
 
   const handleReplayOnPress = useCallback(() => {

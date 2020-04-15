@@ -18,6 +18,7 @@ export default (req, res) => {
       return patch(req, res);
   }
 };
+import _ from "lodash";
 
 function get(req, res) {
   const {
@@ -75,6 +76,7 @@ function playMove(player, cellIndex, uuid, res) {
     })
     .then((game) => {
       const grid = JSON.parse(game.grid);
+      console.log(grid);
 
       if (game.secondPlayerNickname && player === getCurrentPlayer(grid)) {
         const updatedGrid = grid.map((hexagon, index) =>
@@ -83,7 +85,8 @@ function playMove(player, cellIndex, uuid, res) {
 
         const winningPath = getWinningPath(updatedGrid, player);
         if (winningPath) {
-          game = getWonGame(game, grid, player);
+          game = getWonGame(game, grid, player, winningPath);
+          console.log(game);
         } else {
           game.player = getNextPlayer(player);
           game.grid = JSON.stringify(updatedGrid);
@@ -109,8 +112,10 @@ function playMove(player, cellIndex, uuid, res) {
  *
  * @param {Object} game
  * @param {Array} grid
+ * @param {integer} player
+ * @param {Array} winningPath
  */
-function getWonGame(game, grid, player) {
+function getWonGame(game, grid, player, winningPath) {
   game.grid = JSON.stringify(
     grid.map(function (value, index) {
       return hexagonIndexIsInPath(winningPath, index)

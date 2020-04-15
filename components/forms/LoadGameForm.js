@@ -7,7 +7,7 @@ import { OFFLINE_PATHNAME } from "../../pages/board/offline";
 
 export default function LoadGameForm() {
   const games = getGames();
-  const firstGameId = games.length > 0 ? _.first(games).id : "0";
+  const firstGameId = games.length > 0 ? games[0] : "0";
   const options = generateOptions(games);
 
   return (
@@ -30,7 +30,23 @@ export default function LoadGameForm() {
             name="gameId"
             id="load-game-select"
           >
-            {options()}
+            {games.length > 0
+              ? () => {
+                  return games.map((game, index) => {
+                    return (
+                      <option key={index} value={game.id}>
+                        Game #{index + 1}
+                      </option>
+                    );
+                  });
+                }
+              : () => {
+                  return (
+                    <option title={`Game number 0`} value="0">
+                      No game saved
+                    </option>
+                  );
+                }}
           </Select>
           <Button
             mt={4}
@@ -44,32 +60,6 @@ export default function LoadGameForm() {
       )}
     </Formik>
   );
-}
-
-/**
- * Generates options.
- * If games array is empty, "No game saved" is displayed.
- *
- * @param {Array} games
- */
-function generateOptions(games) {
-  return games.length > 0
-    ? () => {
-        return games.map((game, index) => {
-          return (
-            <option key={index} value={game.id}>
-              Game #{index + 1}
-            </option>
-          );
-        });
-      }
-    : () => {
-        return (
-          <option title={`Game number 0`} value="0">
-            No game saved
-          </option>
-        );
-      };
 }
 
 /**
