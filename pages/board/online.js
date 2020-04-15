@@ -2,6 +2,7 @@ import fetch from "isomorphic-unfetch";
 import { useState } from "react";
 import Playboard from "../../components/boards/Playboard";
 import Layout from "../../components/layouts/Layout";
+import { NO_PLAYER_VALUE } from "../../engine/player";
 
 export const GAME_URI = "http://localhost:3000/api/games";
 export const ONLINE_PATHNAME = "/board/online";
@@ -9,25 +10,27 @@ export const ONLINE_PATHNAME = "/board/online";
 export default function OnlineBoardPage({ initialGame }) {
   const [game, setGame] = useState(initialGame);
 
-  const onMovePlayed = ({ index }) => {
-    if (canPlayMove(index, game)) {
+  const onMovePlayed = ({ cellIndex }) => {
+    if (canPlayMove(cellIndex, game)) {
       fetch(`${GAME_URI}/${game.uuid}`, {
         method: "PATCH",
-        body: JSON.stringify({ cellIndex: index, player: game.player }),
+        body: JSON.stringify({ cellIndex, player: game.player }),
       })
         .then(function (response) {
           return response.json();
         })
         .then(function (game) {
-          if (game) {
-            setGame(updatedGame);
-          }
+          setGame(game);
         })
         .catch(function (message) {
           throw `Error during moving : ${message}`;
         });
     }
   };
+
+  if (!game) {
+    return null;
+  }
 
   return (
     <Layout
@@ -58,5 +61,5 @@ export async function getServerSideProps(context) {
  * @param {Object} game
  */
 function canPlayMove(index, game) {
-  return game.grid[index] !== 0 || game.winner;
+  return game.grid[index] === NO_PLAYER_VALUE && !game.winner;
 }

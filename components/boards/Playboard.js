@@ -22,7 +22,7 @@ function Playboard({ game, onMovePlayed, ...props }) {
   const hexagonHeight = getHexagonHeight(size);
 
   const handleCellOnPress = (cellIndex) => {
-    onMovePlayed({ payload: cellIndex });
+    onMovePlayed({ cellIndex });
   };
 
   const handleReplayOnPress = useCallback(() => {
