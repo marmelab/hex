@@ -13,10 +13,6 @@ import {
 } from "../../theme/colors";
 
 function Hud({ player, winner, ...props }) {
-  if (!player || !winner) {
-    return null;
-  }
-
   const { color, colorFont } = switchColor(player, winner);
 
   return (
