@@ -17,4 +17,12 @@ describe("The Home Page", function () {
     cy.findByText("Start").should("exist");
     cy.findByLabelText("Close").click();
   });
+
+  it("should display the 'Rejoin online game' modal", function () {
+    cy.findByText("Rejoin online game").should("exist").click();
+    cy.findByText("Your nickname").should("exist").type("Test");
+    cy.findByLabelText("Choose a game").should("exist").select("0") ;
+    cy.findByText("Rejoin").should("exist");
+    cy.findByLabelText("Close").click();
+  });
 });

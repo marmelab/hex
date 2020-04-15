@@ -11,10 +11,9 @@ import { Formik } from "formik";
 import Router from "next/router";
 import { generateEmptyGrid } from "../../engine/grid";
 import { NO_PLAYER_VALUE } from "../../engine/player";
-import { GAME_URI } from "../../pages/board/online";
+import { GAME_URI, ONLINE_PATHNAME } from "../../pages/board/online";
 import { getGamesFromLocalStorage, setGamesInLocalStorage } from "./storage";
 
-const ONLINE_PATHNAME = "/board/online";
 const OFFLINE_PATHNAME = "/board/offline";
 
 export default function StartGameForm() {

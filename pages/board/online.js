@@ -3,6 +3,7 @@ import Playboard from "../../components/boards/Playboard";
 import Layout from "../../components/layouts/Layout";
 
 export const GAME_URI = "http://localhost:3000/api/games";
+export const ONLINE_PATHNAME = "/board/online";
 
 export default function OnlineBoardPage({ game }) {
   return (
