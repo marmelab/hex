@@ -1,5 +1,5 @@
+import { NO_PLAYER_VALUE, getCurrentPlayer } from "../../engine/player";
 import { getGameRepository } from "../../models/games/gameRepository";
-import { NO_PLAYER_VALUE } from "../../engine/player";
 
 export default (req, res) => {
   const method = req.method;
@@ -48,7 +48,8 @@ function createGame(grid, firstPlayerNickname, res) {
       winner: NO_PLAYER_VALUE,
     })
     .then((game) => {
-      game.currentPlayer = getCurrentPlayer(grid);
+      game.grid = JSON.parse(game.grid);
+      game.player = getCurrentPlayer(game.grid);
       res.status(201).json(game);
     })
     .catch((error) => {
