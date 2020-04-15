@@ -9,23 +9,30 @@ export default function OnlineRejoinForm({ games, ...props }) {
   const nickname = undefined;
 
   const options = getOptions(games);
+
+  const goToOnlinePage = (id) => {
+    Router.push({
+      pathname: ONLINE_PATHNAME,
+      query: {
+        id: id,
+      },
+    });
+  };
+
   return (
     <Formik
       initialValues={{ gameId: firstGameId, nickname }}
       onSubmit={(values) => {
-        addSecondPlayer(values.secondPlayerNickname, values.gameId).then(
-          function () {
-            Router.push({
-              pathname: ONLINE_PATHNAME,
-              query: {
-                id: values.gameId,
-              },
-            });
-          }
+        addSecondPlayer(
+          { secondPlayer: values.secondPlayerNickname },
+          values.gameId
         )
-        .catch(function(message){
-          throw ("Error in form:", message);
-        });
+          .then(function () {
+            goToOnlinePage(values.gameId);
+          })
+          .catch(function (message) {
+            throw ("Error in form:", message);
+          });
       }}
     >
       {({ handleSubmit, handleChange, values }) => (
@@ -88,7 +95,6 @@ function addSecondPlayer({ secondPlayer }, id) {
  * @param {Array} games
  */
 function getOptions(games) {
-
   return games.length >= 1
     ? () => {
         return games.map((game, index) => {
