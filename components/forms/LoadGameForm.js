@@ -3,34 +3,19 @@ import { Formik } from "formik";
 import _ from "lodash";
 import Router from "next/router";
 import { getGamesFromLocalStorage } from "./storage";
+import { OFFLINE_PATHNAME } from "../../pages/board/offline";
 
 export default function LoadGameForm() {
   const games = getGames();
-  const firstGameId = games ? _.first(games).id : "0";
+  const firstGameId = games.length > 0 ? _.first(games).id : "0";
+  const options = generateOptions(games);
 
-  const options = games
-    ? () => {
-        return games.map((game, index) => {
-          return (
-            <option key={index} value={game.id}>
-              Game #{index + 1}
-            </option>
-          );
-        });
-      }
-    : () => {
-        return (
-          <option title={`Game number 0`} value="0">
-            No game saved
-          </option>
-        );
-      };
   return (
     <Formik
       initialValues={{ gameId: firstGameId }}
       onSubmit={(values) => {
         Router.push({
-          pathname: "/board",
+          pathname: OFFLINE_PATHNAME,
           query: { id: values.gameId },
         });
       }}
@@ -59,6 +44,32 @@ export default function LoadGameForm() {
       )}
     </Formik>
   );
+}
+
+/**
+ * Generates options.
+ * If games array is empty, "No game saved" is displayed.
+ *
+ * @param {Array} games
+ */
+function generateOptions(games) {
+  return games.length > 0
+    ? () => {
+        return games.map((game, index) => {
+          return (
+            <option key={index} value={game.id}>
+              Game #{index + 1}
+            </option>
+          );
+        });
+      }
+    : () => {
+        return (
+          <option title={`Game number 0`} value="0">
+            No game saved
+          </option>
+        );
+      };
 }
 
 /**

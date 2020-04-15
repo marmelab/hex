@@ -4,6 +4,9 @@ import Layout from "../../components/layouts/Layout";
 import { getGameById } from "../../components/forms/storage";
 import { NO_PLAYER_VALUE, getCurrentPlayer } from "../../engine/player";
 
+
+export const OFFLINE_PATHNAME = "/board/offline";
+
 export default function OfflineBoardPage() {
   const router = useRouter();
   const id = router.query.id;
