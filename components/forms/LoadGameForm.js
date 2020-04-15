@@ -8,7 +8,6 @@ import { OFFLINE_PATHNAME } from "../../pages/board/offline";
 export default function LoadGameForm() {
   const games = getGames();
   const firstGameId = games.length > 0 ? games[0] : "0";
-  const options = generateOptions(games);
 
   return (
     <Formik
@@ -30,23 +29,20 @@ export default function LoadGameForm() {
             name="gameId"
             id="load-game-select"
           >
-            {games.length > 0
-              ? () => {
-                  return games.map((game, index) => {
-                    return (
-                      <option key={index} value={game.id}>
-                        Game #{index + 1}
-                      </option>
-                    );
-                  });
-                }
-              : () => {
-                  return (
-                    <option title={`Game number 0`} value="0">
-                      No game saved
-                    </option>
-                  );
-                }}
+            {games.length > 0 ? (
+              games.map((game, index) => {
+                return (
+                  <option key={index} value={game.id}>
+                    Game #{index + 1}
+                  </option>
+                );
+              })
+            ) : (
+              <option title={`Game number 0`} value="0">
+                No game saved
+              </option>
+            )}
+            }
           </Select>
           <Button
             mt={4}
