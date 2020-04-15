@@ -8,6 +8,8 @@ import {
   SECOND_PLAYER_VALUE,
 } from "./player";
 
+import _ from "lodash";
+
 export const START_ID = "0";
 
 var dijkstra = require("dijkstrajs");
@@ -29,13 +31,13 @@ export function applyMoveOnGame(game, player, cellIndex) {
     );
 
     const winningPath = getWinningPath(updatedGrid, player);
+
     if (winningPath) {
       game = getWonGame(game, grid, player, winningPath);
     } else {
       game.grid = JSON.stringify(updatedGrid);
       game.player = getNextPlayer(player);
     }
-
     return game;
   }
 
