@@ -1,19 +1,18 @@
+import { Flex, Text } from "@chakra-ui/core";
 import React from "react";
 import {
-  FIRST_PLAYER_COLOR,
-  SECOND_PLAYER_COLOR,
-  DARK_COLOR_100,
-  LIGHT_COLOR_100,
-} from "../../theme/colors";
-import {
   FIRST_PLAYER_VALUE,
-  SECOND_PLAYER_VALUE,
   NO_PLAYER_VALUE,
+  SECOND_PLAYER_VALUE,
 } from "../../engine/player";
-import { Flex, Text } from "@chakra-ui/core";
+import {
+  DARK_COLOR_100,
+  FIRST_PLAYER_COLOR,
+  LIGHT_COLOR_100,
+  SECOND_PLAYER_COLOR,
+} from "../../theme/colors";
 
 function Hud({ player, winner, ...props }) {
-
   const { color, colorFont } = switchColor(player, winner);
 
   return (
