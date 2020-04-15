@@ -5,10 +5,8 @@ import Router from "next/router";
 import { ONLINE_PATHNAME, GAME_URI } from "../../pages/board/online";
 
 export default function OnlineRejoinForm({ games, ...props }) {
-  const firstGameId = games && games.length > 0 ? _.first(games).uuid : "0";
-  const nickname = undefined;
-
-  const options = getOptions(games);
+  const firstUuid = games && games.length > 0 ? games[0].uuid : "0";
+  const secondPlayerNickname = undefined;
 
   const goToOnlinePage = (id) => {
     Router.push({
@@ -21,14 +19,14 @@ export default function OnlineRejoinForm({ games, ...props }) {
 
   return (
     <Formik
-      initialValues={{ gameId: firstGameId, nickname }}
+      initialValues={{ uuid: firstUuid, secondPlayerNickname }}
       onSubmit={(values) => {
         addSecondPlayer(
-          { secondPlayer: values.secondPlayerNickname },
-          values.gameId
+          { secondPlayerNickname: values.secondPlayerNickname },
+          values.uuid
         )
           .then(function () {
-            goToOnlinePage(values.gameId);
+            goToOnlinePage(values.uuid);
           })
           .catch(function (message) {
             throw ("Error in form:", message);
@@ -41,25 +39,36 @@ export default function OnlineRejoinForm({ games, ...props }) {
           <Input
             id="secondPlayerNickname"
             onChange={handleChange}
-            value={values.nickname}
+            value={values.secondPlayerNickname}
             tabIndex="0"
           ></Input>
 
           <FormLabel htmlFor="load-game-select">Choose a game</FormLabel>
           <Select
             onChange={handleChange}
-            value={values.gameId}
+            value={values.uuid}
             tabIndex="0"
-            name="gameId"
             id="load-game-select"
           >
-            {options()}
+            {games.length >= 1 ? (
+              games.map((game, index) => {
+                const size = Math.sqrt(JSON.parse(game.grid).length);
+
+                return (
+                  <option key={index} value={game.uuid}>
+                    Play with {game.firstPlayerNickname} - size {size}x{size}
+                  </option>
+                );
+              })
+            ) : (
+              <option value="0">No game available</option>
+            )}
           </Select>
           <Button
             mt={4}
             variantColor="teal"
             type="submit"
-            disabled={firstGameId === "0"}
+            disabled={firstUuid === "0"}
           >
             Rejoin
           </Button>
@@ -75,10 +84,10 @@ export default function OnlineRejoinForm({ games, ...props }) {
  * @param {Object} secondPlayer
  * @param {string} id
  */
-function addSecondPlayer({ secondPlayer }, id) {
+function addSecondPlayer(secondPlayerNickname, id) {
   return fetch(`${GAME_URI}/${id}`, {
-    method: "patch",
-    body: JSON.stringify(secondPlayer),
+    method: "PATCH",
+    body: JSON.stringify(secondPlayerNickname),
   })
     .then(function (response) {
       return response.json();
@@ -86,28 +95,4 @@ function addSecondPlayer({ secondPlayer }, id) {
     .catch(function (error) {
       return error;
     });
-}
-
-/**
- * Generates options based on the array of games provided.
- *
- *
- * @param {Array} games
- */
-function getOptions(games) {
-  return games.length >= 1
-    ? () => {
-        return games.map((game, index) => {
-          const size = Math.sqrt(JSON.parse(game.grid).length);
-
-          return (
-            <option key={index} value={game.uuid}>
-              Play with {game.firstPlayerNickname} - size {size}x{size}
-            </option>
-          );
-        });
-      }
-    : () => {
-        return <option value="0">No game available</option>;
-      };
 }
