@@ -1,5 +1,9 @@
 import { applyMoveOnGame } from "../../../engine/game";
-import { getCurrentPlayer } from "../../../engine/player";
+import {
+  getCurrentPlayer,
+  getToken,
+  generateToken,
+} from "../../../engine/player";
 import { getGameRepository } from "../../../models/games/gameRepository";
 
 export default (req, res) => {
@@ -40,6 +44,7 @@ function get(req, res) {
 function patch(req, res) {
   const {
     query: { uuid },
+    headers: { token },
   } = req;
 
   const { secondPlayerNickname, cellIndex, player } = JSON.parse(req.body);
@@ -48,8 +53,11 @@ function patch(req, res) {
     updateSecondPlayerNickname(secondPlayerNickname, uuid, res);
   }
 
-  if (cellIndex && player) {
-    playMove(player, cellIndex, uuid, res);
+  if (token === generateToken(player, uuid)) {
+    if (cellIndex && player) {
+      playMove(player, cellIndex, uuid, res);
+    }
+    res.status(401);
   }
 }
 
