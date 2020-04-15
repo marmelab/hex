@@ -31,7 +31,7 @@ function get(req, res) {
       game.dataValues.player = getCurrentPlayer(grid, game.winner);
       game.dataValues.grid = grid;
 
-      return res.status(200).json(game.dataValues);
+      res.status(200).json(game.dataValues);
     });
 }
 
@@ -42,10 +42,10 @@ function put(req, res) {
     .create({ firstPlayerNickname, grid })
     .then((game) => {
       game.currentPlayer = getCurrentPlayer(grid);
-      return res.status(200).json(game);
+      res.status(200).json(game);
     })
     .catch((error) => {
-      return res.status(400).json(error);
+      res.status(400).json(error);
     });
 }
 
@@ -73,10 +73,10 @@ function patch(req, res) {
           },
         })
         .then((game) => {
-          return res.status(200).json(game);
+          res.status(200).json(game);
         });
     })
     .catch((error) => {
-      return res.status(400).json(error);
+      res.status(400).json(error);
     });
 }

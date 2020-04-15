@@ -16,10 +16,10 @@ function get(res) {
   getGameRepository()
     .findAll({ where: { secondPlayerNickname: null } })
     .then((game) => {
-      return res.status(200).json(game);
+      res.status(200).json(game);
     })
     .catch((error) => {
-      return res.status(400).json(error);
+      res.status(400).json(error);
     });
 }
 
@@ -28,9 +28,9 @@ function post(req, res) {
   getGameRepository()
     .create({ firstPlayerNickname, grid, winner, secondPlayerNickname: null })
     .then((game) => {
-      return res.status(200).json(game);
+      res.status(200).json(game);
     })
     .catch((error) => {
-      return res.status(400).json(error);
+      res.status(400).json(error);
     });
 }
