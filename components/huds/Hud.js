@@ -41,8 +41,6 @@ function Hud({ player, winner, ...props }) {
 export default Hud;
 
 function switchColor(player, winner) {
-  console.log("switchColor", player, winner);
-
   const colorSetFirstPlayer = {
     color: FIRST_PLAYER_COLOR,
     colorFont: LIGHT_COLOR_100,
