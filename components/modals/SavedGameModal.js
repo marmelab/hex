@@ -25,7 +25,7 @@ export default function SavedGameModal({ ...props }) {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Load local game</ModalHeader>
-          <ModalCloseButton aria-label="Close" />
+          <ModalCloseButton aria-label="Close" tabIndex="-1"/>
           <ModalBody>
             <LoadGameForm />
           </ModalBody>
