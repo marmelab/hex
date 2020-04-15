@@ -1,12 +1,12 @@
 import { Button, FormLabel, Input, Select } from "@chakra-ui/core";
 import { Formik } from "formik";
-import _ from "lodash";
 import Router from "next/router";
-import { ONLINE_PATHNAME, GAME_URI } from "../../pages/board/online";
+import { writeToken, SECOND_PLAYER_VALUE } from "../../engine/player";
+import { GAME_URI, ONLINE_PATHNAME } from "../../pages/board/online";
 
 export default function OnlineRejoinForm({ games, ...props }) {
   const firstUuid = games && games.length > 0 ? games[0].uuid : "0";
-  const secondPlayerNickname = undefined;
+  const secondPlayerNickname = "John Doe";
 
   const goToOnlinePage = (id) => {
     Router.push({
@@ -26,6 +26,7 @@ export default function OnlineRejoinForm({ games, ...props }) {
           values.uuid
         )
           .then(function () {
+            writeToken(SECOND_PLAYER_VALUE, values.uuid);
             goToOnlinePage(values.uuid);
           })
           .catch(function (message) {
@@ -47,6 +48,7 @@ export default function OnlineRejoinForm({ games, ...props }) {
           <Select
             onChange={handleChange}
             value={values.uuid}
+            name="uuid"
             tabIndex="0"
             id="load-game-select"
           >

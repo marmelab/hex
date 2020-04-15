@@ -10,7 +10,11 @@ import {
 import { Formik } from "formik";
 import Router from "next/router";
 import { generateEmptyGrid } from "../../engine/grid";
-import { NO_PLAYER_VALUE } from "../../engine/player";
+import {
+  NO_PLAYER_VALUE,
+  writeToken,
+  FIRST_PLAYER_VALUE,
+} from "../../engine/player";
 import { GAME_URI, ONLINE_PATHNAME } from "../../pages/board/online";
 import { getGamesFromLocalStorage, setGamesInLocalStorage } from "./storage";
 import { OFFLINE_PATHNAME } from "../../pages/board/offline";
@@ -95,6 +99,7 @@ function initializeGame(values) {
         winner: NO_PLAYER_VALUE,
       })
         .then(function (game) {
+          writeToken(FIRST_PLAYER_VALUE, game.uuid);
           Router.push({
             pathname,
             query: {
