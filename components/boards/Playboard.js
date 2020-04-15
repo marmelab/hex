@@ -1,40 +1,50 @@
+import { Box, Flex, PseudoBox } from "@chakra-ui/core";
 import React, { useCallback, useReducer } from "react";
-import Hexagon from "./Hexagon";
-import BottomBoard from "./BottomBoard";
-import {
-  getBoardRatio,
-  getHexagonHeight,
-  getHexagonWidth,
-  calculateLeftPosition,
-  calculateTopPosition,
-} from "./position.js";
+import { getWinningPath } from "../../engine/game";
 import { generateEmptyGrid } from "../../engine/grid";
 import {
   FIRST_PLAYER_VALUE,
-  WINNER_LINE_VALUE,
   NO_PLAYER_VALUE,
   SECOND_PLAYER_VALUE,
+  WINNER_LINE_VALUE,
 } from "../../engine/player";
-import { getWinningPath } from "../../engine/game";
-import { Flex, Box, PseudoBox } from "@chakra-ui/core";
-import SidePanel from "../panels/SidePanel";
 import {
   getGameById,
-  getGamesInLocalStorage,
+  getGamesFromLocalStorage,
   setGamesInLocalStorage,
 } from "../forms/storage";
+import SidePanel from "../panels/SidePanel";
+import BottomBoard from "./BottomBoard";
+import Hexagon from "./Hexagon";
+import {
+  calculateLeftPosition,
+  calculateTopPosition,
+  getBoardRatio,
+  getHexagonHeight,
+  getHexagonWidth,
+} from "./position.js";
 
 const ERROR_NOT_FOUND_GAME = `Can't find the game with ID`;
+const DEFAULT_SIZE = 11;
 
-function Playboard({ sizeParameter, idParameter, ...props }) {
-  const [{ grid, player, winner, size, gameId }, dispatch] = useReducer(
+function init({ game }) {
+
+  return {
+    grid: game.grid,
+    size: Math.sqrt(game.grid.length),
+    player: game.player,
+    winner: game.winner,
+  };
+}
+
+function Playboard({ game, ...props }) {
+  const [{ grid, player, winner, size }, dispatch] = useReducer(
     reducer,
-    { sizeParameter, idParameter, gameId },
+    { game },
     init
   );
 
   const boardRatio = getBoardRatio(size);
-
   const hexagonWidth = getHexagonWidth(size);
   const hexagonHeight = getHexagonHeight(size);
 
@@ -42,7 +52,7 @@ function Playboard({ sizeParameter, idParameter, ...props }) {
     if (winner) {
       dispatch({
         type: "reset",
-        payload: { sizeParameter: size, idParameter: undefined },
+        payload: { sizeParameter: size },
         winner,
       });
     }
@@ -101,6 +111,7 @@ function Playboard({ sizeParameter, idParameter, ...props }) {
                     height: `${hexagonHeight}%`,
                   }}
                   name={`hexagon_${index}`}
+                  key={index}
                   value={value}
                   aria-label={`Hexagon at row ${rowIndex} and column ${columnIndex}`}
                   role="button"
@@ -153,30 +164,81 @@ function reducer({ grid, player, winner, size, gameId }, action) {
 /**
  * Initialize states.
  *
- * @param {*} size
- * @param {*} id
+ * @param {int} sizeParameter
+ * @param {boolean} onlineParameter
+ * @param {string} player1NicknameParameter
  */
-function init({ sizeParameter, idParameter }) {
-  if (sizeParameter) {
-    return {
-      winner: NO_PLAYER_VALUE,
-      player: FIRST_PLAYER_VALUE,
-      grid: generateEmptyGrid(sizeParameter),
-      size: sizeParameter,
-      gameId: generateGameId(),
-    };
-  } else if (idParameter) {
-    const { grid, player, size } = loadGame(idParameter);
-    return {
-      winner: NO_PLAYER_VALUE,
-      player: player,
-      grid: grid,
-      size: size,
-      gameId: idParameter,
-    };
-  }
+function reset({
+  onlineParameter,
+  player1NicknameParameter,
+  player2NicknameParameter,
+}) {
+  return {
+    grid: generateEmptyGrid(DEFAULT_SIZE),
+    player: FIRST_PLAYER_VALUE,
+    winner: NO_PLAYER_VALUE,
+    size: DEFAULT_SIZE,
+    online: onlineParameter,
+    player1Nickname: player1NicknameParameter,
+    player2Nickname: player2NicknameParameter,
+  };
+}
 
-  throw new Error(`Can't intialize a game.`);
+/**
+ *
+ * @param {*} player2NicknameParameter
+ * @param {*} onlineParameter
+ */
+async function loadExistingGame(player2NicknameParameter, onlineParameter) {
+  const { grid, player, size } = onlineParameter
+    ? updateServerGame(idParameter, player2NicknameParameter)
+    : loadLocalGame();
+
+  return {
+    winner: NO_PLAYER_VALUE,
+    player: player,
+    grid: grid,
+    size: size,
+    gameId: idParameter,
+    online: onlineParameter,
+  };
+}
+
+function loadLocalGame() {
+  if (getGameById(idParameter)) {
+    const nextPlayer = getNextPlayer(game.player);
+    const size = Math.sqrt(game.grid.length);
+
+    return { player: nextPlayer, grid: game.grid, size: size };
+  }
+  throw new Error(`${ERROR_NOT_FOUND_GAME} ${id}`);
+}
+
+/**
+ * To rejoin a game, we need to update the player2Nickname
+ *
+ * @param {int} id
+ * @param {string} player2Nickname
+ */
+function updateServerGame(id, player2Nickname) {
+  return fetch(`${GAME_URI}/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ player2Nickname: player2Nickname }),
+  })
+    .then(function (response) {
+      return response.json().then(function (game) {
+        const grid = JSON.parse(game.grid);
+        return {
+          player: FIRST_PLAYER_VALUE,
+          grid: grid,
+          size: Math.sqrt(grid.length),
+          player1Nickname: player1Nickname,
+        };
+      });
+    })
+    .catch(function (error) {
+      return error;
+    });
 }
 
 /**
@@ -228,16 +290,6 @@ function playMove({ cellIndex, grid, player, winner, size, gameId }) {
 }
 
 /**
- * Create a timestamp based game id
- *
- * Based on : https://gist.github.com/gordonbrander/2230317
- * @param {int} parameterId
- */
-function generateGameId() {
-  return Math.random().toString(36).substr(2, 9);
-}
-
-/**
  * Save the current game and add it to the current pool of saved games.
  *
  * @param {String} gameId
@@ -245,19 +297,14 @@ function generateGameId() {
  * @param {int} player
  */
 function saveCurrentGame(gameId, grid, player) {
-  const games = getGamesInLocalStorage();
+  const games = getGamesFromLocalStorage();
 
   const currentGame = games.find(function (game) {
     return game.id === gameId;
   });
 
-  if (!currentGame) {
-    const newSave = { id: gameId, grid, player };
-    games.push(newSave);
-  } else {
-    currentGame.grid = grid;
-    currentGame.player = player;
-  }
+  currentGame.grid = grid;
+  currentGame.player = player;
 
   setGamesInLocalStorage(games);
 }
@@ -268,7 +315,7 @@ function saveCurrentGame(gameId, grid, player) {
  * @param {string} gameId
  */
 function cleanCurrentGame(gameId) {
-  const games = getGamesInLocalStorage();
+  const games = getGamesFromLocalStorage();
 
   _.remove(games, function (game) {
     return game.id === gameId;
@@ -296,21 +343,4 @@ function getNextPlayer(player) {
   return player === FIRST_PLAYER_VALUE
     ? SECOND_PLAYER_VALUE
     : FIRST_PLAYER_VALUE;
-}
-
-/**
- * Load a game from Local Storage by id.
- *
- * @param {int} id
- */
-function loadGame(id) {
-  const game = getGameById(id);
-
-  if (game) {
-    const nextPlayer = getNextPlayer(game.player);
-    const size = Math.sqrt(game.grid.length);
-
-    return { player: nextPlayer, grid: game.grid, size: size };
-  }
-  throw new Error(`Can't find the game with ID ${id}`);
 }

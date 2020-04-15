@@ -2,6 +2,8 @@ import fetch from "isomorphic-unfetch";
 import Layout from "../components/layouts/Layout";
 import MainMenu from "../components/menus/MainMenu";
 
+export const GAME_URI = "http://localhost:3000/api/games";
+
 export default function Home({ games }) {
   return (
     <Layout
@@ -11,7 +13,7 @@ export default function Home({ games }) {
 }
 
 export async function getServerSideProps() {
-  const res = await fetch("http://localhost:3000/api/games");
+  const res = await fetch(GAME_URI);
   const games = await res.json();
   return { props: { games } };
 }

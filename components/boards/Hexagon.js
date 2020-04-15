@@ -31,7 +31,7 @@ function getColor(value, focus) {
 function Hexagon(props) {
   return (
     <svg
-      tabindex="0"
+      tabIndex="0"
       viewBox="0 0 168.77689 194.88675"
       {...props}
       style={{

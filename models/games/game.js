@@ -5,12 +5,16 @@ const GAME_DEFINITION = {
     type: DataTypes.UUID,
     defaultValue: Sequelize.UUIDV4,
   },
-  player1_nickname: {
+  firstPlayerNickname: {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  player2_nickname: {
+  secondPlayerNickname: {
     type: Sequelize.STRING,
+    defaultValue: 0,
+  },
+  winner: {
+    type: Sequelize.INTEGER,
   },
   grid: {
     type: Sequelize.TEXT,

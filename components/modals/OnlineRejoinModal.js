@@ -24,7 +24,7 @@ export default function OnlineRejoinModal({ games, ...props }) {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Rejoin online game</ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton aria-label="Close" />
           <ModalBody>
             <OnlineRejoinForm games={games} />
           </ModalBody>
