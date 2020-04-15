@@ -72,8 +72,11 @@ function playMove(player, cellIndex, uuid, res) {
       const updatedGame = applyMoveOnGame(game, player, cellIndex);
 
       updatedGame.save().then(function (updatedGame) {
-        updatedGame.grid = JSON.parse(updatedGame.grid);
-        res.status(200).json(updatedGame);
+        const game = updatedGame.dataValues;
+        game.grid = JSON.parse(updatedGame.grid);
+        game.player = updatedGame.player;
+
+        res.status(200).json(game);
       });
     })
     .catch((message) => {
