@@ -5,11 +5,12 @@ export const SECOND_PLAYER_VALUE = 2;
 export const WINNER_LINE_VALUE = 3;
 
 /**
- * 
- * @param {Array} grid 
- * @param {int} winner 
+ *
+ * @param {Array} grid
+ * @param {int} winner
  */
 export function getCurrentPlayer(grid, winner) {
+
   if (winner) {
     return NO_PLAYER_VALUE;
   }

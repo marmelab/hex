@@ -1,3 +1,4 @@
+import { NO_PLAYER_VALUE, getCurrentPlayer } from "../../engine/player";
 import { getGameRepository } from "../../models/games/gameRepository";
 
 export default (req, res) => {
@@ -16,21 +17,42 @@ function get(res) {
   getGameRepository()
     .findAll({ where: { secondPlayerNickname: null } })
     .then((game) => {
-      return res.status(200).json(game);
+      res.status(200).json(game);
     })
     .catch((error) => {
-      return res.status(400).json(error);
+      res.status(400).json(error);
     });
 }
 
 function post(req, res) {
-  const { firstPlayerNickname, grid, winner } = JSON.parse(req.body);
+  const { firstPlayerNickname, grid } = JSON.parse(req.body);
+
+  if (firstPlayerNickname && grid) {
+    createGame(grid, firstPlayerNickname, res);
+  }
+}
+
+/**
+ * Initialize a new game in BDD.
+ *
+ * @param {Object} grid
+ * @param {string} firstPlayerNickname
+ * @param {Object} res
+ */
+function createGame(grid, firstPlayerNickname, res) {
   getGameRepository()
-    .create({ firstPlayerNickname, grid, winner, secondPlayerNickname: null })
+    .create({
+      grid,
+      firstPlayerNickname,
+      secondPlayerNickname: null,
+      winner: NO_PLAYER_VALUE,
+    })
     .then((game) => {
-      return res.status(200).json(game);
+      game.grid = JSON.parse(game.grid);
+      game.player = getCurrentPlayer(game.grid);
+      res.status(201).json(game);
     })
     .catch((error) => {
-      return res.status(400).json(error);
+      res.status(400).json(error);
     });
 }

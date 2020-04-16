@@ -134,7 +134,7 @@ function initializeLocalGame(grid) {
  */
 function initializeServerGame(game) {
   return fetch(GAME_URI, {
-    method: "post",
+    method: "POST",
     body: JSON.stringify(game),
   })
     .then(function (response) {
