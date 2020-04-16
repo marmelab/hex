@@ -25,7 +25,7 @@ export default function StartGameModal({ ...props }) {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Start a new game</ModalHeader>
-          <ModalCloseButton aria-label="Close" />
+          <ModalCloseButton aria-label="Close" tabIndex="-1" />
           <ModalBody>
             <StartGameForm />
           </ModalBody>

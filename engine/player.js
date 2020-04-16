@@ -1,3 +1,5 @@
+import sha256 from "@cryptography/sha256";
+
 export const NO_PLAYER_VALUE = 0;
 export const FIRST_PLAYER_VALUE = 1;
 export const SECOND_PLAYER_VALUE = 2;
@@ -5,12 +7,45 @@ export const SECOND_PLAYER_VALUE = 2;
 export const WINNER_LINE_VALUE = 3;
 
 /**
+ * Get the token in Local Storage.
+ *
+ * @param {string} id
+ */
+export function getToken(id) {
+  return localStorage.getItem(id);
+}
+
+/**
+ * Store a token in Local Storage.
+ * A player can have only one token by game.
+ *
+ * NB: This token generator should be used only on server side (tradeof here).
+ *
+ * @param {integer} player
+ * @param {string} id
+ */
+export function writeToken(player, id) {
+  if (localStorage.getItem(id) === null) {
+    localStorage.setItem(id, generateToken(player, id));
+  }
+}
+
+/**
+ * Create a really basic token to identify first and second player.
+ *
+ * @param {integer} player
+ * @param {string} id
+ */
+export function generateToken(player, id) {
+  return sha256(`${id}${player}`, "hex");
+}
+
+/**
  *
  * @param {Array} grid
  * @param {int} winner
  */
 export function getCurrentPlayer(grid, winner) {
-
   if (winner) {
     return NO_PLAYER_VALUE;
   }
