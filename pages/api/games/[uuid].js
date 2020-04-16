@@ -1,8 +1,8 @@
 import { applyMoveOnGame } from "../../../engine/game";
 import { generateToken, getCurrentPlayer } from "../../../engine/player";
 import {
-  getGameRepository,
   getGameByUuid,
+  getGameRepository,
 } from "../../../models/games/gameRepository";
 
 export default (req, res) => {

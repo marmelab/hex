@@ -1,5 +1,9 @@
-import { getWinningPath } from "./game";
-import { NO_PLAYER_VALUE } from "./player";
+import { getNextPlayer, getWinningPath } from "./game";
+import { ADVISE_VALUE, NO_PLAYER_VALUE } from "./player";
+
+const BASE_VALUE = 0;
+const WINNING_VALUE = 100;
+const LOSING_VALUE = -100;
 
 /**
  * Declines all possible grids for the next movement of the player in parameter.
@@ -9,15 +13,15 @@ import { NO_PLAYER_VALUE } from "./player";
  */
 export function getAllPossibleGrids(grid, player) {
   return grid
-    .map(function (value, index) {
+    .map((value, index) => {
       if (value === NO_PLAYER_VALUE) {
         const possibleGrid = [...grid];
         possibleGrid[index] = player;
-        return possibleGrid;
+        return { grid: possibleGrid, index };
       }
     })
-    .filter(function (value) {
-      return value !== undefined;
+    .filter((grid) => {
+      return grid !== undefined;
     });
 }
 
@@ -26,10 +30,50 @@ export function getAllPossibleGrids(grid, player) {
  *
  * @param {Array} grids
  * @param {integer} player
+ * @param {integer} level
+ * @param {boolean} maximizing
  */
-export function getPathForGrids(grids, player) {
-  return grids.map(function (grid, index) {
-    return { [index]: getWinningPath(grid, player) };
+export function getWinningPathForGrids(grids, player) {
+  return grids.map((grid) => {
+    return {
+      grid: grid.grid,
+      path: getWinningPath(grid.grid, player),
+      index: grid.index,
+    };
+  });
+}
+
+/**
+ * Returns the score based on maximising/minimizing parameter.
+ *
+ * @param {Array} winningPath
+ * @param {integer} level
+ * @param {boolean} maximized
+ */
+function getScore(winningPath, level, maximized) {
+  const { grid, path } = winningPath;
+
+  const isWinningPath = path !== undefined;
+
+  if (maximized && isWinningPath) {
+    const score = WINNING_VALUE + level;
+
+    return { grid, score, index: winningPath.index };
+  } else if (!maximized && isWinningPath) {
+    const score = LOSING_VALUE + level;
+
+    return { grid, score, index: winningPath.index };
+  }
+
+  const score = BASE_VALUE + level;
+  return { grid, score, index: winningPath.index };
+}
+
+export function getScores(grid, player, level, maximise) {
+  const possibleGrids = getAllPossibleGrids(grid, player);
+  const winningPaths = getWinningPathForGrids(possibleGrids, player);
+  return winningPaths.map((winningPath) => {
+    return getScore(winningPath, level, maximise);
   });
 }
 
@@ -40,14 +84,53 @@ export function getPathForGrids(grids, player) {
  * @param {integer} player
  */
 export function getAdvice(grid, player) {
-  const possibleGrids = getAllPossibleGrids(grid, player);
-  const paths = getPathForGrids(possibleGrids, player);
-  const winningPaths = paths.filter(function (path, index) {
-    return path[index] !== undefined;
-  });
+  const getNextLevel = (level = 0) => level--;
 
-  if (winningPaths.length > 0) {
-    const winningIndex = parseInt(Object.keys(winningPaths[0]));
-    return possibleGrids[winningIndex];
+  const level = getNextLevel();
+
+  // Maximizing
+  const maxScores = getScores(grid, player, level, true);
+  const bestMaxScore = Math.max.apply(
+    Math,
+    maxScores.map((maximizedScore) => {
+      return maximizedScore.score;
+    })
+  );
+
+  // Minimazing
+  const adversary = getNextPlayer(player);
+  const minScores = getScores(grid, adversary, level, false);
+  const bestMinScore = Math.min.apply(
+    Math,
+    minScores.map((minimizedScore) => {
+      return minimizedScore.score;
+    })
+  );
+
+  return getBestScore(bestMaxScore, bestMinScore, maxScores, minScores);
+}
+
+function getBestScore(bestMaxScore, bestMinScore, maxScores, minScores) {
+  if (bestMaxScore > -bestMinScore) {
+    const playerGrid = maxScores.find((score) => {
+      return score.score === bestMaxScore;
+    });
+
+    const adviceGrid = () => {
+      playerGrid.grid[playerGrid.index] = ADVISE_VALUE;
+      return playerGrid.grid;
+    };
+    return adviceGrid();
+  } else {
+    const adversaryGrid = minScores.find((score) => {
+      return score.score === bestMinScore;
+    });
+
+    const adviceGrid = () => {
+      adversaryGrid.grid[adversaryGrid.index] = ADVISE_VALUE;
+      return adversaryGrid.grid;
+    };
+
+    return adviceGrid();
   }
 }

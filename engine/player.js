@@ -5,6 +5,7 @@ export const FIRST_PLAYER_VALUE = 1;
 export const SECOND_PLAYER_VALUE = 2;
 
 export const WINNER_LINE_VALUE = 3;
+export const ADVISE_VALUE = 4;
 
 /**
  * Get the token in Local Storage.
