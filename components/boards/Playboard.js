@@ -40,7 +40,7 @@ function Playboard({ game, onMovePlayed, ...props }) {
       <Flex flexGrow="1" alignItems="center" justifyContent="center">
         <PseudoBox
           position="relative"
-          width="80%"
+          width="70%"
           _after={{
             content: `""`,
             display: "block",
@@ -99,7 +99,7 @@ function Playboard({ game, onMovePlayed, ...props }) {
         player={player}
         winner={winner}
         onReplayOnPress={handleReplayOnPress}
-        w="25%"
+        w="10%"
         flexWrap="wrap"
       />
     </Flex>

@@ -1,3 +1,5 @@
+import { getCurrentPlayer } from "../../engine/player";
+
 const GAMES_KEY = "games";
 
 /**
@@ -12,7 +14,7 @@ export function getGamesFromLocalStorage() {
 }
 
 /**
- *
+ * Initialize empty games array in Local Storage.
  */
 function initGamesInLocalStorage() {
   setGamesInLocalStorage([]);
@@ -64,7 +66,13 @@ function getKeys(key) {
  * @param {int} id
  */
 export function getGameById(id) {
-  return getGamesFromLocalStorage().find(function (games) {
+  const game = getGamesFromLocalStorage().find(function (games) {
     return games.id === id;
   });
+
+  game.grid = JSON.parse(game.grid);
+  game.size = Math.sqrt(game.grid.length);
+  game.player = getCurrentPlayer(game.grid, game.winner);
+
+  return game;
 }

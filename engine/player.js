@@ -49,7 +49,6 @@ export function getCurrentPlayer(grid, winner) {
   if (winner) {
     return NO_PLAYER_VALUE;
   }
-
   const size = Math.sqrt(grid.length);
   const isEven = size % 2 === 0;
   const emptyCellCount = grid.filter(function (cell) {
