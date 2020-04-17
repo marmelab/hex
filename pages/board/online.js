@@ -1,42 +1,46 @@
 import fetch from "isomorphic-unfetch";
 import { useEffect, useState } from "react";
+import { getBaseUrl } from "..";
 import Playboard from "../../components/boards/Playboard";
 import Layout from "../../components/layouts/Layout";
 import { canPlayMove } from "../../engine/game";
 import { getToken } from "../../engine/player";
-import { getBaseUrl } from "../index";
 
 export const ONLINE_PATHNAME = "/board/online";
 
 export default function OnlineBoardPage({ initialGame, baseUrl }) {
   const [game, setGame] = useState(initialGame);
 
-  const onMovePlayed = ({ cellIndex }) => {
+  const onMovePlayed = async ({ cellIndex }) => {
     if (canPlayMove(cellIndex, game)) {
-      fetch(getGame(baseUrl, game.uuid), {
-        method: "PATCH",
-        headers: {
-          token: getToken(game.uuid),
-        },
-        body: JSON.stringify({ cellIndex, player: game.player }),
-      })
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (game) {
-          setGame(game);
-        })
-        .catch(function (message) {
-          throw `Error during moving : ${message}`;
+      try {
+        const response = await fetch(`${baseUrl}/api/games/${game.uuid}`, {
+          method: "PATCH",
+          headers: {
+            token: getToken(game.uuid),
+          },
+          body: JSON.stringify({ cellIndex, player: game.player }),
         });
+
+        console.log(response);
+
+        const updatedGame = await response.json();
+        setGame(updatedGame);
+      } catch (message) {
+        throw `Error during moving : ${message}`;
+      }
     }
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      getGame(game.uuid).then(function (game) {
-        setGame(game);
-      });
+    const interval = setInterval(async () => {
+      try {
+        const updatedGame = await getGame(baseUrl, game.uuid);
+
+        setGame(updatedGame);
+      } catch (error) {
+        throw error;
+      }
     }, 1000);
     return () => clearInterval(interval);
   }, [game]);
@@ -61,8 +65,10 @@ export default function OnlineBoardPage({ initialGame, baseUrl }) {
 }
 
 export async function getServerSideProps({ req, ...context }) {
-  const baseUrl = `${getBaseUrl(req)}/api/games/${context.query.id}`;
-  const res = await fetch(baseUrl);
+  const baseUrl = getBaseUrl(req);
+  const uri = `${baseUrl}/api/games/${context.query.id}`;
+
+  const res = await fetch(uri);
   const game = await res.json();
   return { props: { initialGame: game, baseUrl } };
 }
@@ -72,7 +78,7 @@ export async function getServerSideProps({ req, ...context }) {
  *
  * @param {string} uuid
  */
-async function getGame(baseUrl, uuid) {
-  const res = await fetch(`${baseUrl}/${uuid}`);
-  return await res.json();
-}
+const getGame = async (baseUrl, uuid) => {
+  const res = await fetch(`${baseUrl}/api/games/${uuid}`);
+  return res.json();
+};
