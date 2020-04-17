@@ -2,7 +2,7 @@ require("./games/game");
 
 const DB_PARAMETERS = {
   dialect: "sqlite",
-  storage: ":memory:",
+  storage: "./var/data.sqlite",
 };
 
 const { GAME_DEFINITION } = require("./games/game");
