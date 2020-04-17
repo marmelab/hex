@@ -6,16 +6,14 @@ import { canPlayMove } from "../../engine/game";
 import { getToken } from "../../engine/player";
 import { getBaseUrl } from "../index";
 
-/* export const GAME_URI = "https://hex.chroq.now.sh/api/games"; */
-export const GAME_URI = "http://localhost:3000/api/games";
 export const ONLINE_PATHNAME = "/board/online";
 
-export default function OnlineBoardPage({ initialGame }) {
+export default function OnlineBoardPage({ initialGame, baseUrl }) {
   const [game, setGame] = useState(initialGame);
 
   const onMovePlayed = ({ cellIndex }) => {
     if (canPlayMove(cellIndex, game)) {
-      fetch(`${GAME_URI}/${game.uuid}`, {
+      fetch(getGame(baseUrl, game.uuid), {
         method: "PATCH",
         headers: {
           token: getToken(game.uuid),
@@ -62,12 +60,11 @@ export default function OnlineBoardPage({ initialGame }) {
   );
 }
 
-export async function getServerSideProps(context) {
-  const res = await fetch(
-    `https://hex.chroq.now.sh/api/games/${context.query.id}`
-  );
+export async function getServerSideProps({ req, ...context }) {
+  const baseUrl = `${getBaseUrl(req)}/api/games/${context.query.id}`;
+  const res = await fetch(baseUrl);
   const game = await res.json();
-  return { props: { initialGame: game } };
+  return { props: { initialGame: game, baseUrl } };
 }
 
 /**
@@ -75,7 +72,7 @@ export async function getServerSideProps(context) {
  *
  * @param {string} uuid
  */
-async function getGame(uuid) {
-  const res = await fetch(`https://hex.chroq.now.sh/api/games/${uuid}`);
+async function getGame(baseUrl, uuid) {
+  const res = await fetch(`${baseUrl}/${uuid}`);
   return await res.json();
 }
