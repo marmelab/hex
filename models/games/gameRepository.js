@@ -10,3 +10,11 @@ export function getGameRepository() {
   const { GAME_DEFINITION } = require("./game");
   return sequelize.define("game", GAME_DEFINITION);
 }
+
+export function getGameByUuid(uuid) {
+  return getGameRepository().findOne({
+    where: {
+      uuid: uuid,
+    },
+  });
+}

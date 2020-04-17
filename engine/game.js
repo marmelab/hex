@@ -23,9 +23,9 @@ var find_path = dijkstra.find_path;
  * @param {integer} cellIndex
  */
 export function applyMoveOnGame(game, player, cellIndex) {
-  const { grid } = game;
+  const { grid, ...updatedGame } = game;
 
-  if (game.secondPlayerNickname && player === getCurrentPlayer(grid)) {
+  if (updatedGame.secondPlayerNickname && player === getCurrentPlayer(grid)) {
     const updatedGrid = grid.map((hexagon, index) =>
       cellIndex === index ? player : hexagon
     );
@@ -33,12 +33,13 @@ export function applyMoveOnGame(game, player, cellIndex) {
     const winningPath = getWinningPath(updatedGrid, player);
 
     if (winningPath) {
-      game = getWonGame(game, grid, player, winningPath);
-    } else {
-      game.grid = updatedGrid;
-      game.player = getNextPlayer(player);
+      return getWonGame(game, grid, player, winningPath);
     }
-    return game;
+
+    updatedGame.grid = updatedGrid;
+    updatedGame.player = getNextPlayer(player);
+
+    return updatedGame;
   }
 
   throw "NO_SECOND_PLAYER_OR_NOT_YOUR_TURN";

@@ -1,6 +1,9 @@
 import { applyMoveOnGame } from "../../../engine/game";
 import { generateToken, getCurrentPlayer } from "../../../engine/player";
-import { getGameRepository } from "../../../models/games/gameRepository";
+import {
+  getGameRepository,
+  getGameByUuid,
+} from "../../../models/games/gameRepository";
 
 export default (req, res) => {
   const method = req.method;
@@ -65,30 +68,39 @@ function patch(req, res) {
  * @param {uuid} uuid
  * @param {Object} res
  */
-function playMove(player, cellIndex, uuid, res) {
-  getGameRepository()
-    .findOne({
-      where: {
-        uuid: uuid,
-      },
-    })
-    .then((game) => {
-      game.grid = JSON.parse(game.grid);
+async function playMove(player, cellIndex, uuid, res) {
+  try {
+    const game = await getGameByUuid(uuid);
 
-      const updatedGame = applyMoveOnGame(game, player, cellIndex);
-      updatedGame.grid = JSON.stringify(updatedGame.grid);
+    game.grid = JSON.parse(game.grid);
 
-      updatedGame.save().then(function (updatedGame) {
-        const game = updatedGame.dataValues;
-        game.grid = JSON.parse(updatedGame.grid);
-        game.player = updatedGame.player;
+    const updatedGame = applyMoveOnGame(game.dataValues, player, cellIndex);
+    updatedGame.grid = JSON.stringify(updatedGame.grid);
 
-        res.status(200).json(game);
+    getGameRepository()
+      .update(
+        {
+          grid: updatedGame.grid,
+          player: updatedGame.player,
+          winner: updatedGame.winner,
+        },
+        {
+          where: {
+            uuid: uuid,
+          },
+        }
+      )
+      .then(async () => {
+        try {
+          updatedGame.grid = JSON.parse(updatedGame.grid);
+          res.status(200).json(updatedGame);
+        } catch (error) {
+          res.status(404).json(error);
+        }
       });
-    })
-    .catch((message) => {
-      res.status(404).json({ error: `Game not found or ${message}` });
-    });
+  } catch (error) {
+    res.status(404).json(error);
+  }
 }
 
 /**
@@ -97,7 +109,7 @@ function playMove(player, cellIndex, uuid, res) {
  * @param {string} uuid
  * @param {Object} res
  */
-function updateSecondPlayerNickname(secondPlayerNickname, uuid, res) {
+async function updateSecondPlayerNickname(secondPlayerNickname, uuid, res) {
   getGameRepository()
     .update(
       { secondPlayerNickname },
@@ -107,19 +119,13 @@ function updateSecondPlayerNickname(secondPlayerNickname, uuid, res) {
         },
       }
     )
-    .then(() => {
-      getGameRepository()
-        .findOne({
-          where: {
-            uuid: uuid,
-          },
-        })
-        .then((game) => {
-          res.status(200).json(game);
-        })
-        .catch((error) => {
-          res.status(404).json(error);
-        });
+    .then(async () => {
+      try {
+        const game = await getGameByUuid(uuid);
+        res.status(200).json(game);
+      } catch (error) {
+        res.status(404).json(error);
+      }
     })
     .catch((error) => {
       res.status(400).json(error);

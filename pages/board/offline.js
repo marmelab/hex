@@ -18,7 +18,7 @@ export default function OfflineBoardPage() {
   const [game, setGame] = useState(null);
 
   useEffect(
-    function (id, game) {
+    function () {
       if (id && game === null) {
         setGame(getGameById(id));
       }
