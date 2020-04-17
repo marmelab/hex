@@ -1,12 +1,12 @@
 {
-  "name": "app",
+  "name": "hex",
   "version": "0.1.0",
   "license": "MIT",
   "private": false,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next build && next start -p 8080",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "svgr": "@svgr/cli",

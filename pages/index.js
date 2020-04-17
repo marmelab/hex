@@ -1,9 +1,7 @@
 import fetch from "isomorphic-unfetch";
 import Layout from "../components/layouts/Layout";
 import MainMenu from "../components/menus/MainMenu";
-
-/* export const GAME_URI = "https://hex.chroq.now.sh/api/games"; */
-export const GAME_URI = "http://localhost:3000/api/games";
+import { version, forwardRef } from "react";
 
 export default function Home({ games }) {
   return (
@@ -13,8 +11,13 @@ export default function Home({ games }) {
   );
 }
 
-export async function getServerSideProps() {
-  const res = await fetch(GAME_URI);
+export async function getServerSideProps({ req }) {
+  const res = await fetch(`${getBaseUrl(req)}/api/games`);
   const games = await res.json();
   return { props: { games } };
+}
+
+export function getBaseUrl(req) {
+  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+  return protocol + "://" + req.headers.host;
 }
