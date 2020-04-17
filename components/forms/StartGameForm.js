@@ -124,7 +124,13 @@ function initializeLocalGame(grid) {
   const gameId = Math.random().toString(36).substr(2, 9);
   const games = getGamesFromLocalStorage();
 
-  games.push({ id: gameId, grid });
+  games.push({
+    id: gameId,
+    grid: grid,
+    winner: NO_PLAYER_VALUE,
+    firstPlayerNickname: "noValue",
+    secondPlayerNickname: "noValue",
+  });
   setGamesInLocalStorage(games);
 
   return gameId;
