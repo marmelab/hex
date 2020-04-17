@@ -17,9 +17,14 @@ export default function OfflineBoardPage() {
 
   const [game, setGame] = useState(null);
 
-  if (id && game === null) {
-    setGame(getGameById(id));
-  }
+  useEffect(
+    function (id, game) {
+      if (id && game === null) {
+        setGame(getGameById(id));
+      }
+    },
+    [id, game, setGame, getGameById]
+  );
 
   const onMovePlayed = ({ cellIndex }) => {
     if (canPlayMove(cellIndex, game)) {
