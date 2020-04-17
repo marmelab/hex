@@ -1,9 +1,5 @@
 import { applyMoveOnGame } from "../../../engine/game";
-import {
-  getCurrentPlayer,
-  getToken,
-  generateToken,
-} from "../../../engine/player";
+import { generateToken, getCurrentPlayer } from "../../../engine/player";
 import { getGameRepository } from "../../../models/games/gameRepository";
 
 export default (req, res) => {
@@ -77,7 +73,10 @@ function playMove(player, cellIndex, uuid, res) {
       },
     })
     .then((game) => {
+      game.grid = JSON.parse(game.grid);
+
       const updatedGame = applyMoveOnGame(game, player, cellIndex);
+      updatedGame.grid = JSON.stringify(updatedGame.grid);
 
       updatedGame.save().then(function (updatedGame) {
         const game = updatedGame.dataValues;

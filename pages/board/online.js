@@ -2,8 +2,10 @@ import fetch from "isomorphic-unfetch";
 import { useEffect, useState } from "react";
 import Playboard from "../../components/boards/Playboard";
 import Layout from "../../components/layouts/Layout";
-import { getToken, NO_PLAYER_VALUE } from "../../engine/player";
+import { canPlayMove } from "../../engine/game";
+import { getToken } from "../../engine/player";
 
+/* export const GAME_URI = "https://hex.chroq.now.sh/api/games"; */
 export const GAME_URI = "http://localhost:3000/api/games";
 export const ONLINE_PATHNAME = "/board/online";
 
@@ -73,14 +75,4 @@ export async function getServerSideProps(context) {
 async function getGame(uuid) {
   const res = await fetch(`${GAME_URI}/${uuid}`);
   return await res.json();
-}
-
-/**
- * Check if the move is legal.
- *
- * @param {integer} index
- * @param {Object} game
- */
-function canPlayMove(index, game) {
-  return game.grid[index] === NO_PLAYER_VALUE && !game.winner;
 }
