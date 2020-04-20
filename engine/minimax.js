@@ -120,18 +120,23 @@ export function getAdvice(grid, player) {
  */
 function getBestScore(bestMaxScore, bestMinScore, maxScores, minScores) {
   if (bestMaxScore > -bestMinScore) {
-    const playerGrid = maxScores.find((score) => {
-      return score.score === bestMaxScore;
-    });
-
-    playerGrid.grid[playerGrid.index] = ADVISE_VALUE;
-    return playerGrid.grid;
-  } else {
-    const adversaryGrid = minScores.find((score) => {
-      return score.score === bestMinScore;
-    });
-
-    adversaryGrid.grid[adversaryGrid.index] = ADVISE_VALUE;
-    return adversaryGrid.grid;
+    return getUpdatedGrid(maxScores, bestMaxScore);
   }
+
+  return getUpdatedGrid(minScores, bestMinScore);
+}
+
+/**
+ * Returns an updated grid containing ADVISE_VALUE at the index position.
+ *
+ * @param {Array} scores
+ * @param {integer} bestScore
+ */
+export function getUpdatedGrid(scores, bestScore) {
+  const bestGrid = scores.find((score) => {
+    return score.score === bestScore;
+  });
+
+  bestGrid.grid[bestGrid.index] = ADVISE_VALUE;
+  return bestGrid.grid;
 }
