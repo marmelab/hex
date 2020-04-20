@@ -110,27 +110,28 @@ export function getAdvice(grid, player) {
   return getBestScore(bestMaxScore, bestMinScore, maxScores, minScores);
 }
 
+/**
+ * For a couple of best max and min score, we get back the most valuable score.
+ *
+ * @param {integer} bestMaxScore
+ * @param {integer} bestMinScore
+ * @param {Array} maxScores
+ * @param {Array} minScores
+ */
 function getBestScore(bestMaxScore, bestMinScore, maxScores, minScores) {
   if (bestMaxScore > -bestMinScore) {
     const playerGrid = maxScores.find((score) => {
       return score.score === bestMaxScore;
     });
 
-    const adviceGrid = () => {
-      playerGrid.grid[playerGrid.index] = ADVISE_VALUE;
-      return playerGrid.grid;
-    };
-    return adviceGrid();
+    playerGrid.grid[playerGrid.index] = ADVISE_VALUE;
+    return playerGrid.grid;
   } else {
     const adversaryGrid = minScores.find((score) => {
       return score.score === bestMinScore;
     });
 
-    const adviceGrid = () => {
-      adversaryGrid.grid[adversaryGrid.index] = ADVISE_VALUE;
-      return adversaryGrid.grid;
-    };
-
-    return adviceGrid();
+    adversaryGrid.grid[adversaryGrid.index] = ADVISE_VALUE;
+    return adversaryGrid.grid;
   }
 }
