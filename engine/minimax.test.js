@@ -11,10 +11,12 @@ import {
 } from "./player";
 
 describe("Minimax implementation", () => {
+  
   it("should get all grids possible for a grid configuration", () => {
     const grid = [1, 1, 0, 2, 2, 2, 1, 0, 0];
+    const player = FIRST_PLAYER_VALUE;
 
-    const allPossibleGrids = getAllPossibleGrids(grid, FIRST_PLAYER_VALUE);
+    const allPossibleGrids = getAllPossibleGrids(grid, player);
 
     const expectedGrids = [
       { grid: [1, 1, 1, 2, 2, 2, 1, 0, 0], index: 2 },
@@ -71,4 +73,13 @@ describe("Minimax implementation", () => {
 
     expect(advice).toEqual(expectedAdvice);
   });
+
+  /*   it("should returns the next best move as grid (level 1)", () => {
+    const grid = [0, 0, 0, 1, 0, 2, 0, 0, 0];
+
+    const advice = getAdvice(grid, FIRST_PLAYER_VALUE);
+    const expectedAdvice = [ADVISE_VALUE, 0, 0, 1, 0, 2, 0, 0, 0];
+
+    expect(advice).toEqual(expectedAdvice);
+  }); */
 });
