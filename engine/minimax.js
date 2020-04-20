@@ -1,9 +1,96 @@
-import { getNextPlayer, getWinningPath } from "./game";
+import { getWinningPath, getNextPlayer } from "./game";
 import { ADVISE_VALUE, NO_PLAYER_VALUE } from "./player";
 
 const BASE_VALUE = 0;
-const WINNING_VALUE = 100;
-const LOOSING_VALUE = -100;
+const MAX_VALUE = 100;
+const MIN_VALUE = -100;
+
+const ADVICE_DEPTH = 2;
+
+/**
+ * Returns the grid containing the best next move for a given player.
+ *
+ * @param {Array} grid
+ * @param {Array} initialSituation.grid
+ * @param {integer} initialSituation.index
+ * @param {integer} player
+ */
+export const getAdvice = (grid, player) => {
+  const situation = { grid, index: -1 };
+
+  const bestNextSituation = minimax(situation, ADVICE_DEPTH, true, player);
+
+  const advice = [...bestNextSituation.grid];
+  advice[bestNextSituation.index] = ADVISE_VALUE;
+  return advice;
+};
+
+/**
+ * @param {Object} situation
+ * @param {Array} situation.grid
+ * @param {integer} initialSituation.index
+ * @param {integer} depth
+ * @param {boolean} maximizing
+ */
+export const minimax = (situation, depth, maximizing, player) => {
+  const currentScore = calculateScore(
+    situation,
+    getNextPlayer(player),
+    depth,
+    !maximizing
+  );
+
+  if (depth === 0 || isTerminal(currentScore)) {
+    console.log(currentScore);
+
+    return currentScore;
+  }
+
+  if (maximizing) {
+    let maxScore = { score: MIN_VALUE };
+
+    getAllPossibleGrids(situation.grid, player).map((child) => {
+      const currentScore = minimax(
+        child,
+        depth - 1,
+        false,
+        getNextPlayer(player)
+      );
+
+      maxScore =
+        Math.max(maxScore.score, currentScore.score) == maxScore.score
+          ? maxScore
+          : currentScore;
+    });
+    return maxScore;
+  } else {
+    let minScore = { score: MAX_VALUE };
+
+    getAllPossibleGrids(situation.grid, player).map((child) => {
+      const currentScore = minimax(
+        child,
+        depth - 1,
+        true,
+        getNextPlayer(player)
+      );
+
+      minScore =
+        Math.min(minScore.score, currentScore.score) == minScore.score
+          ? minScore
+          : currentScore;
+    });
+
+    return minScore;
+  }
+};
+
+/**
+ *
+ * @param {*} score
+ */
+export const isTerminal = (score) => {
+  
+};
 
 /**
  * Declines all possible grids for the next movement of the player in parameter.
@@ -24,151 +111,49 @@ export const getAllPossibleGrids = (grid, player) => {
 };
 
 /**
- * Returns all paths for a player according to a selection of grids.
- *
- * @param {Array} grids
- * @param {integer} player
- * @param {integer} level
- * @param {boolean} maximizing
- */
-export function getWinningPathForGrids(grids, player) {
-  return grids.map((grid) => {
-    return {
-      grid: grid.grid,
-      path: getWinningPath(grid.grid, player),
-      index: grid.index,
-    };
-  });
-}
-
-/**
  * Returns the score based on maximising/minimizing parameter.
  *
  * @param {Array} winningPath
- * @param {integer} level
+ * @param {integer} depth
  * @param {boolean} maximized
  */
-function getScore(winningPath, level, maximized) {
+function getScore(winningPath, depth, maximized) {
   const { grid, path, index } = winningPath;
 
   const isWinningPath = path !== undefined;
 
   if (isWinningPath) {
     if (maximized) {
-      return makeScore(grid, index, level, WINNING_VALUE);
+      return makeScore(grid, index, depth, MAX_VALUE);
     } else if (!maximized) {
-      return makeScore(grid, index, level, LOOSING_VALUE);
+      return makeScore(grid, index, depth, MIN_VALUE);
     }
   }
 
-  return makeScore(grid, index, level, BASE_VALUE);
+  return makeScore(grid, index, depth, BASE_VALUE);
 }
 
-export const makeScore = (grid, index, level, value) => {
-  return { grid, score: value + level, index };
+export const makeScore = (grid, index, depth, value) => {
+  return { grid, score: value - depth, index };
 };
 
-export function getScores(grid, player, level, maximise) {
-  const possibleGrids = getAllPossibleGrids(grid, player);
-  const winningPaths = getWinningPathForGrids(possibleGrids, player);
-  return winningPaths.map((winningPath) => {
-    return getScore(winningPath, level, maximise);
-  });
-}
-
 /**
- * Returns the grid containing the best next move for a given player.
  *
  * @param {Array} grid
  * @param {integer} player
+ * @param {integer} depth
+ * @param {boolean} maximise
  */
-export function getAdvice(grid, player) {
-  const level = getNextLevel();
-
-  // Maximizing
-  const maxScores = getScores(grid, player, level, true);
-  const bestMaxScore = Math.max.apply(
-    Math,
-    maxScores.map((maximizedScore) => {
-      return maximizedScore.score;
-    })
-  );
-
-  // Minimazing
-  const adversary = getNextPlayer(player);
-  const minScores = getScores(grid, adversary, level, false);
-  const bestMinScore = Math.min.apply(
-    Math,
-    minScores.map((minimizedScore) => {
-      return minimizedScore.score;
-    })
-  );
-
-  /* return getBestScore(bestMaxScore, bestMinScore, maxScores, minScores); */
-
-  /// Level 2
-  const level2 = getNextLevel(level);
-  const nextPlayer = getNextPlayer(player);
-
-  const l2MaxScore = maxScores.map((score) => {
-    const maxScores = getScores(score.grid, nextPlayer, level2, true);
-    const bestMaxScore = Math.max.apply(
-      Math,
-      maxScores.map((maximizedScore) => {
-        return maximizedScore.score;
-      })
-    );
-  });
-
-  const l2Adversary = getNextPlayer(player);
-  const l2minScores = getScores(grid, l2Adversary, level2, false);
-  maxScores.map((score) => {
-    const maxScores = getScores(score.grid, nextPlayer, level2, true);
-    const bestMaxScore = Math.max.apply(
-      Math,
-      maxScores.map((maximizedScore) => {
-        return maximizedScore.score;
-      })
-    );
-  });
-
-  return getBestScore(bestMaxScore, bestMinScore, maxScores, l2minScores);
-}
-
-/**
- * Decrements level.
- *
- * @param {int} level
- */
-const getNextLevel = (level = 0) => level--;
-
-/**
- * For a couple of best max and min score, we get back the most valuable score.
- *
- * @param {integer} bestMaxScore
- * @param {integer} bestMinScore
- * @param {Array} maxScores
- * @param {Array} minScores
- */
-function getBestScore(bestMaxScore, bestMinScore, maxScores, minScores) {
-  if (bestMaxScore > -bestMinScore) {
-    return getUpdatedGrid(maxScores, bestMaxScore);
+export const calculateScore = (grid, player, depth, maximise) => {
+  if (situation.index !== -1) {
+    return;
   }
 
-  return getUpdatedGrid(minScores, bestMinScore);
-}
+  const winningPath = {
+    grid: grid.grid,
+    path: getWinningPath(grid.grid, player),
+    index: grid.index,
+  };
 
-/**
- * Returns an updated grid containing ADVISE_VALUE at the index position.
- *
- * @param {Array} scores
- * @param {integer} bestScore
- */
-export function getUpdatedGrid(scores, bestScore) {
-  const bestGrid = scores.find((score) => {
-    return score.score === bestScore;
-  });
-
-  bestGrid.grid[bestGrid.index] = ADVISE_VALUE;
-  return bestGrid.grid;
-}
+  return getScore(winningPath, depth, maximise);
+};
