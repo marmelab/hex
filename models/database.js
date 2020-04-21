@@ -1,6 +1,4 @@
-import { Sequelize } from "sequelize";
-
-const { DB_PARAMETERS } = require("./bootstrap");
+import { initDatabase } from "./bootstrap";
 
 let instance;
 
@@ -9,6 +7,5 @@ export const getDatabaseInstance = () => {
     return instance;
   }
 
-  instance = new Sequelize(DB_PARAMETERS);
-  return instance;
+  return initDatabase();
 };

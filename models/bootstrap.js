@@ -1,21 +1,22 @@
-require("./games/game");
+import { GAME_DEFINITION } from "./games/game";
+import { Sequelize } from "sequelize";
 
-const DB_PARAMETERS = {
-  dialect: "sqlite",
-  storage: ":memory:",
+export const DB_PARAMETERS = () => {
+  if (process.env.NODE_ENV === "production") {
+    return process.env.POSTGRESQL_ADDON_URI;
+  } else {
+    return {
+      dialect: "sqlite",
+      storage: "./var/data.sqlite",
+    };
+  }
 };
 
-const { GAME_DEFINITION } = require("./games/game");
+export const initDatabase = () => {
+  const sequelize = new Sequelize(DB_PARAMETERS());
 
-/**
- * InitDatabase
- */
+  sequelize.define("game", GAME_DEFINITION);
+  sequelize.sync();
 
-const { Sequelize } = require("sequelize");
-
-const sequelize = new Sequelize(DB_PARAMETERS);
-
-sequelize.define("game", GAME_DEFINITION);
-sequelize.sync();
-
-module.exports = { DB_PARAMETERS };
+  return sequelize;
+};

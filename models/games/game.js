@@ -1,5 +1,6 @@
-const { Sequelize, DataTypes } = require("sequelize");
-const GAME_DEFINITION = {
+import { Sequelize, DataTypes } from "sequelize";
+
+export const GAME_DEFINITION = {
   uuid: {
     primaryKey: true,
     type: DataTypes.UUID,
@@ -21,5 +22,3 @@ const GAME_DEFINITION = {
     allowNull: false,
   },
 };
-
-module.exports = { GAME_DEFINITION };
