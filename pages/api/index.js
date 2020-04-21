@@ -1,4 +1,5 @@
-export let baseUrl;
+let baseUrl;
+
 /**
  * Build the base URL based on the host provided as parameter.
  *
@@ -9,9 +10,9 @@ export const baseUrlSingleton = (host) => {
     return baseUrl;
   }
 
-  if (host) {
+  if (typeof host === "string") {
     const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-    return `${protocol}://${host}`;
+    baseUrl = `${protocol}://${host}`;
   }
 
   throw "Host must be provided a first time to init the singleton.";

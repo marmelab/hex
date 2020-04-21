@@ -5,10 +5,25 @@ import { getToken } from "../../engine/player";
 const GAMES_URI = "/api/games";
 
 /**
+ * Get complete games URI, with or without UUID.
+ *
+ * @param {string} uuid
+ */
+const getGamesUri = (uuid) => {
+  const gamesUri = `${baseUrlSingleton()}${GAMES_URI}`;
+
+  if (uuid) {
+    return `${gamesUri}${uuid}`;
+  }
+
+  return gamesUri;
+};
+
+/**
  * Get all games.
  */
 export const getGames = async () => {
-  const res = await fetch(`${baseUrlSingleton()}${GAMES_URI}`);
+  const res = await fetch(getGamesUri());
   return res.json();
 };
 
@@ -18,7 +33,39 @@ export const getGames = async () => {
  * @param {string} uuid
  */
 export const getGame = async (uuid) => {
-  const res = await fetch(`${baseUrlSingleton()}${GAMES_URI}${uuid}`);
+  const res = await fetch(getGamesUri(uuid));
+  return res.json();
+};
+
+/**
+ * Create a new game.
+ *
+ * @param {string} grid
+ * @param {string} firstPlayerNickname
+ */
+export const createGame = async (grid, firstPlayerNickname) => {
+  const res = await fetch(getGamesUri(), {
+    method: "POST",
+    body: JSON.stringify({
+      grid,
+      firstPlayerNickname,
+      winner: NO_PLAYER_VALUE,
+    }),
+  });
+  return res.json();
+};
+
+/**
+ * Updates a game to add the second player.
+ *
+ * @param {Object} secondPlayer
+ * @param {string} uuid
+ */
+export const addSecondPlayer = async (uuid, secondPlayerNickname) => {
+  const res = await fetch(getGamesUri(uuid), {
+    method: "PATCH",
+    body: JSON.stringify({ secondPlayerNickname }),
+  });
   return res.json();
 };
 
@@ -30,13 +77,10 @@ export const getGame = async (uuid) => {
  * @param {Object} payload
  */
 export const updateGame = async (uuid, payload) => {
-  const res = await fetch(`${baseUrlSingleton()}${GAMES_URI}${uuid}`, {
+  const res = await fetch(getGamesUri(uuid), {
     method: "PATCH",
-    headers: {
-      token: getToken(uuid),
-    },
+    headers: { token: getToken(uuid) },
     body: JSON.stringify(payload),
   });
-
   return res.json();
 };

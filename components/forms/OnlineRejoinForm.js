@@ -1,7 +1,7 @@
 import { Button, FormLabel, Input, Select } from "@chakra-ui/core";
 import { Formik } from "formik";
 import Router from "next/router";
-import { writeToken, SECOND_PLAYER_VALUE } from "../../engine/player";
+import { SECOND_PLAYER_VALUE, writeToken } from "../../engine/player";
 import { ONLINE_PATHNAME } from "../../pages/board/online";
 
 export default function OnlineRejoinForm({ games, baseUrl, ...props }) {
@@ -13,11 +13,7 @@ export default function OnlineRejoinForm({ games, baseUrl, ...props }) {
       initialValues={{ uuid: firstUuid, secondPlayerNickname }}
       onSubmit={async (values) => {
         try {
-          await addSecondPlayer(
-            { secondPlayerNickname: values.secondPlayerNickname },
-            values.uuid,
-            baseUrl
-          );
+          await addSecondPlayer(values.uuid, values.secondPlayerNickname);
           writeToken(SECOND_PLAYER_VALUE, values.uuid);
           goToOnlinePage(values.uuid);
         } catch (message) {
@@ -70,21 +66,6 @@ export default function OnlineRejoinForm({ games, baseUrl, ...props }) {
     </Formik>
   );
 }
-
-/**
- * Updates selected game to add the second player.
- *
- * @param {Object} secondPlayer
- * @param {string} id
- */
-const addSecondPlayer = async (secondPlayerNickname, id, baseUrl) => {
-  const res = await fetch(`${baseUrl}/api/games/${id}`, {
-    method: "PATCH",
-    body: JSON.stringify(secondPlayerNickname),
-  });
-
-  return res.json();
-};
 
 const goToOnlinePage = (id) => {
   Router.push({

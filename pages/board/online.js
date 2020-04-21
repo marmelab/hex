@@ -6,7 +6,7 @@ import { getGame } from "../api/gameCalls";
 
 export const ONLINE_PATHNAME = "/board/online";
 
-export default function OnlineBoardPage({ initialGame, baseUrl }) {
+export default function OnlineBoardPage({ initialGame }) {
   const [game, setGame] = useState(initialGame);
 
   const onMovePlayed = async ({ cellIndex }) => {
@@ -51,5 +51,5 @@ export default function OnlineBoardPage({ initialGame, baseUrl }) {
 }
 
 export async function getServerSideProps({ req, ...context }) {
-  return { props: { initialGame: getGame(context.query.id) } };
+  return { props: { initialGame: await getGame(context.query.id) } };
 }

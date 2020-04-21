@@ -15,16 +15,17 @@ import {
   NO_PLAYER_VALUE,
   writeToken,
 } from "../../engine/player";
+import { createGame } from "../../pages/api/gameCalls";
 import { OFFLINE_PATHNAME } from "../../pages/board/offline";
 import { ONLINE_PATHNAME } from "../../pages/board/online";
 import { getGamesFromLocalStorage, setGamesInLocalStorage } from "./storage";
 
-export default function StartGameForm(baseUrl) {
+export default function StartGameForm() {
   return (
     <Formik
       initialValues={{ size: "7" }}
       onSubmit={(values) => {
-        initializeGame(values, baseUrl);
+        initializeGame(values);
       }}
     >
       {({ handleSubmit, handleChange, values }) => (
@@ -96,14 +97,7 @@ const initializeGame = async (values, baseUrl) => {
 
     case ONLINE_PATHNAME:
       try {
-        const { uuid } = await initializeOnlineGame(
-          {
-            grid,
-            firstPlayerNickname: values.firstPlayerNickname,
-            winner: NO_PLAYER_VALUE,
-          },
-          baseUrl
-        );
+        const { uuid } = await createGame(grid, values.firstPlayerNickname);
 
         writeToken(FIRST_PLAYER_VALUE, uuid);
         Router.push({ pathname, query: { id: uuid } });
@@ -134,23 +128,4 @@ const initializeLocalGame = (grid) => {
   setGamesInLocalStorage(games);
 
   return gameId;
-};
-
-/**
- * Initialize a new game on API.
- *
- * @param {Object} game
- * @param {string} game.grid
- * @param {string} game.firstPlayerNickname
- */
-const initializeOnlineGame = async (game, { baseUrl }) => {
-  try {
-    const res = await fetch(`${baseUrl}/api/games`, {
-      method: "POST",
-      body: JSON.stringify(game),
-    });
-    return res.json();
-  } catch (error) {
-    throw `Error during game initilization: ${error}`;
-  }
 };
