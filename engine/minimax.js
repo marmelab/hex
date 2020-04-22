@@ -18,9 +18,7 @@ const ADVICE_DEPTH = 1;
 export const getAdvice = (grid, player, depth = ADVICE_DEPTH) => {
   const situation = { grid, index: -1 };
 
-  const maximize = true;
-
-  const bestNextSituation = minimax(situation, depth, maximize, player);
+  const bestNextSituation = minimax(situation, depth, true, player);
 
   const advice = [...situation.grid];
   advice[bestNextSituation.childIndex] = ADVISE_VALUE;
@@ -35,10 +33,19 @@ export const getAdvice = (grid, player, depth = ADVICE_DEPTH) => {
  * @param {boolean} maximize
  * @param {integer} player
  */
-export const minimax = (situation, depth, maximize, player) => {
-  const currentScore = calculateScore(situation, player, depth, maximize);
+export const minimax = (situation, depth, maximize, player, baseDepth) => {
+  const currentScore = calculateScore(
+    situation,
+    player,
+    depth,
+    maximize,
+    baseDepth
+  );
 
-  if (depth === 0 || isTerminal(currentScore)) {
+  if (
+    depth === 0 ||
+    (maximize && currentScore && currentScore.score === MAX_VALUE)
+  ) {
     return currentScore;
   }
 
@@ -46,7 +53,7 @@ export const minimax = (situation, depth, maximize, player) => {
     let maxScore = { score: MIN_VALUE };
 
     getAllPossibleGrids(situation.grid, player).forEach((child) => {
-      const currentScore = minimax(child, depth - 1, false, player);
+      const currentScore = minimax(child, depth - 1, false, player, depth);
 
       currentScore.childIndex = child.index;
 
@@ -56,7 +63,7 @@ export const minimax = (situation, depth, maximize, player) => {
           : currentScore;
     });
 
-    console.log(maxScore, depth);
+    console.log(maxScore, depth, "MAX");
 
     return maxScore;
   } else {
@@ -64,7 +71,7 @@ export const minimax = (situation, depth, maximize, player) => {
 
     getAllPossibleGrids(situation.grid, getNextPlayer(player)).forEach(
       (child) => {
-        const currentScore = minimax(child, depth - 1, true, player);
+        const currentScore = minimax(child, depth - 1, true, player, depth);
 
         currentScore.childIndex = child.index;
         minScore =
@@ -74,7 +81,7 @@ export const minimax = (situation, depth, maximize, player) => {
       }
     );
 
-    console.log(minScore, depth);
+    console.log(minScore, depth, "MIN");
 
     return minScore;
   }
@@ -131,6 +138,7 @@ function getScore(winningPath, depth, maximize) {
 
 /**
  *
+ *
  * @param {Array} grid
  * @param {integer} index
  * @param {integer} depth
@@ -141,6 +149,7 @@ export const makeScore = (grid, index, depth, value) => {
 };
 
 /**
+ * Calculate the score for a configuration.
  *
  * @param {Array} situation
  * @param {integer} player
@@ -150,12 +159,16 @@ export const makeScore = (grid, index, depth, value) => {
 export const calculateScore = (situation, player, depth, maximise) => {
   const { grid, index } = situation;
 
+  // -1 index indicates initial situation.
+  // We don't calculate the score for her.
   if (index === -1) {
     return;
   }
 
   const forPlayer = maximise ? getNextPlayer(player) : player;
 
+  // Winning path contains the path to win.
+  // If no path are found, the path will be undefined.
   const winningPath = {
     grid,
     path: getWinningPath(situation.grid, forPlayer),
