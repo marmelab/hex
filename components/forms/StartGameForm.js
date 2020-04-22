@@ -11,20 +11,20 @@ import { Formik } from "formik";
 import Router from "next/router";
 import { generateEmptyGrid } from "../../engine/grid";
 import {
+  FIRST_PLAYER_VALUE,
   NO_PLAYER_VALUE,
   writeToken,
-  FIRST_PLAYER_VALUE,
 } from "../../engine/player";
-import { GAME_URI, ONLINE_PATHNAME } from "../../pages/board/online";
-import { getGamesFromLocalStorage, setGamesInLocalStorage } from "./storage";
 import { OFFLINE_PATHNAME } from "../../pages/board/offline";
+import { ONLINE_PATHNAME } from "../../pages/board/online";
+import { getGamesFromLocalStorage, setGamesInLocalStorage } from "./storage";
 
-export default function StartGameForm() {
+export default function StartGameForm(baseUrl) {
   return (
     <Formik
       initialValues={{ size: "7" }}
       onSubmit={(values) => {
-        initializeGame(values);
+        initializeGame(values, baseUrl);
       }}
     >
       {({ handleSubmit, handleChange, values }) => (
@@ -47,6 +47,8 @@ export default function StartGameForm() {
             <option value="7">7</option>
             <option value="9">9</option>
             <option value="11">11</option>
+            <option value="13">13</option>
+            <option value="15">15</option>
           </Select>
 
           <Flex paddingTop="10%">
@@ -77,7 +79,7 @@ export default function StartGameForm() {
  * @param {Object} values
  * @param {int} values.size
  */
-function initializeGame(values) {
+const initializeGame = async (values, baseUrl) => {
   const grid = JSON.stringify(generateEmptyGrid(values.size));
   const pathname = values.online ? ONLINE_PATHNAME : OFFLINE_PATHNAME;
 
@@ -93,26 +95,24 @@ function initializeGame(values) {
       break;
 
     case ONLINE_PATHNAME:
-      initializeServerGame({
-        grid,
-        firstPlayerNickname: values.firstPlayerNickname,
-        winner: NO_PLAYER_VALUE,
-      })
-        .then(function (game) {
-          writeToken(FIRST_PLAYER_VALUE, game.uuid);
-          Router.push({
-            pathname,
-            query: {
-              id: game.uuid,
-            },
-          });
-        })
-        .catch(function (message) {
-          throw ("Error in form:", message);
-        });
+      try {
+        const { uuid } = await initializeOnlineGame(
+          {
+            grid,
+            firstPlayerNickname: values.firstPlayerNickname,
+            winner: NO_PLAYER_VALUE,
+          },
+          baseUrl
+        );
+
+        writeToken(FIRST_PLAYER_VALUE, uuid);
+        Router.push({ pathname, query: { id: uuid } });
+      } catch (message) {
+        throw message;
+      }
       break;
   }
-}
+};
 
 /**
  * Initialize a local game by storing initial value into Local Storage.
@@ -120,7 +120,7 @@ function initializeGame(values) {
  *
  * @param {Array} grid
  */
-function initializeLocalGame(grid) {
+const initializeLocalGame = (grid) => {
   const gameId = Math.random().toString(36).substr(2, 9);
   const games = getGamesFromLocalStorage();
 
@@ -134,7 +134,7 @@ function initializeLocalGame(grid) {
   setGamesInLocalStorage(games);
 
   return gameId;
-}
+};
 
 /**
  * Initialize a new game on API.
@@ -143,15 +143,14 @@ function initializeLocalGame(grid) {
  * @param {string} game.grid
  * @param {string} game.firstPlayerNickname
  */
-function initializeServerGame(game) {
-  return fetch(GAME_URI, {
-    method: "POST",
-    body: JSON.stringify(game),
-  })
-    .then(function (response) {
-      return response.json();
-    })
-    .catch(function (error) {
-      return error;
+const initializeOnlineGame = async (game, { baseUrl }) => {
+  try {
+    const res = await fetch(`${baseUrl}/api/games`, {
+      method: "POST",
+      body: JSON.stringify(game),
     });
-}
+    return res.json();
+  } catch (error) {
+    throw `Error during game initilization: ${error}`;
+  }
+};

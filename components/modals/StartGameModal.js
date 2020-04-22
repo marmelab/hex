@@ -11,7 +11,7 @@ import {
 import MenuButton from "../buttons/MenuButton";
 import StartGameForm from "../forms/StartGameForm";
 
-export default function StartGameModal({ ...props }) {
+export default function StartGameModal({ baseUrl, ...props }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Flex alignItems="center" justify="center" {...props}>
@@ -27,7 +27,7 @@ export default function StartGameModal({ ...props }) {
           <ModalHeader>Start a new game</ModalHeader>
           <ModalCloseButton aria-label="Close" tabIndex="-1" />
           <ModalBody>
-            <StartGameForm />
+            <StartGameForm baseUrl={baseUrl} />
           </ModalBody>
         </ModalContent>
       </Modal>
