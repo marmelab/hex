@@ -8,7 +8,6 @@ export default function Home({ games, baseUrl }) {
       content={
         <MainMenu
           w="100vw"
-          h="25vh"
           flexWrap="wrap"
           games={games}
           baseUrl={baseUrl}
