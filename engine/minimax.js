@@ -1,14 +1,15 @@
 import { getWinningPath, getNextPlayer } from "./game";
 import { ADVISE_VALUE, NO_PLAYER_VALUE } from "./player";
+import { NumberDecrementStepper } from "@chakra-ui/core";
 
 const BASE_VALUE = 0;
 const MAX_VALUE = 100;
 const MIN_VALUE = -100;
 
-const ADVICE_DEPTH = 1;
+const ADVICE_DEPTH = 3;
 
 /**
- * Returns the grid containing the best next move for a given player.
+ * Returns the grid containing the best move for a given player.
  *
  * @param {Array} grid
  * @param {Array} initialSituation.grid
@@ -18,14 +19,20 @@ const ADVICE_DEPTH = 1;
 export const getAdvice = (grid, player, depth = ADVICE_DEPTH) => {
   const situation = { grid, index: -1 };
 
-  const bestNextSituation = minimax(situation, depth, true, player);
+  const proposition = minimax(situation, depth, true, player, depth);
 
   const advice = [...situation.grid];
-  advice[bestNextSituation.childIndex] = ADVISE_VALUE;
+  advice[proposition.originIndex] = ADVISE_VALUE;
+
   return advice;
 };
 
 /**
+ * Minimax function.
+ * Based on
+ *  https://en.wikipedia.org/wiki/Minimax
+ *  https://medium.com/@alialaa/tic-tac-toe-with-javascript-es2015-ai-player-with-minimax-algorithm-59f069f46efa
+ *
  * @param {Object} situation
  * @param {Array} situation.grid
  * @param {integer} situation.index
@@ -34,118 +41,74 @@ export const getAdvice = (grid, player, depth = ADVICE_DEPTH) => {
  * @param {integer} player
  */
 export const minimax = (situation, depth, maximize, player, baseDepth) => {
-  const currentScore = calculateScore(
-    situation,
-    player,
-    depth,
-    maximize,
-    baseDepth
-  );
+  // Used to ponderate the score.
+  // The lower the depth, the higher the penalty.
+  const penalty = baseDepth - depth;
 
-  if (
-    depth === 0 ||
-    (maximize && currentScore && currentScore.score === MAX_VALUE)
-  ) {
-    return currentScore;
+  const leaf = calculateScore(situation, player, maximize, penalty);
+
+  if (depth === 0 || isTerminal(leaf, penalty, maximize)) {
+    return leaf;
   }
 
   if (maximize) {
     let maxScore = { score: MIN_VALUE };
 
-    getAllPossibleGrids(situation.grid, player).forEach((child) => {
-      const currentScore = minimax(child, depth - 1, false, player, depth);
+    getAllPossibleGrids(situation.grid, player).forEach((leaf) => {
+      const currentLeaf = minimax(leaf, depth - 1, false, player, baseDepth);
 
-      currentScore.childIndex = child.index;
+      currentLeaf.originIndex = getOriginIndex(leaf, currentLeaf);
+      currentLeaf.depth = depth;
 
       maxScore =
-        Math.max(maxScore.score, currentScore.score) === maxScore.score
+        Math.max(maxScore.score, currentLeaf.score) === maxScore.score
           ? maxScore
-          : currentScore;
+          : currentLeaf;
     });
-
-    console.log(maxScore, depth, "MAX");
 
     return maxScore;
   } else {
     let minScore = { score: MAX_VALUE };
 
     getAllPossibleGrids(situation.grid, getNextPlayer(player)).forEach(
-      (child) => {
-        const currentScore = minimax(child, depth - 1, true, player, depth);
+      (leaf) => {
+        const currentLeaf = minimax(leaf, depth - 1, true, player, baseDepth);
 
-        currentScore.childIndex = child.index;
+        currentLeaf.originIndex = getOriginIndex(leaf, currentLeaf);
+        currentLeaf.depth = depth;
+
         minScore =
-          Math.min(minScore.score, currentScore.score) === minScore.score
+          Math.min(minScore.score, currentLeaf.score) === minScore.score
             ? minScore
-            : currentScore;
+            : currentLeaf;
       }
     );
-
-    console.log(minScore, depth, "MIN");
 
     return minScore;
   }
 };
 
 /**
+ * Get the very first index of the branch.
  *
- * @param {*} score
+ * @param {Object} leaf
  */
-export const isTerminal = (score) => {
-  score && (score.score === MAX_VALUE || score.score === MIN_VALUE);
+export const getOriginIndex = (leaf, penalty, maximise) => {
+  return isTerminal(leaf, penalty, maximise) ?? leaf.index;
 };
 
 /**
- * Declines all possible grids for the next movement of the player in parameter.
+ * Checks if the node is terminal.
+ * For each level, returns the expected value of a max success.
+ * Because penalty is a negative value, we do an addition for checking
+ * the min value.
  *
- * @param {Array} grid
- * @param {integer} player
+ * @param {integer} leaf
  */
-export const getAllPossibleGrids = (grid, player) => {
-  return grid
-    .map((value, index) => {
-      if (value === NO_PLAYER_VALUE) {
-        const possibleGrid = [...grid];
-        possibleGrid[index] = player;
-        return { grid: possibleGrid, index };
-      }
-    })
-    .filter((grid) => grid !== undefined);
-};
-
-/**
- * Returns the score based on maximising/minimizing parameter.
- *
- * @param {Array} winningPath
- * @param {integer} depth
- * @param {boolean} maximize
- */
-function getScore(winningPath, depth, maximize) {
-  const { grid, path, index } = winningPath;
-
-  const isWinningPath = path !== undefined;
-
-  if (isWinningPath) {
-    if (maximize) {
-      return makeScore(grid, index, depth, MAX_VALUE);
-    } else {
-      return makeScore(grid, index, depth, MIN_VALUE);
-    }
-  }
-
-  return makeScore(grid, index, depth, BASE_VALUE);
-}
-
-/**
- *
- *
- * @param {Array} grid
- * @param {integer} index
- * @param {integer} depth
- * @param {integer} value
- */
-export const makeScore = (grid, index, depth, value) => {
-  return { grid, score: value - depth, index };
+export const isTerminal = (leaf, penalty, maximize) => {
+  leaf &&
+    ((!maximize && leaf.score === MAX_VALUE - penalty) ||
+      (maximize && leaf.score === MIN_VALUE + penalty));
 };
 
 /**
@@ -155,8 +118,9 @@ export const makeScore = (grid, index, depth, value) => {
  * @param {integer} player
  * @param {integer} depth
  * @param {boolean} maximise
+ * @param {integer} penalty
  */
-export const calculateScore = (situation, player, depth, maximise) => {
+export const calculateScore = (situation, player, maximise, penalty) => {
   const { grid, index } = situation;
 
   // -1 index indicates initial situation.
@@ -175,5 +139,46 @@ export const calculateScore = (situation, player, depth, maximise) => {
     index,
   };
 
-  return getScore(winningPath, depth, !maximise);
+  return getScore(winningPath, !maximise, penalty);
+};
+
+/**
+ * Returns the score based on maximising/minimizing parameter.
+ *
+ * @param {Array} winningPath
+ * @param {integer} depth
+ * @param {boolean} maximize
+ */
+function getScore(winningPath, maximize, penalty) {
+  const { grid, path, index } = winningPath;
+
+  const isWinningPath = path !== undefined;
+
+  if (isWinningPath) {
+    if (maximize) {
+      return { grid, index, score: MAX_VALUE - penalty };
+    } else {
+      return { grid, index, score: MIN_VALUE + penalty };
+    }
+  }
+
+  return { grid, index, score: BASE_VALUE - penalty };
+}
+
+/**
+ * Declines all possible grids for the next movement of the player in parameter.
+ *
+ * @param {Array} grid
+ * @param {integer} player
+ */
+export const getAllPossibleGrids = (grid, player) => {
+  return grid
+    .map((value, index) => {
+      if (value === NO_PLAYER_VALUE) {
+        const possibleGrid = [...grid];
+        possibleGrid[index] = player;
+        return { grid: possibleGrid, index };
+      }
+    })
+    .filter((grid) => grid !== undefined);
 };
