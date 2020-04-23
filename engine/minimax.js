@@ -4,8 +4,9 @@ import { ADVISE_VALUE, NO_PLAYER_VALUE } from "./player";
 const BASE_VALUE = 0;
 const MAX_VALUE = 100;
 const MIN_VALUE = -100;
-
 const INFINITY_VALUE = 10000;
+
+const INITIAL_SITUATION_INDEX = -1;
 
 const ADVICE_DEPTH = 3;
 
@@ -18,7 +19,7 @@ const ADVICE_DEPTH = 3;
  * @param {integer} player
  */
 export const getAdvice = (grid, player, depth = ADVICE_DEPTH) => {
-  const situation = { grid, index: -1 };
+  const situation = { grid, index: INITIAL_SITUATION_INDEX };
 
   const proposition = minimax(situation, depth, true, player, depth);
 
@@ -132,9 +133,8 @@ export const isTerminal = (leaf, penalty, maximize) => {
 export const calculateScore = (situation, player, maximize, penalty) => {
   const { grid, index } = situation;
 
-  // -1 index indicates initial situation.
-  // We don't calculate the score for her.
-  if (index === -1) {
+  // INITIAL_SITUATION_INDEX indicates that it will not be processed.
+  if (index === INITIAL_SITUATION_INDEX) {
     return;
   }
 
