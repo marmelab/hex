@@ -1,5 +1,5 @@
 import { getNextPlayer, getWinningPath } from "./game";
-import { ADVISE_VALUE, NO_PLAYER_VALUE } from "./player";
+import { NO_PLAYER_VALUE } from "./player";
 
 const BASE_VALUE = 0;
 const MAX_VALUE = 100;
@@ -8,6 +8,7 @@ const INFINITY_VALUE = 10000;
 
 const INITIAL_SITUATION_INDEX = -1;
 
+export const ADVISE_VALUE = 4;
 const ADVICE_DEPTH = 3;
 
 /**
@@ -36,8 +37,8 @@ export const getAdvice = (grid, player, depth = ADVICE_DEPTH) => {
 /**
  * Minimax function.
  * Based on
- *  https://en.wikipedia.org/wiki/Minimax
- *  https://medium.com/@alialaa/tic-tac-toe-with-javascript-es2015-ai-player-with-minimax-algorithm-59f069f46efa
+ * @link https://en.wikipedia.org/wiki/Minimax
+ * @link https://medium.com/@alialaa/tic-tac-toe-with-javascript-es2015-ai-player-with-minimax-algorithm-59f069f46efa
  *
  * @param {Object} situation
  * @param {Array} situation.grid
@@ -51,7 +52,7 @@ export const minimax = (situation, depth, maximize, player, baseDepth) => {
   // The lower the depth, the higher the penalty.
   const penalty = baseDepth - depth;
 
-  const leaf = calculateScore(situation, player, maximize, penalty);
+  const leaf = getScore(situation, player, maximize, penalty);
 
   if (depth === 0 || isTerminal(leaf, penalty, maximize)) {
     return leaf;
@@ -108,8 +109,9 @@ export const addIndexToPath = (currentLeaf, index) => {
 };
 
 /**
- * Checks if the node is terminal.
- * For each level, returns the expected value of a max success.
+ * Checks if the leaf is terminal.
+ * A leaf is terminal if his value equals the maximum value possible.
+ *
  * Because penalty is a negative value, we do an addition for checking
  * the min value.
  *
@@ -122,7 +124,7 @@ export const isTerminal = (leaf, penalty, maximize) => {
 };
 
 /**
- * Calculate the score for a configuration.
+ * Get the score for a situation.
  *
  * @param {Array} situation
  * @param {integer} player
@@ -130,7 +132,7 @@ export const isTerminal = (leaf, penalty, maximize) => {
  * @param {boolean} maximize
  * @param {integer} penalty
  */
-export const calculateScore = (situation, player, maximize, penalty) => {
+export const getScore = (situation, player, maximize, penalty) => {
   const { grid, index } = situation;
 
   // INITIAL_SITUATION_INDEX indicates that it will not be processed.
@@ -148,17 +150,17 @@ export const calculateScore = (situation, player, maximize, penalty) => {
     index,
   };
 
-  return getScore(winningPath, !maximize, penalty);
+  return determineScore(winningPath, !maximize, penalty);
 };
 
 /**
- * Returns the score based on maximising/minimizing parameter.
+ * Returns the score based on maximizing/minimizing parameter.
  *
  * @param {Array} winningPath
  * @param {integer} depth
  * @param {boolean} maximize
  */
-export const getScore = (winningPath, maximize, penalty) => {
+export const determineScore = (winningPath, maximize, penalty) => {
   const { grid, path, index } = winningPath;
 
   const isWinningPath = path !== undefined;
