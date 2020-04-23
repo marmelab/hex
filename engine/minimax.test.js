@@ -49,7 +49,7 @@ describe("Minimax implementation", () => {
     expect(hint).toEqual(expectedHint);
   });
 
-  it("should play the next winning move for second player (size of grid: 7x7) ", () => {
+  it("should play the next winning move for first player (size of grid: 7x7) ", () => {
     // prettier-ignore
     const grid = [
       _,_,O,X,O,O,X,O,_,_,X,O,X,_,_,X,O,O,X,X,O,_,_,X,_,O,O,_,X,O,O,O,O,O,_,X,X,X,O,X,_,_,O,_,X,X,X,X,_
@@ -65,8 +65,8 @@ describe("Minimax implementation", () => {
   });
 
   it("should not let the player X win the next turn", () => {
-    const grid = [_, _, _, X, X, O, _, _, _];
-    const expectedHint = [_, _, A, X, X, O, _, _, _];
+    const grid = [_, _, _, X, X, _, _, _, O];
+    const expectedHint = [_, _, A, X, X, _, _, _, O];
 
     const hint = getHint(grid, O);
 
@@ -74,8 +74,8 @@ describe("Minimax implementation", () => {
   });
 
   it("should play a move with the purpose to win", () => {
-    const situation = [_, _, _, _, X, O, _, _, _];
-    const expectedHint = [_, _, A, _, X, O, _, _, _];
+    const situation = [_, _, _, X, _, O, _, _, _];
+    const expectedHint = [_, A, _, X, _, O, _, _, _];
 
     const hint = getHint(situation, X);
 
@@ -84,10 +84,9 @@ describe("Minimax implementation", () => {
 
   it("should play a move to win in 2 turn", () => {
     const situation = [_, _, _, 2, _, _, 1, _, _];
+    const expectedHint = [_, _, A, 2, _, _, 1, _, _];
 
-    const expectedHint = [_, _, _, 2, A, _, 1, _, _];
-
-    const hint = getHint(situation, X, 4);
+    const hint = getHint(situation, X);
 
     expect(hint).toEqual(expectedHint);
   });

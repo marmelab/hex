@@ -52,8 +52,7 @@ export const minimax = (situation, depth, maximize, player, baseDepth) => {
   // The lower the depth, the higher the penalty.
   const penalty = baseDepth - depth;
 
-  const currentPlayer = getCurrentPlayer(player, depth);
-  const leaf = getLeaf(situation, currentPlayer, maximize, penalty);
+  const leaf = getLeaf(situation, player, maximize, penalty);
 
   if (depth === 0 || isTerminal(leaf, penalty, maximize)) {
     return leaf;
@@ -62,14 +61,12 @@ export const minimax = (situation, depth, maximize, player, baseDepth) => {
   if (maximize) {
     let maxScore = { score: -INFINITY_VALUE };
 
-    getAllPossibleGrids(situation.grid, currentPlayer).forEach((leaf) => {
-      const currentLeaf = minimax(
-        leaf,
-        depth - 1,
-        false,
-        currentPlayer,
-        baseDepth
-      );
+    if (depth !== baseDepth) {
+      player = getNextPlayer(player);
+    }
+
+    getAllPossibleGrids(situation.grid, player).forEach((leaf) => {
+      const currentLeaf = minimax(leaf, depth - 1, false, player, baseDepth);
 
       addIndexToPath(currentLeaf, leaf.index);
 
@@ -83,14 +80,9 @@ export const minimax = (situation, depth, maximize, player, baseDepth) => {
   } else {
     let minScore = { score: INFINITY_VALUE };
 
-    getAllPossibleGrids(situation.grid, currentPlayer).forEach((leaf) => {
-      const currentLeaf = minimax(
-        leaf,
-        depth - 1,
-        true,
-        currentPlayer,
-        baseDepth
-      );
+    player = getNextPlayer(player);
+    getAllPossibleGrids(situation.grid, player).forEach((leaf) => {
+      const currentLeaf = minimax(leaf, depth - 1, true, player, baseDepth);
 
       addIndexToPath(currentLeaf, leaf.index);
 
@@ -102,16 +94,6 @@ export const minimax = (situation, depth, maximize, player, baseDepth) => {
 
     return minScore;
   }
-};
-
-/**
- * This function determines which player should be treated.
- *
- * @param {integer} player
- * @param {integer} depth
- */
-export const getCurrentPlayer = (player, depth) => {
-  return depth % 2 === 0 ? player : getNextPlayer(player);
 };
 
 /**
