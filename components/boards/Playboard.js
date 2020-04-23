@@ -11,7 +11,7 @@ import {
   getHexagonWidth,
 } from "./position.js";
 
-function Playboard({ game, onMovePlayed, ...props }) {
+function Playboard({ game, onMovePlayed, onHintAsked, ...props }) {
   const grid = game.grid;
   const size = Math.sqrt(game.grid.length);
   const player = game.player;
@@ -23,6 +23,10 @@ function Playboard({ game, onMovePlayed, ...props }) {
 
   const handleCellOnPress = (cellIndex) => {
     onMovePlayed({ cellIndex });
+  };
+
+  const handleHintOnPress = () => {
+    onHintAsked();
   };
 
   const handleReplayOnPress = useCallback(() => {
@@ -99,6 +103,7 @@ function Playboard({ game, onMovePlayed, ...props }) {
         player={player}
         winner={winner}
         onReplayOnPress={handleReplayOnPress}
+        onHintOnPress={handleHintOnPress}
         w="10%"
         flexWrap="wrap"
       />
