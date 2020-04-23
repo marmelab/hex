@@ -1,5 +1,5 @@
 import { getNextPlayer, getWinningPath } from "./game";
-import { NO_PLAYER_VALUE } from "./player";
+import { NO_PLAYER_VALUE, SECOND_PLAYER_VALUE } from "./player";
 
 const BASE_VALUE = 0;
 const MAX_VALUE = 100;
@@ -52,7 +52,9 @@ export const minimax = (situation, depth, maximize, player, baseDepth) => {
   // The lower the depth, the higher the penalty.
   const penalty = baseDepth - depth;
 
-  const leaf = getScore(situation, player, maximize, penalty);
+  const currentPlayer = getCurrentPlayer(player, depth);
+
+  const leaf = getScore(situation, currentPlayer, maximize, penalty);
 
   if (depth === 0 || isTerminal(leaf, penalty, maximize)) {
     return leaf;
@@ -61,8 +63,14 @@ export const minimax = (situation, depth, maximize, player, baseDepth) => {
   if (maximize) {
     let maxScore = { score: -INFINITY_VALUE };
 
-    getAllPossibleGrids(situation.grid, player).forEach((leaf) => {
-      const currentLeaf = minimax(leaf, depth - 1, false, player, baseDepth);
+    getAllPossibleGrids(situation.grid, currentPlayer).forEach((leaf) => {
+      const currentLeaf = minimax(
+        leaf,
+        depth - 1,
+        false,
+        currentPlayer,
+        baseDepth
+      );
 
       addIndexToPath(currentLeaf, leaf.index);
 
@@ -76,21 +84,35 @@ export const minimax = (situation, depth, maximize, player, baseDepth) => {
   } else {
     let minScore = { score: INFINITY_VALUE };
 
-    getAllPossibleGrids(situation.grid, getNextPlayer(player)).forEach(
-      (leaf) => {
-        const currentLeaf = minimax(leaf, depth - 1, true, player, baseDepth);
+    getAllPossibleGrids(situation.grid, currentPlayer).forEach((leaf) => {
+      const currentLeaf = minimax(
+        leaf,
+        depth - 1,
+        true,
+        currentPlayer,
+        baseDepth
+      );
 
-        addIndexToPath(currentLeaf, leaf.index);
+      addIndexToPath(currentLeaf, leaf.index);
 
-        minScore =
-          Math.min(minScore.score, currentLeaf.score) === minScore.score
-            ? minScore
-            : currentLeaf;
-      }
-    );
+      minScore =
+        Math.min(minScore.score, currentLeaf.score) === minScore.score
+          ? minScore
+          : currentLeaf;
+    });
 
     return minScore;
   }
+};
+
+/**
+ * This function determines which player should be treated.
+ *
+ * @param {integer} player
+ * @param {integer} depth
+ */
+export const getCurrentPlayer = (player, depth) => {
+  return depth % 2 === 1 ? getNextPlayer(player) : player;
 };
 
 /**
@@ -140,15 +162,9 @@ export const getScore = (situation, player, maximize, penalty) => {
     return;
   }
 
-  const forPlayer = getNextPlayer(player);
-
-  // Winning path contains the path to win.
   // If no path are found, the path will be undefined.
-  const winningPath = {
-    grid,
-    path: getWinningPath(situation.grid, forPlayer),
-    index,
-  };
+  const path = getWinningPath(situation.grid, player);
+  const winningPath = { grid, path, index };
 
   return determineScore(winningPath, !maximize, penalty);
 };

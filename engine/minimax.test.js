@@ -42,20 +42,17 @@ describe("Minimax implementation", () => {
     expect(allPossibleGrids).toEqual(expectedGrids);
   });
 
-  it("should play the next winning move (size of grid: 3x3)", () => {
-    const grid = [_, _, _, X, X, _, O, O, _];
-    const expectedAdvice = [_, _, A, X, X, _, O, O, _];
+  it("should play the next winning move for second player (size of grid: 5x5) ", () => {
+    // prettier-ignore
+    const grid = [
+        X, X, O, _, _, X, _, O, _, _, X, _, O, _, _, X, _, O, _, _, _, _, _, _, _,                
+    ];
+    // prettier-ignore
+    const expectedAdvice = [
+        X, X, O, _, _, X, _, O, _, _, X, _, O, _, _, X, _, O, _, _, _, A, _, _, _,       
+    ];
 
-    const advice = getAdvice(grid, X);
-
-    expect(advice).toEqual(expectedAdvice);
-  });
-
-  it("should play the next winning move (size of grid: 4x4) ", () => {
-    const grid = [_, X, _, O, O, X, O, X, X, _, X, _, _, _, O, O];
-
-    const expectedAdvice = [_, X, _, O, O, X, O, X, X, A, X, _, _, _, O, O];
-    const advice = getAdvice(grid, X);
+    const advice = getAdvice(grid, O);
 
     expect(advice).toEqual(expectedAdvice);
   });
@@ -72,15 +69,6 @@ describe("Minimax implementation", () => {
   it("should play a move with the purpose to win", () => {
     const situation = [_, _, _, _, X, O, _, _, _];
     const expectedAdvice = [_, _, A, _, X, O, _, _, _];
-
-    const advice = getAdvice(situation, X);
-
-    expect(advice).toEqual(expectedAdvice);
-  });
-
-  it("should return the next best move as grid", () => {
-    const situation = [_, _, _, X, X, O, O, _, _];
-    const expectedAdvice = [_, _, A, X, X, O, O, _, _];
 
     const advice = getAdvice(situation, X);
 
