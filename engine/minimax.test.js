@@ -16,7 +16,7 @@ import {
  * ADVISE_VALUE = 4
  */
 describe("Minimax implementation", () => {
-  it("should get all grids possible for a grid configuration", () => {
+  it("should get all possible grids for a grid configuration", () => {
     const grid = [
       FIRST_PLAYER_VALUE,
       FIRST_PLAYER_VALUE,
@@ -108,7 +108,7 @@ describe("Minimax implementation", () => {
     expect(advice).toEqual(expectedAdvice);
   });
 
-  it("should not let the player 1 wins the next turn", () => {
+  it("should not let the player 1 win the next turn", () => {
     const grid = [
       NO_PLAYER_VALUE,
       NO_PLAYER_VALUE,
@@ -137,7 +137,7 @@ describe("Minimax implementation", () => {
     expect(advice).toEqual(expectedAdvice);
   });
 
-  it("should plays a move with the purpose to win", () => {
+  it("should play a move with the purpose to win", () => {
     const situation = [
       NO_PLAYER_VALUE,
       NO_PLAYER_VALUE,
@@ -166,7 +166,7 @@ describe("Minimax implementation", () => {
     expect(advice).toEqual(expectedAdvice);
   });
 
-  it("should returns the next best move as grid", () => {
+  it("should return the next best move as grid", () => {
     const situation = [
       NO_PLAYER_VALUE,
       NO_PLAYER_VALUE,
