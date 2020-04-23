@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 import { getBaseUrl } from "..";
 import Playboard from "../../components/boards/Playboard";
 import Layout from "../../components/layouts/Layout";
-import { canPlayMove } from "../../engine/game";
-import { getToken } from "../../engine/player";
+import { canPlayMove, cleanHints } from "../../engine/game";
+import { getToken, NO_PLAYER_VALUE } from "../../engine/player";
 
 export const ONLINE_PATHNAME = "/board/online";
 
 export default function OnlineBoardPage({ initialGame, baseUrl }) {
   const [game, setGame] = useState(initialGame);
+  const [hint, setHint] = useState(null);
 
   const onMovePlayed = async ({ cellIndex }) => {
     if (canPlayMove(cellIndex, game)) {
@@ -30,12 +31,37 @@ export default function OnlineBoardPage({ initialGame, baseUrl }) {
     }
   };
 
+  const onHintAsked = async () => {
+    if (game.winner === NO_PLAYER_VALUE) {
+      const hint = game;
+      hint.grid = cleanHints(game.grid);
+
+      try {
+        const res = await fetch(`${baseUrl}/api/hints`, {
+          method: "POST",
+          body: JSON.stringify({ grid: hint.grid, player: hint.player }),
+        });
+
+        const { grid } = await res.json();
+        hint.grid = grid;
+      } catch (error) {
+        throw "Unable to get hint.";
+      }
+
+      setHint(hint);
+    }
+  };
+
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const updatedGame = await getGame(baseUrl, game.uuid);
-
-        setGame(updatedGame);
+        if (hint !== null) {
+          setGame(hint);
+          setHint(null);
+        } else {
+          const updatedGame = await getGame(baseUrl, game.uuid);
+          setGame(updatedGame);
+        }
       } catch (error) {
         throw error;
       }
@@ -52,6 +78,7 @@ export default function OnlineBoardPage({ initialGame, baseUrl }) {
       content={
         <Playboard
           onMovePlayed={onMovePlayed}
+          onHintAsked={onHintAsked}
           game={game}
           w="100vw"
           marginTop="15vh"
