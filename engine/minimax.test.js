@@ -105,12 +105,11 @@ describe("Minimax implementation", () => {
     ];
 
     const advice = getAdvice(grid, FIRST_PLAYER_VALUE);
-    console.log(advice);
 
     expect(advice).toEqual(expectedAdvice);
   });
 
-  it("should not let the player FIRST_PLAYER_VALUE wins the next turn", () => {
+  it("should not let the player 1 wins the next turn", () => {
     const grid = [
       NO_PLAYER_VALUE,
       NO_PLAYER_VALUE,

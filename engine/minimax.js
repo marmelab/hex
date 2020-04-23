@@ -1,10 +1,11 @@
-import { getWinningPath, getNextPlayer } from "./game";
+import { getNextPlayer, getWinningPath } from "./game";
 import { ADVISE_VALUE, NO_PLAYER_VALUE } from "./player";
-import { NumberDecrementStepper } from "@chakra-ui/core";
 
 const BASE_VALUE = 0;
 const MAX_VALUE = 100;
 const MIN_VALUE = -100;
+
+const INFINITY_VALUE = 10000;
 
 const ADVICE_DEPTH = 3;
 
@@ -22,7 +23,11 @@ export const getAdvice = (grid, player, depth = ADVICE_DEPTH) => {
   const proposition = minimax(situation, depth, true, player, depth);
 
   const advice = [...situation.grid];
-  advice[proposition.originIndex] = ADVISE_VALUE;
+
+  if (proposition.path.length === 0) {
+    throw "Unable to determine the order of played indexes";
+  }
+  advice[proposition.path[0]] = ADVISE_VALUE;
 
   return advice;
 };
@@ -52,13 +57,12 @@ export const minimax = (situation, depth, maximize, player, baseDepth) => {
   }
 
   if (maximize) {
-    let maxScore = { score: MIN_VALUE };
+    let maxScore = { score: -INFINITY_VALUE };
 
     getAllPossibleGrids(situation.grid, player).forEach((leaf) => {
       const currentLeaf = minimax(leaf, depth - 1, false, player, baseDepth);
 
-      currentLeaf.originIndex = getOriginIndex(leaf, currentLeaf);
-      currentLeaf.depth = depth;
+      addIndexToPath(currentLeaf, leaf.index);
 
       maxScore =
         Math.max(maxScore.score, currentLeaf.score) === maxScore.score
@@ -68,14 +72,13 @@ export const minimax = (situation, depth, maximize, player, baseDepth) => {
 
     return maxScore;
   } else {
-    let minScore = { score: MAX_VALUE };
+    let minScore = { score: INFINITY_VALUE };
 
     getAllPossibleGrids(situation.grid, getNextPlayer(player)).forEach(
       (leaf) => {
         const currentLeaf = minimax(leaf, depth - 1, true, player, baseDepth);
 
-        currentLeaf.originIndex = getOriginIndex(leaf, currentLeaf);
-        currentLeaf.depth = depth;
+        addIndexToPath(currentLeaf, leaf.index);
 
         minScore =
           Math.min(minScore.score, currentLeaf.score) === minScore.score
@@ -89,12 +92,18 @@ export const minimax = (situation, depth, maximize, player, baseDepth) => {
 };
 
 /**
- * Get the very first index of the branch.
+ * Add an index into the path. First value represents the first simulated move.
  *
- * @param {Object} leaf
+ * @param {Object} currentLeaf
+ * @param {integer} index
  */
-export const getOriginIndex = (leaf, penalty, maximise) => {
-  return isTerminal(leaf, penalty, maximise) ?? leaf.index;
+export const addIndexToPath = (currentLeaf, index) => {
+  if (!currentLeaf.path) {
+    currentLeaf.path = [];
+  }
+  currentLeaf.path.push(index);
+
+  return currentLeaf;
 };
 
 /**
@@ -117,10 +126,10 @@ export const isTerminal = (leaf, penalty, maximize) => {
  * @param {Array} situation
  * @param {integer} player
  * @param {integer} depth
- * @param {boolean} maximise
+ * @param {boolean} maximize
  * @param {integer} penalty
  */
-export const calculateScore = (situation, player, maximise, penalty) => {
+export const calculateScore = (situation, player, maximize, penalty) => {
   const { grid, index } = situation;
 
   // -1 index indicates initial situation.
@@ -129,7 +138,7 @@ export const calculateScore = (situation, player, maximise, penalty) => {
     return;
   }
 
-  const forPlayer = maximise ? getNextPlayer(player) : player;
+  const forPlayer = getNextPlayer(player);
 
   // Winning path contains the path to win.
   // If no path are found, the path will be undefined.
@@ -139,7 +148,7 @@ export const calculateScore = (situation, player, maximise, penalty) => {
     index,
   };
 
-  return getScore(winningPath, !maximise, penalty);
+  return getScore(winningPath, !maximize, penalty);
 };
 
 /**
@@ -149,7 +158,7 @@ export const calculateScore = (situation, player, maximise, penalty) => {
  * @param {integer} depth
  * @param {boolean} maximize
  */
-function getScore(winningPath, maximize, penalty) {
+export const getScore = (winningPath, maximize, penalty) => {
   const { grid, path, index } = winningPath;
 
   const isWinningPath = path !== undefined;
@@ -163,7 +172,7 @@ function getScore(winningPath, maximize, penalty) {
   }
 
   return { grid, index, score: BASE_VALUE - penalty };
-}
+};
 
 /**
  * Declines all possible grids for the next movement of the player in parameter.
