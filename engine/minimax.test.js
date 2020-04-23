@@ -4,20 +4,13 @@ import {
   FIRST_PLAYER_VALUE,
   NO_PLAYER_VALUE,
 } from "./player";
+import { getWinningPath } from "./game";
 
 const X = FIRST_PLAYER_VALUE;
 const O = SECOND_PLAYER_VALUE;
 const _ = NO_PLAYER_VALUE;
 const A = ADVISE_VALUE;
 
-/**
- * Reminder
- *
- * _ = 0
- * X = 1
- * O = 2
- * A = 4
- */
 describe("Minimax implementation", () => {
   it("should get all possible grids for a grid configuration", () => {
     const grid = [X, X, _, O, O, O, X, _, _];
@@ -57,7 +50,22 @@ describe("Minimax implementation", () => {
     expect(advice).toEqual(expectedAdvice);
   });
 
-  it("should not let the player 1 win the next turn", () => {
+  it("should play the next winning move for second player (size of grid: 7x7) ", () => {
+    // prettier-ignore
+    const grid = [
+      _,_,O,X,O,O,X,O,_,_,X,O,X,_,_,X,O,O,X,X,O,_,_,X,_,O,O,_,X,O,O,O,O,O,_,X,X,X,O,X,_,_,O,_,X,X,X,X,_
+    ];
+    // prettier-ignore
+    const expectedAdvice = [
+      _,_,O,X,O,O,X,O,_,_,X,O,X,_,_,X,O,O,X,X,O,_,_,X,_,O,O,_,X,O,O,O,O,O,_,X,X,X,O,X,_,A,O,_,X,X,X,X,_
+    ];
+
+    const advice = getAdvice(grid, X);
+
+    expect(advice).toEqual(expectedAdvice);
+  });
+
+  it("should not let the player X win the next turn", () => {
     const grid = [_, _, _, X, X, O, _, _, _];
     const expectedAdvice = [_, _, A, X, X, O, _, _, _];
 

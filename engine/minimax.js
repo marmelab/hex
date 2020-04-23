@@ -23,7 +23,6 @@ export const getAdvice = (grid, player, depth = ADVICE_DEPTH) => {
   const situation = { grid, index: INITIAL_SITUATION_INDEX };
 
   const proposition = minimax(situation, depth, true, player, depth);
-
   const advice = [...situation.grid];
 
   if (proposition.path.length === 0) {
@@ -53,7 +52,6 @@ export const minimax = (situation, depth, maximize, player, baseDepth) => {
   const penalty = baseDepth - depth;
 
   const currentPlayer = getCurrentPlayer(player, depth);
-
   const leaf = getScore(situation, currentPlayer, maximize, penalty);
 
   if (depth === 0 || isTerminal(leaf, penalty, maximize)) {
