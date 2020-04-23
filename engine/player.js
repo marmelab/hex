@@ -1,4 +1,5 @@
 import sha256 from "@cryptography/sha256";
+import { HINT_VALUE } from "./minimax";
 
 export const NO_PLAYER_VALUE = 0;
 export const FIRST_PLAYER_VALUE = 1;
@@ -52,7 +53,7 @@ export function getCurrentPlayer(grid, winner) {
   const size = Math.sqrt(grid.length);
   const isEven = size % 2 === 0;
   const emptyCellCount = grid.filter(function (cell) {
-    return cell === NO_PLAYER_VALUE;
+    return cell === NO_PLAYER_VALUE || cell === HINT_VALUE;
   }).length;
 
   const isFirstMove = emptyCellCount === size;

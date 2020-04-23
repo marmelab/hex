@@ -81,14 +81,4 @@ describe("Minimax implementation", () => {
 
     expect(hint).toEqual(expectedHint);
   });
-
-  it("should play a move to win in 2 turn", () => {
-    const situation = [_, _, _, 2, _, _, 1, _, _];
-
-    const expectedHint = [_, _, _, 2, A, _, 1, _, _];
-
-    const hint = getHint(situation, X, 4);
-
-    expect(hint).toEqual(expectedHint);
-  });
 });
