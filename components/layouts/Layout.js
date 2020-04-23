@@ -8,6 +8,11 @@ function Layout({ content }) {
         <title>Hex</title>
         <link rel="manifest" href="/manifest.webmanifest"></link>
         <style>{"body { background-color: #2f404d }"}</style>
+
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Orbitron"
+        ></link>
       </Head>
 
       <ThemeProvider>

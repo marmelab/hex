@@ -5,7 +5,7 @@ describe("The Home Page", function () {
 
   it("should display the menu", function () {
     cy.findByText("Start a new game").should("exist");
-    cy.findByText("Resume local game").should("exist");
+    cy.findByText("Resume a solo game").should("exist");
     cy.findByText("Rejoin online game").should("exist");
   });
 
@@ -19,7 +19,7 @@ describe("The Home Page", function () {
   });
 
   it("should display the 'Resume local game' modal", function () {
-    cy.findByText("Resume local game").should("exist").click();
+    cy.findByText("Resume a solo game").should("exist").click();
     cy.findByLabelText("Load game").should("exist").select("0") ;
     cy.findByText("Start").should("exist");
     cy.findByLabelText("Close").click();
