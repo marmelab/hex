@@ -1,15 +1,14 @@
-import { ADVISE_VALUE, getAdvice, getAllPossibleGrids } from "./minimax";
+import { getAllPossibleGrids, getHint, HINT_VALUE } from "./minimax";
 import {
-  SECOND_PLAYER_VALUE,
   FIRST_PLAYER_VALUE,
   NO_PLAYER_VALUE,
+  SECOND_PLAYER_VALUE,
 } from "./player";
-import { getWinningPath } from "./game";
 
 const X = FIRST_PLAYER_VALUE;
 const O = SECOND_PLAYER_VALUE;
 const _ = NO_PLAYER_VALUE;
-const A = ADVISE_VALUE;
+const A = HINT_VALUE;
 
 describe("Minimax implementation", () => {
   it("should get all possible grids for a grid configuration", () => {
@@ -41,13 +40,13 @@ describe("Minimax implementation", () => {
         X, X, O, _, _, X, _, O, _, _, X, _, O, _, _, X, _, O, _, _, _, _, _, _, _,                
     ];
     // prettier-ignore
-    const expectedAdvice = [
+    const expectedHint = [
         X, X, O, _, _, X, _, O, _, _, X, _, O, _, _, X, _, O, _, _, _, A, _, _, _,       
     ];
 
-    const advice = getAdvice(grid, O);
+    const hint = getHint(grid, O);
 
-    expect(advice).toEqual(expectedAdvice);
+    expect(hint).toEqual(expectedHint);
   });
 
   it("should play the next winning move for second player (size of grid: 7x7) ", () => {
@@ -56,30 +55,40 @@ describe("Minimax implementation", () => {
       _,_,O,X,O,O,X,O,_,_,X,O,X,_,_,X,O,O,X,X,O,_,_,X,_,O,O,_,X,O,O,O,O,O,_,X,X,X,O,X,_,_,O,_,X,X,X,X,_
     ];
     // prettier-ignore
-    const expectedAdvice = [
+    const expectedHint = [
       _,_,O,X,O,O,X,O,_,_,X,O,X,_,_,X,O,O,X,X,O,_,_,X,_,O,O,_,X,O,O,O,O,O,_,X,X,X,O,X,_,A,O,_,X,X,X,X,_
     ];
 
-    const advice = getAdvice(grid, X);
+    const hint = getHint(grid, X);
 
-    expect(advice).toEqual(expectedAdvice);
+    expect(hint).toEqual(expectedHint);
   });
 
   it("should not let the player X win the next turn", () => {
     const grid = [_, _, _, X, X, O, _, _, _];
-    const expectedAdvice = [_, _, A, X, X, O, _, _, _];
+    const expectedHint = [_, _, A, X, X, O, _, _, _];
 
-    const advice = getAdvice(grid, O);
+    const hint = getHint(grid, O);
 
-    expect(advice).toEqual(expectedAdvice);
+    expect(hint).toEqual(expectedHint);
   });
 
   it("should play a move with the purpose to win", () => {
     const situation = [_, _, _, _, X, O, _, _, _];
-    const expectedAdvice = [_, _, A, _, X, O, _, _, _];
+    const expectedHint = [_, _, A, _, X, O, _, _, _];
 
-    const advice = getAdvice(situation, X);
+    const hint = getHint(situation, X);
 
-    expect(advice).toEqual(expectedAdvice);
+    expect(hint).toEqual(expectedHint);
+  });
+
+  it("should play a move to win in 2 turn", () => {
+    const situation = [_, _, _, 2, _, _, 1, _, _];
+
+    const expectedHint = [_, _, _, 2, A, _, 1, _, _];
+
+    const hint = getHint(situation, X, 4);
+
+    expect(hint).toEqual(expectedHint);
   });
 });

@@ -1,5 +1,5 @@
 import { getNextPlayer, getWinningPath } from "./game";
-import { NO_PLAYER_VALUE, SECOND_PLAYER_VALUE } from "./player";
+import { NO_PLAYER_VALUE } from "./player";
 
 const BASE_VALUE = 0;
 const MAX_VALUE = 100;
@@ -8,8 +8,8 @@ const INFINITY_VALUE = 10000;
 
 const INITIAL_SITUATION_INDEX = -1;
 
-export const ADVISE_VALUE = 4;
-const ADVICE_DEPTH = 3;
+export const HINT_VALUE = 4;
+const HINT_DEPTH = 3;
 
 /**
  * Returns the grid containing the best move for a given player.
@@ -19,18 +19,19 @@ const ADVICE_DEPTH = 3;
  * @param {integer} initialSituation.index
  * @param {integer} player
  */
-export const getAdvice = (grid, player, depth = ADVICE_DEPTH) => {
+export const getHint = (grid, player, depth = HINT_DEPTH) => {
   const situation = { grid, index: INITIAL_SITUATION_INDEX };
 
   const proposition = minimax(situation, depth, true, player, depth);
-  const advice = [...situation.grid];
+
+  const hint = [...situation.grid];
 
   if (proposition.path.length === 0) {
     throw "Unable to determine the order of played indexes";
   }
-  advice[proposition.path[0]] = ADVISE_VALUE;
+  hint[proposition.path[0]] = HINT_VALUE;
 
-  return advice;
+  return hint;
 };
 
 /**
@@ -52,7 +53,7 @@ export const minimax = (situation, depth, maximize, player, baseDepth) => {
   const penalty = baseDepth - depth;
 
   const currentPlayer = getCurrentPlayer(player, depth);
-  const leaf = getScore(situation, currentPlayer, maximize, penalty);
+  const leaf = getLeaf(situation, currentPlayer, maximize, penalty);
 
   if (depth === 0 || isTerminal(leaf, penalty, maximize)) {
     return leaf;
@@ -110,7 +111,7 @@ export const minimax = (situation, depth, maximize, player, baseDepth) => {
  * @param {integer} depth
  */
 export const getCurrentPlayer = (player, depth) => {
-  return depth % 2 === 1 ? getNextPlayer(player) : player;
+  return depth % 2 === 0 ? player : getNextPlayer(player);
 };
 
 /**
@@ -152,7 +153,7 @@ export const isTerminal = (leaf, penalty, maximize) => {
  * @param {boolean} maximize
  * @param {integer} penalty
  */
-export const getScore = (situation, player, maximize, penalty) => {
+export const getLeaf = (situation, player, maximize, penalty) => {
   const { grid, index } = situation;
 
   // INITIAL_SITUATION_INDEX indicates that it will not be processed.
