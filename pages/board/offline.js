@@ -28,13 +28,13 @@ export default function OfflineBoardPage() {
         setGame(hint);
         setHint(null);
       }
-      game;
     },
     [id, game, hint]
   );
 
   const onMovePlayed = ({ cellIndex }) => {
     if (canPlayMove(cellIndex, game)) {
+      game.grid = cleanHints(game.grid);
       const player = getCurrentPlayer(game.grid, game.winner);
       const updatedGame = applyMoveOnGame(game, player, cellIndex);
 
