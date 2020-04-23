@@ -9,13 +9,12 @@ import {
 /**
  * Reminder
  *
- * NO_PLAYER_VALUE = NO_PLAYER_VALUE
- * FIRST_PLAYER_VALUE = FIRST_PLAYER_VALUE
- * SECOND_PLAYER_VALUE = SECOND_PLAYER_VALUE
+ * NO_PLAYER_VALUE = 0
+ * FIRST_PLAYER_VALUE = 1
+ * SECOND_PLAYER_VALUE = 2
  * WINNER_LINE_VALUE = 3
- * ADVISE_VALUE = ADVISE_VALUE
+ * ADVISE_VALUE = 4
  */
-
 describe("Minimax implementation", () => {
   it("should get all grids possible for a grid configuration", () => {
     const grid = [
