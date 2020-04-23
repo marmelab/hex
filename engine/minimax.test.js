@@ -1,75 +1,38 @@
-import { getAdvice, getAllPossibleGrids } from "./minimax";
+import { ADVISE_VALUE, getAdvice, getAllPossibleGrids } from "./minimax";
 import {
-  ADVISE_VALUE,
+  SECOND_PLAYER_VALUE,
   FIRST_PLAYER_VALUE,
   NO_PLAYER_VALUE,
-  SECOND_PLAYER_VALUE,
 } from "./player";
+
+const X = FIRST_PLAYER_VALUE;
+const O = SECOND_PLAYER_VALUE;
+const _ = NO_PLAYER_VALUE;
+const A = ADVISE_VALUE;
 
 /**
  * Reminder
  *
- * NO_PLAYER_VALUE = 0
- * FIRST_PLAYER_VALUE = 1
- * SECOND_PLAYER_VALUE = 2
- * WINNER_LINE_VALUE = 3
- * ADVISE_VALUE = 4
+ * _ = 0
+ * X = 1
+ * O = 2
+ * A = 4
  */
 describe("Minimax implementation", () => {
   it("should get all possible grids for a grid configuration", () => {
-    const grid = [
-      FIRST_PLAYER_VALUE,
-      FIRST_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      SECOND_PLAYER_VALUE,
-      SECOND_PLAYER_VALUE,
-      SECOND_PLAYER_VALUE,
-      FIRST_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-    ];
-    const player = FIRST_PLAYER_VALUE;
+    const grid = [X, X, _, O, O, O, X, _, _];
+    const player = X;
     const expectedGrids = [
       {
-        grid: [
-          FIRST_PLAYER_VALUE,
-          FIRST_PLAYER_VALUE,
-          FIRST_PLAYER_VALUE,
-          SECOND_PLAYER_VALUE,
-          SECOND_PLAYER_VALUE,
-          SECOND_PLAYER_VALUE,
-          FIRST_PLAYER_VALUE,
-          NO_PLAYER_VALUE,
-          NO_PLAYER_VALUE,
-        ],
-        index: SECOND_PLAYER_VALUE,
+        grid: [X, X, X, O, O, O, X, _, _],
+        index: O,
       },
       {
-        grid: [
-          FIRST_PLAYER_VALUE,
-          FIRST_PLAYER_VALUE,
-          NO_PLAYER_VALUE,
-          SECOND_PLAYER_VALUE,
-          SECOND_PLAYER_VALUE,
-          SECOND_PLAYER_VALUE,
-          FIRST_PLAYER_VALUE,
-          FIRST_PLAYER_VALUE,
-          NO_PLAYER_VALUE,
-        ],
+        grid: [X, X, _, O, O, O, X, X, _],
         index: 7,
       },
       {
-        grid: [
-          FIRST_PLAYER_VALUE,
-          FIRST_PLAYER_VALUE,
-          NO_PLAYER_VALUE,
-          SECOND_PLAYER_VALUE,
-          SECOND_PLAYER_VALUE,
-          SECOND_PLAYER_VALUE,
-          FIRST_PLAYER_VALUE,
-          NO_PLAYER_VALUE,
-          FIRST_PLAYER_VALUE,
-        ],
+        grid: [X, X, _, O, O, O, X, _, X],
         index: 8,
       },
     ];
@@ -80,117 +43,37 @@ describe("Minimax implementation", () => {
   });
 
   it("should seize the opportunity to defeat the opponent", () => {
-    const grid = [
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      FIRST_PLAYER_VALUE,
-      FIRST_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      SECOND_PLAYER_VALUE,
-      SECOND_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-    ];
-    const expectedAdvice = [
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      ADVISE_VALUE,
-      FIRST_PLAYER_VALUE,
-      FIRST_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      SECOND_PLAYER_VALUE,
-      SECOND_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-    ];
+    const grid = [_, _, _, X, X, _, O, O, _];
+    const expectedAdvice = [_, _, A, X, X, _, O, O, _];
 
-    const advice = getAdvice(grid, FIRST_PLAYER_VALUE);
+    const advice = getAdvice(grid, X);
 
     expect(advice).toEqual(expectedAdvice);
   });
 
   it("should not let the player 1 win the next turn", () => {
-    const grid = [
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      FIRST_PLAYER_VALUE,
-      FIRST_PLAYER_VALUE,
-      SECOND_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-    ];
-    const expectedAdvice = [
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      ADVISE_VALUE,
-      FIRST_PLAYER_VALUE,
-      FIRST_PLAYER_VALUE,
-      SECOND_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-    ];
+    const grid = [_, _, _, X, X, O, _, _, _];
+    const expectedAdvice = [_, _, A, X, X, O, _, _, _];
 
-    const advice = getAdvice(grid, SECOND_PLAYER_VALUE);
+    const advice = getAdvice(grid, O);
 
     expect(advice).toEqual(expectedAdvice);
   });
 
   it("should play a move with the purpose to win", () => {
-    const situation = [
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      FIRST_PLAYER_VALUE,
-      SECOND_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-    ];
-    const expectedAdvice = [
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      ADVISE_VALUE,
-      NO_PLAYER_VALUE,
-      FIRST_PLAYER_VALUE,
-      SECOND_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-    ];
+    const situation = [_, _, _, _, X, O, _, _, _];
+    const expectedAdvice = [_, _, A, _, X, O, _, _, _];
 
-    const advice = getAdvice(situation, FIRST_PLAYER_VALUE);
+    const advice = getAdvice(situation, X);
 
     expect(advice).toEqual(expectedAdvice);
   });
 
   it("should return the next best move as grid", () => {
-    const situation = [
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      FIRST_PLAYER_VALUE,
-      FIRST_PLAYER_VALUE,
-      SECOND_PLAYER_VALUE,
-      SECOND_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-    ];
-    const expectedAdvice = [
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      ADVISE_VALUE,
-      FIRST_PLAYER_VALUE,
-      FIRST_PLAYER_VALUE,
-      SECOND_PLAYER_VALUE,
-      SECOND_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-      NO_PLAYER_VALUE,
-    ];
+    const situation = [_, _, _, X, X, O, O, _, _];
+    const expectedAdvice = [_, _, A, X, X, O, O, _, _];
 
-    const advice = getAdvice(situation, FIRST_PLAYER_VALUE);
+    const advice = getAdvice(situation, X);
 
     expect(advice).toEqual(expectedAdvice);
   });
