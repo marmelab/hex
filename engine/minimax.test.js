@@ -42,10 +42,19 @@ describe("Minimax implementation", () => {
     expect(allPossibleGrids).toEqual(expectedGrids);
   });
 
-  it("should seize the opportunity to defeat the opponent", () => {
+  it("should play the next winning move (size of grid: 3x3)", () => {
     const grid = [_, _, _, X, X, _, O, O, _];
     const expectedAdvice = [_, _, A, X, X, _, O, O, _];
 
+    const advice = getAdvice(grid, X);
+
+    expect(advice).toEqual(expectedAdvice);
+  });
+
+  it("should play the next winning move (size of grid: 4x4) ", () => {
+    const grid = [_, X, _, O, O, X, O, X, X, _, X, _, _, _, O, O];
+
+    const expectedAdvice = [_, X, _, O, O, X, O, X, X, A, X, _, _, _, O, O];
     const advice = getAdvice(grid, X);
 
     expect(advice).toEqual(expectedAdvice);
