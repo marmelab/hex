@@ -1,7 +1,7 @@
 import { Button } from "@chakra-ui/core";
 import { DARK_COLOR_100 } from "../../theme/colors";
 
-export const InGameButton = ({ text, ...props }) => {
+const InGameButton = ({ text, ...props }) => {
   return (
     <Button
       color={DARK_COLOR_100}
@@ -15,3 +15,5 @@ export const InGameButton = ({ text, ...props }) => {
     </Button>
   );
 };
+
+export default InGameButton;
