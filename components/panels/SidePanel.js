@@ -23,9 +23,7 @@ function SidePanel({
       >
         {!winner ? (
           <InGameButton width="75%" text="Hint" onClick={onHintOnPress} />
-        ) : null}
-
-        {winner ? <ReplayButton width="75%" onClick={onReplayOnPress} /> : null}
+        ) : <ReplayButton width="75%" onClick={onReplayOnPress} /> }
       </Flex>
     </Flex>
   );
