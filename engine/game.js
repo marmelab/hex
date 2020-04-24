@@ -100,7 +100,7 @@ function hexagonIndexIsInPath(winningPath, index) {
  *
  * @param {*} player
  */
-function getNextPlayer(player) {
+export function getNextPlayer(player) {
   return player === FIRST_PLAYER_VALUE
     ? SECOND_PLAYER_VALUE
     : FIRST_PLAYER_VALUE;
