@@ -33,17 +33,18 @@ export default function OnlineBoardPage({ initialGame, baseUrl }) {
 
   const onHintAsked = async () => {
     if (game.winner === NO_PLAYER_VALUE) {
-      const hint = game;
-      hint.grid = cleanHints(game.grid);
+      const newHint = game;
+      newHint.grid = cleanHints(game.grid);
 
       try {
         const res = await fetch(`${baseUrl}/api/hints`, {
           method: "POST",
-          body: JSON.stringify({ grid: hint.grid, player: hint.player }),
+          body: JSON.stringify({ grid: newHint.grid, player: newHint.player }),
         });
 
         const { grid } = await res.json();
-        hint.grid = grid;
+        newHint.grid = grid;
+        setHint(newHint);
       } catch (error) {
         throw "Unable to get hint.";
       }
