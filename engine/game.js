@@ -9,11 +9,23 @@ import {
 } from "./player";
 
 import _ from "lodash";
+import { HINT_VALUE } from "./minimax";
 
 export const START_ID = "0";
 
 var dijkstra = require("dijkstrajs");
 var find_path = dijkstra.find_path;
+
+/**
+ * Remove all hint values presents in the grid.
+ *
+ * @param {Array} grid
+ */
+export const cleanHints = (grid) => {
+  return grid.map((value) => {
+    return value === HINT_VALUE ? NO_PLAYER_VALUE : value;
+  });
+};
 
 /**
  * This function try to apply a move on the current state of the game.
@@ -113,5 +125,8 @@ export function getNextPlayer(player) {
  * @param {Object} game
  */
 export function canPlayMove(index, game) {
-  return game.grid[index] === NO_PLAYER_VALUE && !game.winner;
+  return (
+    (game.grid[index] === NO_PLAYER_VALUE || game.grid[index] === HINT_VALUE) &&
+    !game.winner
+  );
 }

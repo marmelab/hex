@@ -22,8 +22,6 @@ export default function OnlineBoardPage({ initialGame, baseUrl }) {
           body: JSON.stringify({ cellIndex, player: game.player }),
         });
 
-        console.log(response);
-
         const updatedGame = await response.json();
         setGame(updatedGame);
       } catch (message) {

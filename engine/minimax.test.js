@@ -73,9 +73,9 @@ describe("Minimax implementation", () => {
     expect(hint).toEqual(expectedHint);
   });
 
-  it("should play a move to win in 2 turn", () => {
-    const situation = [_, _, _, X, _, _, O, _, _];
-    const expectedHint = [_, A, _, X, _, _, O, _, _];
+  it("should play a move with the purpose to win", () => {
+    const situation = [_, _, _, X, _, O, _, _, _];
+    const expectedHint = [_, A, _, X, _, O, _, _, _];
 
     const hint = getHint(situation, X);
 

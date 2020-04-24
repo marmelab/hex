@@ -23,7 +23,6 @@ export const getHint = (grid, player, depth = HINT_DEPTH) => {
   const situation = { grid, index: INITIAL_SITUATION_INDEX };
 
   const proposition = minimax(situation, depth, true, player, depth);
-
   const hint = [...situation.grid];
 
   if (proposition.path.length === 0) {
